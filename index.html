@@ -114,6 +114,34 @@
     padding:88px 0 64px;
     border-bottom:1px solid var(--line);
   }
+  .hero-inner{
+    display:grid;
+    grid-template-columns:1fr 200px;
+    gap:40px;
+    align-items:start;
+  }
+  .hero-photo{
+    justify-self:end;
+  }
+  .hero-photo img{
+    width:180px;
+    height:180px;
+    object-fit:cover;
+    border-radius:50%;
+    border:3px solid var(--ink);
+    box-shadow:0 0 0 6px var(--paper), 0 0 0 7px var(--line);
+    display:block;
+  }
+  @media (max-width:640px){
+    .hero-inner{
+      grid-template-columns:1fr;
+    }
+    .hero-photo{
+      justify-self:start;
+      order:-1;
+    }
+    .hero-photo img{ width:120px; height:120px; }
+  }
   .kicker{
     color:var(--forest);
     font-size:0.82rem;
@@ -346,15 +374,22 @@
 <main class="wrap">
 
   <section class="hero" style="border-bottom:1px solid var(--line);">
-    <div class="kicker">biotechnology student / islamabad</div>
-    <h1>Trained at the bench.<br>Building toward <em>bioinformatics</em>.</h1>
-    <p class="lede">I'm a biotechnology undergraduate at the International Islamic University, Islamabad, with hands-on lab experience in genetics and molecular biology. I'm now teaching myself to bring computational tools — Python, data analysis, sequence analysis — into that work, aiming toward computational genomics.</p>
+    <div class="hero-inner">
+      <div>
+        <div class="kicker">biotechnology student / islamabad</div>
+        <h1>Trained at the bench.<br>Building toward <em>bioinformatics</em>.</h1>
+        <p class="lede">I'm a biotechnology undergraduate at the International Islamic University, Islamabad, with hands-on lab experience in genetics and molecular biology. I'm now teaching myself to bring computational tools — Python, data analysis, sequence analysis — into that work, aiming toward computational genomics.</p>
 
-    <div class="seq" id="seqStrip"></div>
+        <div class="seq" id="seqStrip"></div>
 
-    <div class="hero-links">
-      <a class="btn solid" href="mailto:saifali15874@gmail.com">Email me</a>
-      <a class="btn ghost" href="https://www.linkedin.com/in/saif-ali-421b20369" target="_blank" rel="noopener">LinkedIn</a>
+        <div class="hero-links">
+          <a class="btn solid" href="mailto:saifali15874@gmail.com">Email me</a>
+          <a class="btn ghost" href="https://www.linkedin.com/in/saif-ali-421b20369" target="_blank" rel="noopener">LinkedIn</a>
+        </div>
+      </div>
+      <div class="hero-photo">
+        <img src="saif-ali.jpg" alt="Saif Ali">
+      </div>
     </div>
   </section>
 
