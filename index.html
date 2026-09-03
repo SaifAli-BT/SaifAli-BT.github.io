@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Saif Ali | Biotechnology & Bioinformatics</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #0b0f14;
+            color: #e8eef5;
+            line-height: 1.6;
+        }
+
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 20px 8%;
+            background: rgba(11, 15, 20, 0.9);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 22px;
+            font-weight: bold;
+        }
+
+        .logo span {
+            color: #5eead4;
+        }
+
+        nav a {
+            color: #cbd5e1;
+            text-decoration: none;
+            margin-left: 25px;
+        }
+
+        nav a:hover {
+            color: #5eead4;
+        }
+
+        section {
+            padding: 100px 8%;
+            max-width: 1100px;
+            margin: auto;
+        }
+
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .tag {
+            color: #5eead4;
+            font-size: 15px;
+            margin-bottom: 15px;
+        }
+
+        h1 {
+            font-size: clamp(45px, 8vw, 80px);
+            line-height: 1.05;
+            margin-bottom: 20px;
+        }
+
+        h1 span {
+            color: #5eead4;
+        }
+
+        .hero p {
+            max-width: 650px;
+            color: #94a3b8;
+            font-size: 20px;
+        }
+
+        .buttons {
+            margin-top: 30px;
+        }
+
+        .button {
+            display: inline-block;
+            padding: 12px 22px;
+            margin-right: 10px;
+            border-radius: 8px;
+            text-decoration: none;
+            border: 1px solid #5eead4;
+            color: #5eead4;
+        }
+
+        .button:hover {
+            background: #5eead4;
+            color: #0b0f14;
+        }
+
+        h2 {
+            font-size: 35px;
+            margin-bottom: 30px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background: #111821;
+            border: 1px solid #1e293b;
+            border-radius: 12px;
+            padding: 25px;
+        }
+
+        .card h3 {
+            margin-bottom: 10px;
+            color: #5eead4;
+        }
+
+        .card p {
+            color: #94a3b8;
+        }
+
+        .about {
+            color: #94a3b8;
+            max-width: 750px;
+            font-size: 18px;
+        }
+
+        footer {
+            text-align: center;
+            padding: 40px;
+            border-top: 1px solid #1e293b;
+            color: #64748b;
+        }
+
+        @media (max-width: 700px) {
+            nav {
+                padding: 15px 5%;
+            }
+
+            nav div:last-child {
+                display: none;
+            }
+
+            section {
+                padding: 80px 6%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav>
+        <div class="logo">Saif<span>.</span></div>
+
+        <div>
+            <a href="#about">About</a>
+            <a href="#skills">Skills</a>
+            <a href="#projects">Projects</a>
+            <a href="#contact">Contact</a>
+        </div>
+    </nav>
+
+    <section class="hero">
+
+        <div class="tag">BIOTECHNOLOGY → BIOINFORMATICS</div>
+
+        <h1>
+            Hi, I'm <span>Saif Ali.</span>
+        </h1>
+
+        <p>
+            Biotechnology undergraduate exploring bioinformatics,
+            genomics, Python, and computational biology.
+        </p>
+
+        <div class="buttons">
+            <a class="button" href="#projects">View Projects</a>
+            <a class="button" href="https://github.com/SaifAli-BT">
+                GitHub
+            </a>
+        </div>
+
+    </section>
+
+
+    <section id="about">
+
+        <h2>About Me</h2>
+
+        <p class="about">
+            I am a biotechnology student developing my skills in
+            bioinformatics and computational biology. I am currently
+            learning Python and exploring biological data analysis,
+            sequence analysis, genomics, and related computational tools.
+        </p>
+
+    </section>
+
+
+    <section id="skills">
+
+        <h2>Skills I'm Building</h2>
+
+        <div class="grid">
+
+            <div class="card">
+                <h3>🧬 Bioinformatics</h3>
+                <p>
+                    Sequence analysis, BLAST, biological databases
+                    and computational biology.
+                </p>
+            </div>
+
+            <div class="card">
+                <h3>🐍 Python</h3>
+                <p>
+                    Learning Python for biological data processing
+                    and automation.
+                </p>
+            </div>
+
+            <div class="card">
+                <h3>🧪 Biotechnology</h3>
+                <p>
+                    Undergraduate knowledge of molecular biology,
+                    genetics and biotechnology.
+                </p>
+            </div>
+
+            <div class="card">
+                <h3>📊 Data Analysis</h3>
+                <p>
+                    Exploring data visualization, statistics and
+                    biological datasets.
+                </p>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <section id="projects">
+
+        <h2>Projects</h2>
+
+        <div class="grid">
+
+            <div class="card">
+                <h3>Coming Soon 🧬</h3>
+                <p>
+                    My first bioinformatics project will appear here.
+                </p>
+            </div>
+
+            <div class="card">
+                <h3>Learning Python 🐍</h3>
+                <p>
+                    Small Python projects focused on biological
+                    problems and sequence analysis.
+                </p>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <section id="contact">
+
+        <h2>Let's Connect</h2>
+
+        <p class="about">
+            I'm currently learning and building my skills in
+            bioinformatics. Feel free to connect with me.
+        </p>
+
+        <div class="buttons">
+
+            <a class="button"
+               href="https://github.com/SaifAli-BT">
+                GitHub
+            </a>
+
+        </div>
+
+    </section>
+
+
+    <footer>
+        © 2026 Saif Ali · Biotechnology & Bioinformatics
+    </footer>
+
+</body>
+</html>
