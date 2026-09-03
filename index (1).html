@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Saif Ali — Biotechnology → Bioinformatics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,500;9..144,600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper: #EDEEE3;
+    --paper-2: #E4E5D8;
+    --ink: #1B2420;
+    --muted: #57635A;
+    --forest: #35563F;
+    --rust: #B1472F;
+    --line: #C7C2AE;
+  }
+
+  *{ margin:0; padding:0; box-sizing:border-box; }
+
+  html{ scroll-behavior:smooth; }
+
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'JetBrains Mono', monospace;
+    font-size:16px;
+    line-height:1.65;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  h1,h2,h3{
+    font-family:'Fraunces', serif;
+    font-weight:500;
+    line-height:1.1;
+    letter-spacing:-0.01em;
+  }
+
+  a{ color:inherit; }
+
+  .wrap{
+    max-width:920px;
+    margin:0 auto;
+    padding:0 28px;
+  }
+
+  /* ---------- NAV ---------- */
+  header{
+    position:sticky;
+    top:0;
+    background:rgba(237,238,227,0.92);
+    backdrop-filter:blur(6px);
+    border-bottom:1px solid var(--line);
+    z-index:50;
+  }
+  nav.wrap{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    height:64px;
+  }
+  .logo{
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    font-size:1.15rem;
+    letter-spacing:0.02em;
+  }
+  .logo span{ color:var(--rust); }
+  .navlinks{
+    display:flex;
+    gap:26px;
+    font-size:0.85rem;
+  }
+  .navlinks a{
+    text-decoration:none;
+    color:var(--muted);
+    border-bottom:1px solid transparent;
+    padding-bottom:2px;
+    transition:border-color .2s ease, color .2s ease;
+  }
+  .navlinks a:hover{ color:var(--ink); border-color:var(--rust); }
+  .navtoggle{ display:none; }
+
+  @media (max-width:640px){
+    .navlinks{
+      display:none;
+      position:absolute;
+      top:64px; left:0; right:0;
+      background:var(--paper);
+      border-bottom:1px solid var(--line);
+      flex-direction:column;
+      gap:0;
+      padding:8px 28px 18px;
+    }
+    .navlinks.open{ display:flex; }
+    .navlinks a{ padding:10px 0; border-bottom:1px solid var(--line); }
+    .navtoggle{
+      display:block;
+      background:none;
+      border:1px solid var(--line);
+      border-radius:3px;
+      padding:6px 10px;
+      font-family:inherit;
+      font-size:0.85rem;
+      color:var(--ink);
+      cursor:pointer;
+    }
+  }
+
+  /* ---------- HERO ---------- */
+  .hero{
+    padding:88px 0 64px;
+    border-bottom:1px solid var(--line);
+  }
+  .kicker{
+    color:var(--forest);
+    font-size:0.82rem;
+    margin-bottom:18px;
+  }
+  .kicker::before{
+    content:"// ";
+    color:var(--rust);
+  }
+  .hero h1{
+    font-size:clamp(2.4rem, 6vw, 3.6rem);
+    max-width:14ch;
+  }
+  .hero h1 em{
+    font-style:italic;
+    color:var(--forest);
+  }
+  .hero .lede{
+    margin-top:22px;
+    max-width:56ch;
+    color:var(--muted);
+    font-size:1rem;
+  }
+
+  /* sequence strip */
+  .seq{
+    margin-top:40px;
+    display:flex;
+    flex-wrap:wrap;
+    gap:2px;
+    font-size:0.95rem;
+    letter-spacing:0.02em;
+  }
+  .seq span{
+    display:inline-block;
+    width:1.4ch;
+    text-align:center;
+    color:var(--line);
+    opacity:0;
+    animation:reveal 0.05s ease forwards;
+  }
+  .seq span.hit{
+    color:var(--paper);
+    background:var(--rust);
+    border-radius:2px;
+  }
+  @keyframes reveal{ to{ opacity:1; } }
+  @media (prefers-reduced-motion: reduce){
+    .seq span{ animation:none; opacity:1; }
+  }
+
+  .hero-links{
+    margin-top:36px;
+    display:flex;
+    gap:14px;
+    flex-wrap:wrap;
+  }
+  .btn{
+    display:inline-block;
+    padding:11px 20px;
+    font-family:inherit;
+    font-size:0.85rem;
+    text-decoration:none;
+    border-radius:3px;
+    border:1px solid var(--ink);
+    transition:background .2s ease, color .2s ease;
+  }
+  .btn.solid{ background:var(--ink); color:var(--paper); }
+  .btn.solid:hover{ background:var(--forest); border-color:var(--forest); }
+  .btn.ghost:hover{ background:var(--ink); color:var(--paper); }
+
+  /* ---------- SECTIONS ---------- */
+  section{ padding:64px 0; border-bottom:1px solid var(--line); }
+  section:last-of-type{ border-bottom:none; }
+
+  .section-head{
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+    margin-bottom:34px;
+  }
+  .section-head h2{ font-size:1.6rem; }
+  .section-head .idx{ color:var(--line); font-size:0.85rem; }
+
+  .about-grid{
+    display:grid;
+    grid-template-columns:1.4fr 1fr;
+    gap:48px;
+  }
+  .about-grid p{ color:var(--muted); }
+  .about-grid p + p{ margin-top:16px; }
+
+  .facts{ font-size:0.85rem; }
+  .facts dt{ color:var(--muted); margin-top:14px; }
+  .facts dt:first-child{ margin-top:0; }
+  .facts dd{ margin-top:2px; }
+
+  @media (max-width:640px){
+    .about-grid{ grid-template-columns:1fr; gap:28px; }
+  }
+
+  /* ---------- TIMELINE ---------- */
+  .timeline{ position:relative; }
+  .tl-item{
+    display:grid;
+    grid-template-columns:130px 1fr;
+    gap:24px;
+    padding:22px 0;
+    border-top:1px solid var(--line);
+  }
+  .tl-item:first-child{ border-top:none; }
+  .tl-when{ color:var(--rust); font-size:0.82rem; padding-top:3px; }
+  .tl-role{ font-family:'Fraunces', serif; font-size:1.15rem; margin-bottom:4px; }
+  .tl-org{ color:var(--muted); font-size:0.88rem; margin-bottom:8px; }
+  .tl-desc{ color:var(--muted); font-size:0.92rem; max-width:52ch; }
+  @media (max-width:640px){
+    .tl-item{ grid-template-columns:1fr; gap:6px; }
+  }
+
+  /* ---------- SKILLS ---------- */
+  .skill-cols{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:48px;
+  }
+  .skill-group h3{
+    font-size:1rem;
+    font-family:'JetBrains Mono', monospace;
+    font-weight:600;
+    color:var(--forest);
+    margin-bottom:14px;
+  }
+  .skill-group ul{ list-style:none; }
+  .skill-group li{
+    padding:9px 0;
+    border-top:1px solid var(--line);
+    font-size:0.92rem;
+    display:flex;
+    justify-content:space-between;
+  }
+  .skill-group li:first-of-type{ border-top:none; }
+  .skill-tag{ color:var(--muted); font-size:0.78rem; }
+  @media (max-width:640px){
+    .skill-cols{ grid-template-columns:1fr; gap:32px; }
+  }
+
+  /* ---------- ROADMAP ---------- */
+  .road{ counter-reset:step; }
+  .road-item{
+    display:grid;
+    grid-template-columns:44px 1fr;
+    gap:18px;
+    padding:20px 0;
+    border-top:1px solid var(--line);
+  }
+  .road-item:first-child{ border-top:none; }
+  .road-num{
+    counter-increment:step;
+    font-family:'Fraunces', serif;
+    font-size:1.3rem;
+    color:var(--line);
+  }
+  .road-num::before{ content: counter(step, decimal-leading-zero); }
+  .road-title{ font-weight:600; margin-bottom:4px; }
+  .road-desc{ color:var(--muted); font-size:0.92rem; max-width:56ch; }
+  .road-status{
+    display:inline-block;
+    margin-top:8px;
+    font-size:0.72rem;
+    padding:3px 8px;
+    border-radius:2px;
+    border:1px solid var(--line);
+    color:var(--muted);
+  }
+  .road-status.now{ border-color:var(--rust); color:var(--rust); }
+
+  /* ---------- CERTS ---------- */
+  .certs{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:14px;
+  }
+  .cert{
+    border:1px solid var(--line);
+    border-radius:4px;
+    padding:16px 18px;
+    font-size:0.88rem;
+  }
+  .cert .name{ font-weight:600; margin-bottom:3px; }
+  .cert .issuer{ color:var(--muted); font-size:0.8rem; }
+  @media (max-width:640px){ .certs{ grid-template-columns:1fr; } }
+
+  /* ---------- CONTACT ---------- */
+  .contact h2{ font-size:2rem; max-width:16ch; }
+  .contact-row{
+    margin-top:28px;
+    display:flex;
+    gap:14px;
+    flex-wrap:wrap;
+  }
+
+  footer{
+    padding:32px 0 48px;
+    color:var(--muted);
+    font-size:0.78rem;
+    display:flex;
+    justify-content:space-between;
+    flex-wrap:wrap;
+    gap:8px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <nav class="wrap">
+    <div class="logo">Saif<span>.</span>Ali</div>
+    <button class="navtoggle" id="navToggle" aria-expanded="false">menu</button>
+    <div class="navlinks" id="navLinks">
+      <a href="#about">About</a>
+      <a href="#experience">Experience</a>
+      <a href="#skills">Skills</a>
+      <a href="#roadmap">Roadmap</a>
+      <a href="#certifications">Certifications</a>
+      <a href="#contact">Contact</a>
+    </div>
+  </nav>
+</header>
+
+<main class="wrap">
+
+  <section class="hero" style="border-bottom:1px solid var(--line);">
+    <div class="kicker">biotechnology student / islamabad</div>
+    <h1>Trained at the bench.<br>Building toward <em>bioinformatics</em>.</h1>
+    <p class="lede">I'm a biotechnology undergraduate at the International Islamic University, Islamabad, with hands-on lab experience in genetics and molecular biology. I'm now teaching myself to bring computational tools — Python, data analysis, sequence analysis — into that work, aiming toward computational genomics.</p>
+
+    <div class="seq" id="seqStrip"></div>
+
+    <div class="hero-links">
+      <a class="btn solid" href="mailto:saifali15874@gmail.com">Email me</a>
+      <a class="btn ghost" href="https://www.linkedin.com/in/saif-ali-421b20369" target="_blank" rel="noopener">LinkedIn</a>
+    </div>
+  </section>
+
+  <section id="about">
+    <div class="section-head"><h2>About</h2><span class="idx">01</span></div>
+    <div class="about-grid">
+      <div>
+        <p>My background is wet-lab: gel electrophoresis, PCR, and DNA extraction, sharpened over two internships this year at the National Institutes of Health, Pakistan and the Pakistan Agricultural Research Council. That work is where I first ran into the limits of doing biology by hand — and where the pull toward computational tools started.</p>
+        <p>I'm currently early in that transition: comfortable with lab technique, still building the programming and data-analysis side. This site tracks that shift honestly — what I've done, and what I'm actively learning next.</p>
+      </div>
+      <dl class="facts">
+        <dt>Degree</dt>
+        <dd>BS Biotechnology, IIU Islamabad</dd>
+        <dt>Expected</dt>
+        <dd>September 2027</dd>
+        <dt>Current focus</dt>
+        <dd>Python, data analysis, sequence tools</dd>
+        <dt>Based in</dt>
+        <dd>Islamabad, Pakistan</dd>
+      </dl>
+    </div>
+  </section>
+
+  <section id="experience">
+    <div class="section-head"><h2>Experience</h2><span class="idx">02</span></div>
+    <div class="timeline">
+      <div class="tl-item">
+        <div class="tl-when">Aug 2026 — Present</div>
+        <div>
+          <div class="tl-role">Intern</div>
+          <div class="tl-org">Pakistan Agricultural Research Council (PARC)</div>
+          <div class="tl-desc">Applying lab technique in an agricultural biotechnology research setting.</div>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-when">Jul 2026 — Aug 2026</div>
+        <div>
+          <div class="tl-role">Intern</div>
+          <div class="tl-org">National Institutes of Health, Pakistan (NIH)</div>
+          <div class="tl-desc">Two-month research internship focused on molecular biology technique.</div>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-when">May 2025 — Jun 2025</div>
+        <div>
+          <div class="tl-role">Academic Engagement</div>
+          <div class="tl-org">International Islamic University, Islamabad</div>
+          <div class="tl-desc">Two-month hands-on program building foundational biotechnology lab skills.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="skills">
+    <div class="section-head"><h2>Skills</h2><span class="idx">03</span></div>
+    <div class="skill-cols">
+      <div class="skill-group">
+        <h3>Wet lab</h3>
+        <ul>
+          <li>Gel Electrophoresis <span class="skill-tag">hands-on</span></li>
+          <li>Polymerase Chain Reaction (PCR) <span class="skill-tag">hands-on</span></li>
+          <li>DNA Extraction <span class="skill-tag">hands-on</span></li>
+          <li>Computer-Aided Design (CAD) <span class="skill-tag">applied</span></li>
+        </ul>
+      </div>
+      <div class="skill-group">
+        <h3>Dry lab — building now</h3>
+        <ul>
+          <li>Python <span class="skill-tag">essentials</span></li>
+          <li>Data Science fundamentals <span class="skill-tag">intro level</span></li>
+          <li>AutoDock <span class="skill-tag">certified</span></li>
+          <li>Git &amp; GitHub <span class="skill-tag">just started</span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section id="roadmap">
+    <div class="section-head"><h2>Path to bioinformatics</h2><span class="idx">04</span></div>
+    <div class="road">
+      <div class="road-item">
+        <div class="road-num"></div>
+        <div>
+          <div class="road-title">Python fundamentals</div>
+          <div class="road-desc">Syntax, control flow, functions — building past the Essentials-level foundation already in place.</div>
+          <span class="road-status now">in progress</span>
+        </div>
+      </div>
+      <div class="road-item">
+        <div class="road-num"></div>
+        <div>
+          <div class="road-title">Data handling with pandas &amp; NumPy</div>
+          <div class="road-desc">Working with tabular biological data — expression tables, lab datasets — programmatically.</div>
+          <span class="road-status">next</span>
+        </div>
+      </div>
+      <div class="road-item">
+        <div class="road-num"></div>
+        <div>
+          <div class="road-title">Sequence analysis with Biopython</div>
+          <div class="road-desc">Parsing FASTA files, computing sequence properties, connecting code back to lab-familiar data.</div>
+          <span class="road-status">planned</span>
+        </div>
+      </div>
+      <div class="road-item">
+        <div class="road-num"></div>
+        <div>
+          <div class="road-title">First public project</div>
+          <div class="road-desc">A small, complete analysis of a public dataset — documented on GitHub, linked here.</div>
+          <span class="road-status">planned</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="certifications">
+    <div class="section-head"><h2>Certifications</h2><span class="idx">05</span></div>
+    <div class="certs">
+      <div class="cert">
+        <div class="name">Python Essentials 1</div>
+        <div class="issuer">Al-Faoz Educational Foundation</div>
+      </div>
+      <div class="cert">
+        <div class="name">Introduction to Data Science</div>
+        <div class="issuer">Al-Faoz Educational Foundation</div>
+      </div>
+      <div class="cert">
+        <div class="name">AutoDock</div>
+        <div class="issuer">Al-Faoz Educational Foundation</div>
+      </div>
+    </div>
+  </section>
+
+  <section id="education">
+    <div class="section-head"><h2>Education</h2><span class="idx">06</span></div>
+    <div class="timeline">
+      <div class="tl-item">
+        <div class="tl-when">2023 — 2027</div>
+        <div>
+          <div class="tl-role">BS Biotechnology</div>
+          <div class="tl-org">International Islamic University, Islamabad</div>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-when">2020 — 2022</div>
+        <div>
+          <div class="tl-role">FSc, Pre-Medical</div>
+          <div class="tl-org">Fauji Foundation College, Jhelum Cantt</div>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-when">2018 — 2020</div>
+        <div>
+          <div class="tl-role">Matriculation, Biology</div>
+          <div class="tl-org">Govt. High School Kala Depot, Jhelum</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="contact" class="contact">
+    <div class="section-head"><h2>Let's talk bioinformatics.</h2><span class="idx">07</span></div>
+    <p style="color:var(--muted); max-width:52ch;">Open to internships, research collaboration, or just a conversation with anyone further along this path.</p>
+    <div class="contact-row">
+      <a class="btn solid" href="mailto:saifali15874@gmail.com">saifali15874@gmail.com</a>
+      <a class="btn ghost" href="https://www.linkedin.com/in/saif-ali-421b20369" target="_blank" rel="noopener">LinkedIn ↗</a>
+    </div>
+  </section>
+
+
+</main>
+
+<script>
+  // mobile nav toggle
+  const toggle = document.getElementById('navToggle');
+  const links = document.getElementById('navLinks');
+  toggle.addEventListener('click', () => {
+    const open = links.classList.toggle('open');
+    toggle.setAttribute('aria-expanded', open);
+  });
+  links.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+    links.classList.remove('open');
+  }));
+
+  // sequence strip: a DNA-style string with one "read" substring highlighted
+  const seq = "ATCGGATCCGATCGTAGCTAGGCATCGATCGGATTACGGCTAGCATCGATCGGGTACGATCGATGGCATCG";
+  const hitStart = 24, hitEnd = 33; // "TAGGCATCG" highlighted, arbitrary motif
+  const el = document.getElementById('seqStrip');
+  const frag = document.createDocumentFragment();
+  [...seq].forEach((ch, i) => {
+    const s = document.createElement('span');
+    s.textContent = ch;
+    s.style.animationDelay = (i * 18) + 'ms';
+    if (i >= hitStart && i < hitEnd) s.classList.add('hit');
+    frag.appendChild(s);
+  });
+  el.appendChild(frag);
+</script>
+
+</body>
+</html>
