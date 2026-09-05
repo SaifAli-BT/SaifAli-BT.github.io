@@ -1612,6 +1612,320 @@ body {
   .nucleotide-btns { grid-template-columns: repeat(2, 1fr); }
   .project-card-wrap { min-height: 400px; height: 400px; }
 }
+
+/* ============================================================
+   LIVE CHAT WIDGET
+   ============================================================ */
+#chat-bubble {
+  position: fixed;
+  right: 1.5rem;
+  bottom: 1.5rem;
+  width: 58px; height: 58px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--cyan), var(--violet));
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 6px 24px rgba(0,229,255,0.35);
+  z-index: 9000;
+  transition: transform 0.25s var(--ease-out), box-shadow 0.25s;
+  border: none;
+}
+#chat-bubble:hover { transform: scale(1.08); box-shadow: 0 8px 30px rgba(0,229,255,0.5); }
+#chat-bubble i { font-size: 1.4rem; color: #04101f; }
+#chat-bubble .chat-dot {
+  position: absolute; top: 2px; right: 2px;
+  width: 13px; height: 13px; border-radius: 50%;
+  background: var(--green);
+  border: 2px solid var(--bg-void);
+  animation: chatPulse 2s infinite;
+}
+@keyframes chatPulse {
+  0%,100% { box-shadow: 0 0 0 0 rgba(57,255,20,0.5); }
+  50% { box-shadow: 0 0 0 5px rgba(57,255,20,0); }
+}
+#chat-bubble.open i.fa-comment-dots { display: none; }
+#chat-bubble .fa-xmark { display: none; font-size: 1.3rem; color: #04101f; }
+#chat-bubble.open .fa-xmark { display: inline-block; }
+
+#chat-panel {
+  position: fixed;
+  right: 1.5rem;
+  bottom: 5.5rem;
+  width: 350px;
+  max-width: calc(100vw - 2rem);
+  height: 480px;
+  max-height: calc(100vh - 8rem);
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.55), var(--shadow-glow);
+  display: flex; flex-direction: column;
+  overflow: hidden;
+  z-index: 8999;
+  opacity: 0; visibility: hidden; transform: translateY(16px) scale(0.97);
+  transition: opacity 0.25s var(--ease-out), transform 0.25s var(--ease-out), visibility 0.25s;
+}
+#chat-panel.open { opacity: 1; visibility: visible; transform: translateY(0) scale(1); }
+
+.chat-header {
+  padding: 0.9rem 1rem;
+  background: linear-gradient(120deg, rgba(0,229,255,0.08), rgba(157,78,221,0.08));
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 0.65rem;
+}
+.chat-header-avatar {
+  width: 34px; height: 34px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--cyan), var(--violet));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.95rem; color: #04101f; flex-shrink: 0;
+}
+.chat-header-info { flex: 1; min-width: 0; }
+.chat-header-info .name { font-family: var(--font-h); font-size: 0.88rem; font-weight: 600; color: var(--text-1); }
+.chat-header-info .status { font-size: 0.7rem; color: var(--green); display: flex; align-items: center; gap: 0.3rem; }
+.chat-header-info .status::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--green); }
+
+.chat-mode-tabs {
+  display: flex; gap: 0.4rem;
+  padding: 0.6rem 0.8rem 0;
+  background: var(--bg-card);
+}
+.chat-mode-tab {
+  flex: 1;
+  text-align: center;
+  padding: 0.45rem 0.4rem;
+  border-radius: 8px 8px 0 0;
+  font-size: 0.72rem;
+  font-family: var(--font-b);
+  color: var(--text-2);
+  background: var(--bg-deep);
+  cursor: pointer;
+  border: 1px solid var(--border);
+  border-bottom: none;
+  transition: color 0.2s, background 0.2s;
+}
+.chat-mode-tab.active { color: var(--cyan); background: var(--bg-glass); }
+.chat-mode-tab i { margin-right: 0.3rem; }
+
+.chat-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0.9rem;
+  display: flex; flex-direction: column; gap: 0.55rem;
+  background: var(--bg-deep);
+}
+.chat-msg {
+  max-width: 84%;
+  padding: 0.55rem 0.75rem;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  line-height: 1.45;
+  word-wrap: break-word;
+  white-space: pre-wrap;
+}
+.chat-msg.bot, .chat-msg.owner-note {
+  align-self: flex-start;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  color: var(--text-1);
+  border-bottom-left-radius: 3px;
+}
+.chat-msg.user {
+  align-self: flex-end;
+  background: linear-gradient(135deg, var(--cyan-dim), var(--violet-dim));
+  color: #f0f9ff;
+  border-bottom-right-radius: 3px;
+}
+.chat-msg.system {
+  align-self: center;
+  background: transparent;
+  color: var(--text-3);
+  font-size: 0.68rem;
+  text-align: center;
+  max-width: 100%;
+}
+.chat-msg.typing { align-self: flex-start; }
+.chat-typing-dots span {
+  display: inline-block; width: 5px; height: 5px; margin-right: 2px;
+  border-radius: 50%; background: var(--text-2);
+  animation: typingBounce 1s infinite;
+}
+.chat-typing-dots span:nth-child(2) { animation-delay: 0.15s; }
+.chat-typing-dots span:nth-child(3) { animation-delay: 0.3s; }
+@keyframes typingBounce { 0%,60%,100% { transform: translateY(0); opacity: 0.5; } 30% { transform: translateY(-4px); opacity: 1; } }
+
+.chat-quick-replies {
+  display: flex; flex-wrap: wrap; gap: 0.4rem;
+  padding: 0 0.9rem 0.6rem;
+  background: var(--bg-deep);
+}
+.chat-chip {
+  font-size: 0.68rem;
+  padding: 0.32rem 0.6rem;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  color: var(--cyan);
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+  white-space: nowrap;
+}
+.chat-chip:hover { background: var(--bg-glass); border-color: var(--border-hover); }
+
+.chat-input-row {
+  display: flex; align-items: center; gap: 0.5rem;
+  padding: 0.7rem 0.8rem;
+  background: var(--bg-card);
+  border-top: 1px solid var(--border);
+}
+.chat-input-row input[type="text"], .chat-input-row input[type="email"] {
+  flex: 1;
+  background: var(--bg-deep);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 0.55rem 0.9rem;
+  font-size: 0.78rem;
+  color: var(--text-1);
+  font-family: var(--font-b);
+  outline: none;
+}
+.chat-input-row input:focus { border-color: var(--cyan); }
+.chat-send-btn {
+  width: 34px; height: 34px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--cyan), var(--violet));
+  border: none; color: #04101f; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.85rem; flex-shrink: 0;
+  transition: transform 0.15s;
+}
+.chat-send-btn:hover { transform: scale(1.08); }
+.chat-send-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+.chat-owner-intro {
+  padding: 0.6rem 0.9rem;
+  font-size: 0.68rem;
+  color: var(--text-3);
+  background: var(--bg-deep);
+  border-top: 1px dashed var(--border);
+}
+.chat-email-row {
+  display: flex; gap: 0.4rem;
+  padding: 0.6rem 0.9rem 0;
+  background: var(--bg-deep);
+}
+.chat-email-row input {
+  flex: 1;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.4rem 0.6rem;
+  font-size: 0.7rem;
+  color: var(--text-1);
+  outline: none;
+}
+.chat-email-row input:focus { border-color: var(--cyan); }
+
+/* ============================================================
+   BIOINFORMATICS TOOLBOX
+   ============================================================ */
+.tools-layout { display: grid; grid-template-columns: 210px 1fr; gap: 1.5rem; align-items: start; }
+.tools-nav { display: flex; flex-direction: column; gap: 0.4rem; position: sticky; top: 1rem; }
+.tool-nav-btn {
+  text-align: left;
+  padding: 0.6rem 0.75rem;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  color: var(--text-2);
+  cursor: pointer;
+  font-size: 0.78rem;
+  font-family: var(--font-b);
+  display: flex; align-items: center; gap: 0.55rem;
+  transition: color 0.2s, border-color 0.2s, background 0.2s;
+}
+.tool-nav-btn i { width: 1.1em; color: var(--text-3); }
+.tool-nav-btn:hover { border-color: var(--border-hover); color: var(--text-1); }
+.tool-nav-btn.active { color: var(--cyan); border-color: var(--border-hover); background: var(--bg-glass); }
+.tool-nav-btn.active i { color: var(--cyan); }
+
+.tool-pane { display: none; background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; }
+.tool-pane.active { display: block; }
+.tool-title { font-family: var(--font-h); font-weight: 600; font-size: 1.1rem; margin-bottom: 0.5rem; color: var(--text-1); }
+.tool-desc { font-size: 0.82rem; color: var(--text-2); margin-bottom: 1rem; line-height: 1.6; }
+
+.seq-textarea {
+  width: 100%;
+  min-height: 110px;
+  font-family: var(--font-c);
+  font-size: 0.76rem;
+  background: var(--bg-deep);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.7rem;
+  color: var(--text-1);
+  resize: vertical;
+  outline: none;
+}
+.seq-textarea:focus { border-color: var(--cyan); }
+
+.tool-io-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.9rem; }
+
+.tool-params { display: flex; flex-wrap: wrap; gap: 1rem; margin: 0.9rem 0; align-items: center; }
+.tool-param { font-size: 0.78rem; color: var(--text-2); display: flex; align-items: center; gap: 0.35rem; }
+.tool-param input[type="number"], .tool-param input[type="text"], .tool-param select {
+  background: var(--bg-deep);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 0.3rem 0.5rem;
+  color: var(--text-1);
+  font-size: 0.78rem;
+  font-family: var(--font-b);
+}
+
+.tool-error { color: var(--red); font-size: 0.78rem; margin-top: 0.6rem; }
+.tool-output {
+  margin-top: 1rem;
+  background: var(--bg-deep);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.9rem;
+  font-family: var(--font-c);
+  font-size: 0.74rem;
+  line-height: 1.55;
+  white-space: pre-wrap;
+  word-break: break-all;
+  max-height: 420px;
+  overflow: auto;
+}
+.tool-output table { width: 100%; border-collapse: collapse; font-size: 0.72rem; white-space: normal; }
+.tool-output th, .tool-output td { border-bottom: 1px solid var(--border); padding: 0.35rem 0.5rem; text-align: left; }
+.tool-output th { color: var(--cyan); font-weight: 600; }
+.tool-output h4 { color: var(--text-1); font-family: var(--font-h); font-size: 0.85rem; margin: 0.9rem 0 0.4rem; }
+.tool-output h4:first-child { margin-top: 0; }
+.tool-download-row { margin-top: 0.7rem; display: flex; gap: 0.5rem; }
+.tool-stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 0.7rem; white-space: normal; }
+.tool-stat-box { background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; padding: 0.6rem 0.8rem; }
+.tool-stat-box .val { font-family: var(--font-h); font-size: 1.05rem; color: var(--cyan); }
+.tool-stat-box .lbl { font-size: 0.68rem; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.04em; }
+.align-match { color: var(--green); }
+.align-mismatch { color: var(--red); }
+.align-gap { color: var(--text-3); }
+.re-map-svg { width: 100%; height: auto; }
+
+@media (max-width: 800px) {
+  .tools-layout { grid-template-columns: 1fr; }
+  .tools-nav { position: static; flex-direction: row; flex-wrap: wrap; }
+  .tool-io-grid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 480px) {
+  #chat-panel {
+    right: 0.75rem; left: 0.75rem;
+    width: auto;
+    bottom: 5rem;
+    height: 65vh;
+  }
+  #chat-bubble { right: 1.1rem; bottom: 1.1rem; }
+}
 </style>
 </head>
 <body>
@@ -1736,6 +2050,9 @@ body {
       </a></li>
       <li><a href="#research" class="nav-link" data-tab="research" onclick="switchTab('research')">
         <span class="nav-icon">🧬</span> Research
+      </a></li>
+      <li><a href="#tools" class="nav-link" data-tab="tools" onclick="switchTab('tools')">
+        <span class="nav-icon">🧪</span> Tools
       </a></li>
       <li><a href="#game" class="nav-link" data-tab="game" onclick="switchTab('game')">
         <span class="nav-icon">🎮</span> Antisense Game
@@ -2484,6 +2801,159 @@ body {
       </div>
     </section>
 
+    <!-- ====== TOOLS ====== -->
+    <section class="tab-section" id="tab-tools">
+      <div class="section-header">
+        <div class="section-eyebrow">// bioinformatics.toolbox</div>
+        <h2 class="section-title">Bioinformatics Toolbox</h2>
+        <p class="section-subtitle">Eight sequence-analysis tools, all running live in your browser. Nothing you paste or upload leaves this page.</p>
+      </div>
+      <div class="section-body">
+        <div class="tools-layout">
+          <div class="tools-nav" id="tools-nav">
+            <button class="tool-nav-btn active" data-tool="revcomp" onclick="switchTool('revcomp')"><i class="fa-solid fa-rotate"></i> Reverse Complement</button>
+            <button class="tool-nav-btn" data-tool="stats" onclick="switchTool('stats')"><i class="fa-solid fa-chart-simple"></i> GC / Sequence Stats</button>
+            <button class="tool-nav-btn" data-tool="orf" onclick="switchTool('orf')"><i class="fa-solid fa-dna"></i> ORF Finder</button>
+            <button class="tool-nav-btn" data-tool="translate" onclick="switchTool('translate')"><i class="fa-solid fa-language"></i> Translator (6-frame)</button>
+            <button class="tool-nav-btn" data-tool="restriction" onclick="switchTool('restriction')"><i class="fa-solid fa-scissors"></i> Restriction Mapper</button>
+            <button class="tool-nav-btn" data-tool="primer" onclick="switchTool('primer')"><i class="fa-solid fa-thermometer-half"></i> Primer Design Helper</button>
+            <button class="tool-nav-btn" data-tool="motif" onclick="switchTool('motif')"><i class="fa-solid fa-magnifying-glass"></i> Motif / Pattern Finder</button>
+            <button class="tool-nav-btn" data-tool="align" onclick="switchTool('align')"><i class="fa-solid fa-align-left"></i> Pairwise Aligner</button>
+          </div>
+
+          <div class="tools-panel">
+
+            <!-- 1. Reverse Complement -->
+            <div class="tool-pane active" id="tool-revcomp">
+              <h3 class="tool-title">Reverse Complement</h3>
+              <p class="tool-desc">Paste a DNA or RNA sequence to get its complement, reverse, and reverse complement. Ambiguity codes (N, R, Y, S, W, K, M, B, D, H, V) are supported.</p>
+              <textarea class="seq-textarea" id="rc-input" placeholder="Paste a sequence, e.g. ATGCGTACGTTAGC...">ATGCGTACGTTAGCCGTAAGCTTGGATCCA</textarea>
+              <div class="tool-params">
+                <label class="tool-param"><input type="radio" name="rc-mode" value="dna" checked> DNA</label>
+                <label class="tool-param"><input type="radio" name="rc-mode" value="rna"> RNA</label>
+              </div>
+              <button class="btn btn-primary" onclick="runRevComp()"><i class="fa-solid fa-play"></i> Run</button>
+              <div class="tool-error" id="rc-error"></div>
+              <div class="tool-output hidden" id="rc-output"></div>
+              <div class="tool-download-row hidden" id="rc-download-row"></div>
+            </div>
+
+            <!-- 2. GC / Stats -->
+            <div class="tool-pane" id="tool-stats">
+              <h3 class="tool-title">GC Content &amp; Sequence Statistics</h3>
+              <p class="tool-desc">Length, base composition, GC%, estimated molecular weight (ssDNA), and estimated melting temperature (Wallace rule for &lt;14 nt, GC% formula for longer sequences).</p>
+              <textarea class="seq-textarea" id="stats-input" placeholder="Paste a DNA sequence...">ATGCGTACGTTAGCCGTAAGCTTGGATCCATGCGTACGTTAGCCGTAAGCTTGGATCCA</textarea>
+              <button class="btn btn-primary" onclick="runStats()"><i class="fa-solid fa-play"></i> Run</button>
+              <div class="tool-error" id="stats-error"></div>
+              <div class="tool-output hidden" id="stats-output"></div>
+            </div>
+
+            <!-- 3. ORF Finder -->
+            <div class="tool-pane" id="tool-orf">
+              <h3 class="tool-title">ORF Finder (6 Frames)</h3>
+              <p class="tool-desc">Scans all 3 forward and 3 reverse reading frames for open reading frames (ATG → stop codon) using the standard genetic code.</p>
+              <textarea class="seq-textarea" id="orf-input" placeholder="Paste a DNA sequence...">ATGGCCATTGTAATGGGCCGCTGAAAGGGTGCCCGATAGCTGA</textarea>
+              <div class="tool-params">
+                <label class="tool-param">Min ORF length (nt): <input type="number" id="orf-minlen" value="30" min="6" step="3" style="width:70px;"></label>
+              </div>
+              <button class="btn btn-primary" onclick="runORF()"><i class="fa-solid fa-play"></i> Run</button>
+              <div class="tool-error" id="orf-error"></div>
+              <div class="tool-output hidden" id="orf-output"></div>
+            </div>
+
+            <!-- 4. Translator -->
+            <div class="tool-pane" id="tool-translate">
+              <h3 class="tool-title">DNA → Protein Translator</h3>
+              <p class="tool-desc">Translates a DNA sequence in a chosen frame (or all 6 frames) using the standard genetic code. Stop codons are shown as *.</p>
+              <textarea class="seq-textarea" id="tr-input" placeholder="Paste a DNA sequence...">ATGGCCATTGTAATGGGCCGCTGAAAGGGTGCCCGATAG</textarea>
+              <div class="tool-params">
+                <label class="tool-param">Frame:
+                  <select id="tr-frame">
+                    <option value="all">All 6 frames</option>
+                    <option value="1">+1</option>
+                    <option value="2">+2</option>
+                    <option value="3">+3</option>
+                    <option value="-1">-1</option>
+                    <option value="-2">-2</option>
+                    <option value="-3">-3</option>
+                  </select>
+                </label>
+              </div>
+              <button class="btn btn-primary" onclick="runTranslate()"><i class="fa-solid fa-play"></i> Run</button>
+              <div class="tool-error" id="tr-error"></div>
+              <div class="tool-output hidden" id="tr-output"></div>
+            </div>
+
+            <!-- 5. Restriction Mapper -->
+            <div class="tool-pane" id="tool-restriction">
+              <h3 class="tool-title">Restriction Enzyme Mapper</h3>
+              <p class="tool-desc">Scans your sequence against 24 common Type II restriction enzymes (real recognition sites and cut offsets) and maps every cut site.</p>
+              <textarea class="seq-textarea" id="re-input" placeholder="Paste a DNA sequence...">GGAATTCGGATCCAAGCTTGGTACCGAGCTCGCGGCCGCCTCGAGCTGCAGGTCGACT</textarea>
+              <button class="btn btn-primary" onclick="runRestriction()"><i class="fa-solid fa-play"></i> Run</button>
+              <div class="tool-error" id="re-error"></div>
+              <div class="tool-output hidden" id="re-output"></div>
+            </div>
+
+            <!-- 6. Primer Design Helper -->
+            <div class="tool-pane" id="tool-primer">
+              <h3 class="tool-title">Primer Design Helper</h3>
+              <p class="tool-desc">A simplified, heuristic primer picker — <strong>not</strong> the full Primer3 thermodynamic model. It scores candidate primers near each end of your sequence by GC%, estimated Tm, repeat runs, and basic self-dimer/hairpin risk, and returns the best-ranked pairs. Use it to narrow candidates, not as a final lab decision.</p>
+              <textarea class="seq-textarea" id="pr-input" placeholder="Paste the target DNA sequence (100+ bp works best)...">ATGGCCATTGTAATGGGCCGCTGAAAGGGTGCCCGATAGCTGACCTAGGTCAGCTAGGCATCGATCGTAGCTAGCTAGGATCCAAGCTTGGTACCGAGCTCGCGGCCGCCTCGAGCTGCAGGTCGACTGGATCCATGCGTACGTTAGCCGTAAGCTTGGATCC</textarea>
+              <div class="tool-params">
+                <label class="tool-param">Primer length: <input type="number" id="pr-len" value="20" min="15" max="30" style="width:60px;"></label>
+                <label class="tool-param">Target Tm (°C): <input type="number" id="pr-tm" value="60" min="45" max="75" style="width:60px;"></label>
+              </div>
+              <button class="btn btn-primary" onclick="runPrimer()"><i class="fa-solid fa-play"></i> Run</button>
+              <div class="tool-error" id="pr-error"></div>
+              <div class="tool-output hidden" id="pr-output"></div>
+            </div>
+
+            <!-- 7. Motif Finder -->
+            <div class="tool-pane" id="tool-motif">
+              <h3 class="tool-title">Motif / Pattern Finder</h3>
+              <p class="tool-desc">Search one or more sequences (plain or multi-FASTA) for a pattern. Supports IUPAC ambiguity codes (R, Y, S, W, K, M, B, D, H, V, N) or, in regex mode, a full JavaScript regular expression.</p>
+              <textarea class="seq-textarea" id="mo-input" placeholder="Paste sequence(s), plain or FASTA...">&gt;seq1
+GGGAAGCTTATCGAATTCGGGATCCAAGCTTAACGT
+&gt;seq2
+CCCGAATTCTTTAAGCTTGGATCCGGGAAGCTT</textarea>
+              <div class="tool-params">
+                <label class="tool-param">Pattern: <input type="text" id="mo-pattern" value="AAGCTT" style="width:140px;"></label>
+                <label class="tool-param"><input type="checkbox" id="mo-regex"> Treat as regex</label>
+              </div>
+              <button class="btn btn-primary" onclick="runMotif()"><i class="fa-solid fa-play"></i> Run</button>
+              <div class="tool-error" id="mo-error"></div>
+              <div class="tool-output hidden" id="mo-output"></div>
+            </div>
+
+            <!-- 8. Pairwise Aligner -->
+            <div class="tool-pane" id="tool-align">
+              <h3 class="tool-title">Pairwise Sequence Aligner</h3>
+              <p class="tool-desc">Real Needleman-Wunsch (global) or Smith-Waterman (local) dynamic-programming alignment — the classic, exact algorithms, not an approximation.</p>
+              <div class="tool-io-grid">
+                <textarea class="seq-textarea" id="al-seq1" placeholder="Sequence 1">GATTACAGATTACA</textarea>
+                <textarea class="seq-textarea" id="al-seq2" placeholder="Sequence 2">GATCACAGATCACA</textarea>
+              </div>
+              <div class="tool-params">
+                <label class="tool-param">Mode:
+                  <select id="al-mode">
+                    <option value="global">Global (Needleman-Wunsch)</option>
+                    <option value="local">Local (Smith-Waterman)</option>
+                  </select>
+                </label>
+                <label class="tool-param">Match: <input type="number" id="al-match" value="1" style="width:50px;"></label>
+                <label class="tool-param">Mismatch: <input type="number" id="al-mismatch" value="-1" style="width:50px;"></label>
+                <label class="tool-param">Gap: <input type="number" id="al-gap" value="-2" style="width:50px;"></label>
+              </div>
+              <button class="btn btn-primary" onclick="runAlign()"><i class="fa-solid fa-play"></i> Run</button>
+              <div class="tool-error" id="al-error"></div>
+              <div class="tool-output hidden" id="al-output"></div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- ====== GAME ====== -->
     <section class="tab-section" id="tab-game">
       <div class="section-header">
@@ -2708,7 +3178,7 @@ function switchTab(tab, pushState = true) {
 
 function checkHash() {
   const hash = location.hash.replace('#','');
-  const valid = ['home','about','experience','projects','skills','certifications','publications','research','game','contact'];
+  const valid = ['home','about','experience','projects','skills','certifications','publications','research','tools','game','contact'];
   if (hash && valid.includes(hash)) switchTab(hash, false);
 }
 
@@ -3618,6 +4088,716 @@ function triggerConfetti() {
 }
 
 window.addEventListener('hashchange', checkHash);
+</script>
+
+<!-- ============================================================
+     BIOINFORMATICS TOOLBOX LOGIC
+     Every algorithm below is a real, standard implementation
+     (standard genetic code, IUPAC codes, classic DP alignment,
+     textbook Tm/MW formulas, real restriction sites). Nothing
+     here calls an external server — everything runs in-browser.
+     ============================================================ -->
+<script>
+/* ---------- shared helpers ---------- */
+function switchTool(name) {
+  document.querySelectorAll('#tools-nav .tool-nav-btn').forEach(b => b.classList.toggle('active', b.dataset.tool === name));
+  document.querySelectorAll('.tools-panel .tool-pane').forEach(p => p.classList.toggle('active', p.id === 'tool-' + name));
+}
+
+function cleanSeq(raw) {
+  // Strips FASTA headers, whitespace, numbers; uppercases; keeps only letters
+  return raw.split('\n').filter(l => !l.trim().startsWith('>')).join('').replace(/[^A-Za-z]/g, '').toUpperCase();
+}
+
+function parseMultiFasta(raw) {
+  // Returns [{name, seq}] — treats a header-less block as a single unnamed sequence
+  const text = raw.trim();
+  if (!text) return [];
+  if (!text.startsWith('>')) return [{ name: 'sequence_1', seq: cleanSeq(text) }];
+  const entries = [];
+  const blocks = text.split(/^>/m).filter(Boolean);
+  blocks.forEach((b, i) => {
+    const lines = b.split('\n');
+    const name = (lines[0] || ('seq_' + (i + 1))).trim() || ('seq_' + (i + 1));
+    const seq = cleanSeq(lines.slice(1).join('\n'));
+    if (seq) entries.push({ name, seq });
+  });
+  return entries;
+}
+
+const IUPAC_COMPLEMENT = {
+  A:'T', T:'A', U:'A', G:'C', C:'G',
+  R:'Y', Y:'R', S:'S', W:'W', K:'M', M:'K',
+  B:'V', D:'H', H:'D', V:'B', N:'N'
+};
+
+function complementSeq(seq, isRNA) {
+  return seq.split('').map(ch => {
+    const c = IUPAC_COMPLEMENT[ch] || 'N';
+    return (isRNA && c === 'T') ? 'U' : c;
+  }).join('');
+}
+function reverseSeq(seq) { return seq.split('').reverse().join(''); }
+function reverseComplementDNA(seq) { return reverseSeq(complementSeq(seq.replace(/U/g,'T'), false)); }
+
+const STANDARD_CODON_TABLE = {
+  TTT:'F',TTC:'F',TTA:'L',TTG:'L',CTT:'L',CTC:'L',CTA:'L',CTG:'L',
+  ATT:'I',ATC:'I',ATA:'I',ATG:'M',GTT:'V',GTC:'V',GTA:'V',GTG:'V',
+  TCT:'S',TCC:'S',TCA:'S',TCG:'S',CCT:'P',CCC:'P',CCA:'P',CCG:'P',
+  ACT:'T',ACC:'T',ACA:'T',ACG:'T',GCT:'A',GCC:'A',GCA:'A',GCG:'A',
+  TAT:'Y',TAC:'Y',TAA:'*',TAG:'*',CAT:'H',CAC:'H',CAA:'Q',CAG:'Q',
+  AAT:'N',AAC:'N',AAA:'K',AAG:'K',GAT:'D',GAC:'D',GAA:'E',GAG:'E',
+  TGT:'C',TGC:'C',TGA:'*',TGG:'W',CGT:'R',CGC:'R',CGA:'R',CGG:'R',
+  AGT:'S',AGC:'S',AGA:'R',AGG:'R',GGT:'G',GGC:'G',GGA:'G',GGG:'G'
+};
+
+function translateFrame(seq, frame) {
+  // frame: 1,2,3 (forward) or -1,-2,-3 (reverse, translated from revcomp)
+  const template = frame > 0 ? seq : reverseComplementDNA(seq);
+  const start = Math.abs(frame) - 1;
+  let protein = '';
+  for (let i = start; i + 3 <= template.length; i += 3) {
+    const codon = template.slice(i, i + 3);
+    protein += STANDARD_CODON_TABLE[codon] || 'X';
+  }
+  return protein;
+}
+
+function escapeHtml(str) {
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function downloadText(filename, content) {
+  const blob = new Blob([content], { type: 'text/plain' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+/* ---------- 1. Reverse Complement ---------- */
+function runRevComp() {
+  const errEl = document.getElementById('rc-error');
+  const outEl = document.getElementById('rc-output');
+  const dlRow = document.getElementById('rc-download-row');
+  errEl.textContent = ''; outEl.classList.add('hidden'); dlRow.classList.add('hidden'); dlRow.innerHTML = '';
+
+  const raw = document.getElementById('rc-input').value;
+  const isRNA = document.querySelector('input[name="rc-mode"]:checked').value === 'rna';
+  const seq = cleanSeq(raw).replace(/U/g, 'T');
+  if (!seq) { errEl.textContent = 'Please paste a sequence.'; return; }
+
+  const comp = complementSeq(seq, isRNA);
+  const rev = reverseSeq(isRNA ? seq.replace(/T/g,'U') : seq);
+  const revComp = reverseSeq(comp);
+
+  outEl.classList.remove('hidden');
+  outEl.innerHTML =
+    `<h4>Original (${seq.length} nt)</h4>${escapeHtml(isRNA ? seq.replace(/T/g,'U') : seq)}` +
+    `<h4>Complement</h4>${escapeHtml(comp)}` +
+    `<h4>Reverse</h4>${escapeHtml(rev)}` +
+    `<h4>Reverse Complement</h4>${escapeHtml(revComp)}`;
+
+  dlRow.classList.remove('hidden');
+  const btn = document.createElement('button');
+  btn.className = 'btn btn-primary'; btn.innerHTML = '<i class="fa-solid fa-download"></i> Download FASTA';
+  btn.onclick = () => downloadText('reverse_complement.fasta', `>original\n${seq}\n>complement\n${comp}\n>reverse\n${rev}\n>reverse_complement\n${revComp}\n`);
+  dlRow.appendChild(btn);
+}
+
+/* ---------- 2. GC / Stats ---------- */
+function runStats() {
+  const errEl = document.getElementById('stats-error');
+  const outEl = document.getElementById('stats-output');
+  errEl.textContent = ''; outEl.classList.add('hidden');
+
+  const seq = cleanSeq(document.getElementById('stats-input').value).replace(/U/g,'T');
+  if (!seq) { errEl.textContent = 'Please paste a sequence.'; return; }
+
+  const n = seq.length;
+  const counts = { A:0, T:0, G:0, C:0, other:0 };
+  for (const ch of seq) { if (counts[ch] !== undefined) counts[ch]++; else counts.other++; }
+  const gc = counts.G + counts.C;
+  const at = counts.A + counts.T;
+  const gcPct = n ? (gc / n * 100) : 0;
+
+  // Standard ssDNA molecular weight formula (5' monophosphate oligo)
+  const mw = counts.A*313.21 + counts.T*304.2 + counts.C*289.18 + counts.G*329.21 - 61.96;
+
+  // Tm: Wallace rule for short oligos, GC%-based formula otherwise
+  let tm, tmMethod;
+  if (n < 14) { tm = 2*at + 4*gc; tmMethod = 'Wallace rule (2×AT + 4×GC)'; }
+  else { tm = 64.9 + 41*(gc - 16.4)/n; tmMethod = 'GC% formula (64.9 + 41×(GC−16.4)/N)'; }
+
+  outEl.classList.remove('hidden');
+  outEl.innerHTML = `
+    <div class="tool-stat-grid">
+      <div class="tool-stat-box"><div class="val">${n}</div><div class="lbl">Length (nt)</div></div>
+      <div class="tool-stat-box"><div class="val">${gcPct.toFixed(1)}%</div><div class="lbl">GC Content</div></div>
+      <div class="tool-stat-box"><div class="val">${(100-gcPct).toFixed(1)}%</div><div class="lbl">AT Content</div></div>
+      <div class="tool-stat-box"><div class="val">${tm.toFixed(1)}°C</div><div class="lbl">Est. Tm</div></div>
+      <div class="tool-stat-box"><div class="val">${(mw/1000).toFixed(2)} kDa</div><div class="lbl">Est. MW (ssDNA)</div></div>
+    </div>
+    <h4>Base Composition</h4>
+    A: ${counts.A} &nbsp; T: ${counts.T} &nbsp; G: ${counts.G} &nbsp; C: ${counts.C}${counts.other ? ' &nbsp; Other/ambiguous: ' + counts.other : ''}
+    <h4>Notes</h4>
+    Tm estimated using ${tmMethod}. MW uses the standard single-stranded DNA oligo formula (5′-monophosphate). Both are estimates — actual values depend on buffer conditions, salt concentration, and strand context.
+  `;
+}
+
+/* ---------- 3. ORF Finder ---------- */
+function findORFsInFrame(seq, frame, minLen, label) {
+  const template = frame > 0 ? seq : reverseComplementDNA(seq);
+  const start = Math.abs(frame) - 1;
+  const orfs = [];
+  let i = start;
+  while (i + 3 <= template.length) {
+    const codon = template.slice(i, i + 3);
+    if (codon === 'ATG') {
+      let j = i;
+      let protein = '';
+      let found = false;
+      while (j + 3 <= template.length) {
+        const c = template.slice(j, j + 3);
+        const aa = STANDARD_CODON_TABLE[c] || 'X';
+        if (aa === '*') { found = true; break; }
+        protein += aa;
+        j += 3;
+      }
+      const ntLen = found ? (j + 3 - i) : (template.length - i);
+      if (found && ntLen >= minLen) {
+        orfs.push({ frame: label, start: i + 1, end: j + 3, length: ntLen, protein });
+      }
+      i = found ? j + 3 : template.length;
+    } else {
+      i += 3;
+    }
+  }
+  return orfs;
+}
+
+function runORF() {
+  const errEl = document.getElementById('orf-error');
+  const outEl = document.getElementById('orf-output');
+  errEl.textContent = ''; outEl.classList.add('hidden');
+
+  const seq = cleanSeq(document.getElementById('orf-input').value).replace(/U/g,'T');
+  const minLen = parseInt(document.getElementById('orf-minlen').value, 10) || 30;
+  if (!seq) { errEl.textContent = 'Please paste a sequence.'; return; }
+  if (seq.length < 6) { errEl.textContent = 'Sequence too short.'; return; }
+
+  let allOrfs = [];
+  [1,2,3,-1,-2,-3].forEach(f => { allOrfs = allOrfs.concat(findORFsInFrame(seq, f, minLen, (f>0?'+':'') + f)); });
+  allOrfs.sort((a,b) => b.length - a.length);
+
+  outEl.classList.remove('hidden');
+  if (!allOrfs.length) {
+    outEl.innerHTML = `No ORFs ≥ ${minLen} nt found in any of the 6 frames.`;
+    return;
+  }
+  let rows = allOrfs.map(o => `<tr><td>${o.frame}</td><td>${o.start}–${o.end}</td><td>${o.length} nt</td><td style="word-break:break-all;">${o.protein}</td></tr>`).join('');
+  outEl.innerHTML = `<h4>${allOrfs.length} ORF(s) found</h4><table><tr><th>Frame</th><th>Position</th><th>Length</th><th>Protein</th></tr>${rows}</table>`;
+}
+
+/* ---------- 4. Translator ---------- */
+function runTranslate() {
+  const errEl = document.getElementById('tr-error');
+  const outEl = document.getElementById('tr-output');
+  errEl.textContent = ''; outEl.classList.add('hidden');
+
+  const seq = cleanSeq(document.getElementById('tr-input').value).replace(/U/g,'T');
+  const frameSel = document.getElementById('tr-frame').value;
+  if (!seq) { errEl.textContent = 'Please paste a sequence.'; return; }
+
+  outEl.classList.remove('hidden');
+  if (frameSel === 'all') {
+    const frames = [1,2,3,-1,-2,-3];
+    outEl.innerHTML = frames.map(f => `<h4>Frame ${f > 0 ? '+' + f : f}</h4>${escapeHtml(translateFrame(seq, f)) || '(too short)'}`).join('');
+  } else {
+    const f = parseInt(frameSel, 10);
+    outEl.innerHTML = `<h4>Frame ${f > 0 ? '+' + f : f}</h4>${escapeHtml(translateFrame(seq, f)) || '(too short)'}`;
+  }
+}
+
+/* ---------- 5. Restriction Mapper ---------- */
+const RESTRICTION_ENZYMES = [
+  { name:'EcoRI', site:'GAATTC', cut:1 }, { name:'BamHI', site:'GGATCC', cut:1 },
+  { name:'HindIII', site:'AAGCTT', cut:1 }, { name:'NotI', site:'GCGGCCGC', cut:2 },
+  { name:'XhoI', site:'CTCGAG', cut:1 }, { name:'PstI', site:'CTGCAG', cut:5 },
+  { name:'SalI', site:'GTCGAC', cut:1 }, { name:'SmaI', site:'CCCGGG', cut:3 },
+  { name:'KpnI', site:'GGTACC', cut:5 }, { name:'SacI', site:'GAGCTC', cut:5 },
+  { name:'NcoI', site:'CCATGG', cut:1 }, { name:'NdeI', site:'CATATG', cut:2 },
+  { name:'XbaI', site:'TCTAGA', cut:1 }, { name:'SpeI', site:'ACTAGT', cut:1 },
+  { name:'ApaI', site:'GGGCCC', cut:5 }, { name:'BglII', site:'AGATCT', cut:1 },
+  { name:'ClaI', site:'ATCGAT', cut:2 }, { name:'EcoRV', site:'GATATC', cut:3 },
+  { name:'NheI', site:'GCTAGC', cut:1 }, { name:'PvuII', site:'CAGCTG', cut:3 },
+  { name:'SacII', site:'CCGCGG', cut:4 }, { name:'ScaI', site:'AGTACT', cut:3 },
+  { name:'SphI', site:'GCATGC', cut:5 }, { name:'StuI', site:'AGGCCT', cut:3 }
+];
+
+function runRestriction() {
+  const errEl = document.getElementById('re-error');
+  const outEl = document.getElementById('re-output');
+  errEl.textContent = ''; outEl.classList.add('hidden');
+
+  const seq = cleanSeq(document.getElementById('re-input').value).replace(/U/g,'T');
+  if (!seq) { errEl.textContent = 'Please paste a sequence.'; return; }
+
+  const hits = [];
+  RESTRICTION_ENZYMES.forEach(enz => {
+    let idx = seq.indexOf(enz.site);
+    while (idx !== -1) {
+      hits.push({ name: enz.name, site: enz.site, position: idx + 1, cutAfter: idx + enz.cut });
+      idx = seq.indexOf(enz.site, idx + 1);
+    }
+  });
+  hits.sort((a,b) => a.position - b.position);
+
+  outEl.classList.remove('hidden');
+  if (!hits.length) {
+    outEl.innerHTML = `No sites found for any of the ${RESTRICTION_ENZYMES.length} enzymes screened.`;
+    return;
+  }
+
+  const w = Math.max(600, Math.min(seq.length * 6, 1400));
+  const y = 40;
+  const scale = (w - 40) / seq.length;
+  let svgMarks = hits.map((h, i) => {
+    const x = 20 + h.cutAfter * scale;
+    const labelY = 15 + (i % 3) * 12;
+    return `<line x1="${x}" y1="${y-6}" x2="${x}" y2="${y+6}" stroke="var(--cyan,#00e5ff)" stroke-width="1.5"/>
+            <text x="${x}" y="${labelY}" font-size="9" fill="#94a3b8" text-anchor="middle">${h.name}</text>`;
+  }).join('');
+  const svg = `<svg class="re-map-svg" viewBox="0 0 ${w} 60" xmlns="http://www.w3.org/2000/svg">
+      <line x1="20" y1="${y}" x2="${w-20}" y2="${y}" stroke="#4b5e7a" stroke-width="2"/>
+      ${svgMarks}
+    </svg>`;
+
+  const rows = hits.map(h => `<tr><td>${h.name}</td><td>${h.site}</td><td>${h.position}</td><td>after position ${h.cutAfter}</td></tr>`).join('');
+  outEl.innerHTML = `<h4>${hits.length} cut site(s) found</h4>${svg}<table><tr><th>Enzyme</th><th>Recognition site</th><th>Site start</th><th>Cut position</th></tr>${rows}</table>`;
+}
+
+/* ---------- 6. Primer Design Helper ---------- */
+function estimateTm(seq) {
+  const gc = (seq.match(/[GC]/g) || []).length;
+  const at = seq.length - gc;
+  return seq.length < 14 ? (2*at + 4*gc) : (64.9 + 41*(gc - 16.4)/seq.length);
+}
+function hasLongRepeat(seq, run) {
+  const re = new RegExp('(.)\\1{' + (run - 1) + ',}');
+  return re.test(seq);
+}
+function selfDimerRisk(seq) {
+  // crude check: does the 3' end (last 5 nt) have a complementary match elsewhere in the primer?
+  const tail = seq.slice(-5);
+  const tailRC = reverseComplementDNA(tail);
+  return seq.includes(tailRC);
+}
+function scorePrimer(seq, targetTm) {
+  const tm = estimateTm(seq);
+  const gc = (seq.match(/[GC]/g) || []).length / seq.length * 100;
+  let score = 100;
+  score -= Math.abs(tm - targetTm) * 3;
+  score -= Math.abs(gc - 50) * 0.8;
+  if (hasLongRepeat(seq, 4)) score -= 20;
+  if (selfDimerRisk(seq)) score -= 15;
+  if (seq[seq.length-1] !== 'G' && seq[seq.length-1] !== 'C') score -= 5; // 3' GC clamp preference
+  return { tm, gc, score, repeat: hasLongRepeat(seq,4), dimer: selfDimerRisk(seq) };
+}
+
+function runPrimer() {
+  const errEl = document.getElementById('pr-error');
+  const outEl = document.getElementById('pr-output');
+  errEl.textContent = ''; outEl.classList.add('hidden');
+
+  const seq = cleanSeq(document.getElementById('pr-input').value).replace(/U/g,'T');
+  const len = parseInt(document.getElementById('pr-len').value, 10) || 20;
+  const targetTm = parseFloat(document.getElementById('pr-tm').value) || 60;
+  if (!seq) { errEl.textContent = 'Please paste a sequence.'; return; }
+  if (seq.length < len * 2 + 20) { errEl.textContent = `Sequence too short for reliable primer picking (need at least ${len*2+20} nt).`; return; }
+
+  // Forward candidates near the 5' end, reverse candidates near the 3' end
+  const windowSize = Math.min(60, Math.floor(seq.length / 2));
+  const fwdCandidates = [];
+  for (let i = 0; i + len <= windowSize; i++) {
+    const p = seq.slice(i, i + len);
+    fwdCandidates.push({ pos: i + 1, seq: p, ...scorePrimer(p, targetTm) });
+  }
+  const revCandidates = [];
+  for (let i = seq.length - windowSize; i + len <= seq.length; i++) {
+    const region = seq.slice(i, i + len);
+    const p = reverseComplementDNA(region);
+    revCandidates.push({ pos: i + 1, endPos: i + len, seq: p, ...scorePrimer(p, targetTm) });
+  }
+  fwdCandidates.sort((a,b) => b.score - a.score);
+  revCandidates.sort((a,b) => b.score - a.score);
+  const topFwd = fwdCandidates.slice(0, 3);
+  const topRev = revCandidates.slice(0, 3);
+
+  outEl.classList.remove('hidden');
+  const rowFmt = (p) => `<tr><td>${p.seq}</td><td>${p.pos}</td><td>${p.tm.toFixed(1)}°C</td><td>${p.gc.toFixed(0)}%</td><td>${p.repeat ? '⚠️ repeat' : ''} ${p.dimer ? '⚠️ dimer risk' : ''}</td><td>${p.score.toFixed(0)}</td></tr>`;
+  outEl.innerHTML = `
+    <h4>Top Forward Primers (5′ region)</h4>
+    <table><tr><th>Sequence</th><th>Start pos</th><th>Tm</th><th>GC%</th><th>Flags</th><th>Score</th></tr>${topFwd.map(rowFmt).join('')}</table>
+    <h4>Top Reverse Primers (3′ region)</h4>
+    <table><tr><th>Sequence</th><th>Binds pos</th><th>Tm</th><th>GC%</th><th>Flags</th><th>Score</th></tr>${topRev.map(rowFmt).join('')}</table>
+    ${(topFwd[0] && topRev[0]) ? `<h4>Suggested Pair Product Size</h4>${topRev[0].endPos - topFwd[0].pos + 1} bp (best-scored forward → best-scored reverse)` : ''}
+  `;
+}
+
+/* ---------- 7. Motif Finder ---------- */
+const IUPAC_TO_REGEX = { A:'A',C:'C',G:'G',T:'T',U:'T',R:'[AG]',Y:'[CT]',S:'[GC]',W:'[AT]',K:'[GT]',M:'[AC]',B:'[CGT]',D:'[AGT]',H:'[ACT]',V:'[ACG]',N:'[ACGT]' };
+
+function runMotif() {
+  const errEl = document.getElementById('mo-error');
+  const outEl = document.getElementById('mo-output');
+  errEl.textContent = ''; outEl.classList.add('hidden');
+
+  const entries = parseMultiFasta(document.getElementById('mo-input').value);
+  const pattern = document.getElementById('mo-pattern').value.trim();
+  const isRegex = document.getElementById('mo-regex').checked;
+  if (!entries.length) { errEl.textContent = 'Please paste at least one sequence.'; return; }
+  if (!pattern) { errEl.textContent = 'Please enter a pattern.'; return; }
+
+  let regex;
+  try {
+    const pat = isRegex ? pattern : pattern.toUpperCase().split('').map(c => IUPAC_TO_REGEX[c] || c).join('');
+    regex = new RegExp(pat, 'gi');
+  } catch (e) { errEl.textContent = 'Invalid pattern: ' + e.message; return; }
+
+  outEl.classList.remove('hidden');
+  let html = '';
+  let totalHits = 0;
+  entries.forEach(entry => {
+    const matches = [];
+    let m;
+    regex.lastIndex = 0;
+    while ((m = regex.exec(entry.seq)) !== null) {
+      matches.push({ pos: m.index + 1, match: m[0] });
+      if (m[0].length === 0) regex.lastIndex++;
+    }
+    totalHits += matches.length;
+    html += `<h4>${escapeHtml(entry.name)} (${entry.seq.length} nt) — ${matches.length} match(es)</h4>`;
+    html += matches.length
+      ? `<table><tr><th>Position</th><th>Matched text</th></tr>${matches.map(x => `<tr><td>${x.pos}</td><td>${escapeHtml(x.match)}</td></tr>`).join('')}</table>`
+      : 'No matches.';
+  });
+  outEl.innerHTML = `<div style="margin-bottom:0.6rem;color:var(--text-2);">${totalHits} total match(es) across ${entries.length} sequence(s)</div>` + html;
+}
+
+/* ---------- 8. Pairwise Aligner (Needleman-Wunsch / Smith-Waterman) ---------- */
+function pairwiseAlign(seq1, seq2, mode, match, mismatch, gap) {
+  const n = seq1.length, m = seq2.length;
+  const score = Array.from({ length: n + 1 }, () => new Array(m + 1).fill(0));
+  const trace = Array.from({ length: n + 1 }, () => new Array(m + 1).fill(0)); // 0=diag,1=up,2=left
+
+  if (mode === 'global') {
+    for (let i = 1; i <= n; i++) { score[i][0] = i * gap; trace[i][0] = 1; }
+    for (let j = 1; j <= m; j++) { score[0][j] = j * gap; trace[0][j] = 2; }
+  }
+
+  let best = { val: 0, i: 0, j: 0 };
+  for (let i = 1; i <= n; i++) {
+    for (let j = 1; j <= m; j++) {
+      const diag = score[i-1][j-1] + (seq1[i-1] === seq2[j-1] ? match : mismatch);
+      const up = score[i-1][j] + gap;
+      const left = score[i][j-1] + gap;
+      let val = Math.max(diag, up, left);
+      let dir = diag >= up ? (diag >= left ? 0 : 2) : (up >= left ? 1 : 2);
+      if (mode === 'local' && val < 0) { val = 0; dir = -1; }
+      score[i][j] = val; trace[i][j] = dir;
+      if (mode === 'local' && val > best.val) best = { val, i, j };
+    }
+  }
+
+  let ai = '', aj = '', i, j;
+  if (mode === 'global') { i = n; j = m; }
+  else { i = best.i; j = best.j; }
+  const finalScore = mode === 'global' ? score[n][m] : best.val;
+
+  while (i > 0 || j > 0) {
+    if (mode === 'local' && (i === 0 || j === 0 || score[i][j] === 0)) break;
+    const dir = trace[i][j];
+    if (dir === 0) { ai = seq1[i-1] + ai; aj = seq2[j-1] + aj; i--; j--; }
+    else if (dir === 1) { ai = seq1[i-1] + ai; aj = '-' + aj; i--; }
+    else if (dir === 2) { ai = '-' + ai; aj = seq2[j-1] + aj; j--; }
+    else break;
+  }
+
+  let mid = '';
+  for (let k = 0; k < ai.length; k++) mid += (ai[k] === aj[k] && ai[k] !== '-') ? '|' : (ai[k] === '-' || aj[k] === '-' ? ' ' : '.');
+
+  return { aligned1: ai, aligned2: aj, mid, score: finalScore };
+}
+
+function runAlign() {
+  const errEl = document.getElementById('al-error');
+  const outEl = document.getElementById('al-output');
+  errEl.textContent = ''; outEl.classList.add('hidden');
+
+  const seq1 = cleanSeq(document.getElementById('al-seq1').value);
+  const seq2 = cleanSeq(document.getElementById('al-seq2').value);
+  const mode = document.getElementById('al-mode').value;
+  const match = parseFloat(document.getElementById('al-match').value) || 1;
+  const mismatch = parseFloat(document.getElementById('al-mismatch').value) || -1;
+  const gap = parseFloat(document.getElementById('al-gap').value) || -2;
+
+  if (!seq1 || !seq2) { errEl.textContent = 'Please provide both sequences.'; return; }
+  if (seq1.length > 2000 || seq2.length > 2000) { errEl.textContent = 'Please keep sequences under 2000 nt for in-browser alignment.'; return; }
+
+  const result = pairwiseAlign(seq1, seq2, mode, match, mismatch, gap);
+
+  outEl.classList.remove('hidden');
+  const lineLen = 60;
+  let blocks = '';
+  for (let i = 0; i < result.aligned1.length; i += lineLen) {
+    const a = result.aligned1.slice(i, i + lineLen);
+    const b = result.aligned2.slice(i, i + lineLen);
+    const mid = result.mid.slice(i, i + lineLen);
+    const coloredMid = mid.split('').map(c => c === '|' ? '<span class="align-match">|</span>' : (c === '.' ? '<span class="align-mismatch">.</span>' : '<span class="align-gap"> </span>')).join('');
+    blocks += `${escapeHtml(a)}\n${coloredMid}\n${escapeHtml(b)}\n\n`;
+  }
+
+  outEl.innerHTML = `<h4>Alignment Score: ${result.score}</h4><div class="align-view">${blocks}</div>`;
+}
+</script>
+
+<!-- ============================================================
+     LIVE CHAT WIDGET (no signup, no external service required)
+     - Bot mode: instant, rule-based answers about Saif's work
+     - Direct mode: messages emailed straight to Saif via formsubmit.co
+     ============================================================ -->
+<button id="chat-bubble" onclick="toggleChat()" aria-label="Open chat">
+  <i class="fa-solid fa-comment-dots"></i>
+  <i class="fa-solid fa-xmark"></i>
+  <span class="chat-dot"></span>
+</button>
+
+<div id="chat-panel">
+  <div class="chat-header">
+    <div class="chat-header-avatar"><i class="fa-solid fa-dna"></i></div>
+    <div class="chat-header-info">
+      <div class="name">Saif's Chat</div>
+      <div class="status">Online · replies fast</div>
+    </div>
+    <div style="cursor:pointer; color:var(--text-2); font-size:0.9rem;" onclick="toggleChat()"><i class="fa-solid fa-chevron-down"></i></div>
+  </div>
+
+  <div class="chat-mode-tabs">
+    <div class="chat-mode-tab active" id="tab-bot" onclick="switchChatMode('bot')"><i class="fa-solid fa-robot"></i>Quick Answers</div>
+    <div class="chat-mode-tab" id="tab-owner" onclick="switchChatMode('owner')"><i class="fa-solid fa-paper-plane"></i>Message Saif</div>
+  </div>
+
+  <div class="chat-body" id="chat-body"></div>
+
+  <div class="chat-quick-replies" id="chat-quick-replies"></div>
+
+  <div id="chat-owner-email-row" class="chat-email-row hidden">
+    <input type="text" id="chat-owner-name" placeholder="Your name (optional)">
+    <input type="email" id="chat-owner-email" placeholder="Your email (so Saif can reply)">
+  </div>
+  <div id="chat-owner-intro" class="chat-owner-intro hidden">
+    Messages here are sent straight to Saif's inbox — no account or app needed. He typically replies within 24 hours.
+  </div>
+
+  <div class="chat-input-row">
+    <input type="text" id="chat-input" placeholder="Type a message..." onkeydown="if(event.key==='Enter'){event.preventDefault();sendChatMessage();}">
+    <button class="chat-send-btn" id="chat-send-btn" onclick="sendChatMessage()"><i class="fa-solid fa-paper-plane"></i></button>
+  </div>
+</div>
+
+<script>
+/* ---------- Live Chat Widget Logic ---------- */
+const CHAT_OWNER_EMAIL = 'saifali15874@gmail.com';
+const CHAT_STORAGE_KEY = 'saif_chat_history_v1';
+
+let chatState = {
+  mode: 'bot', // 'bot' | 'owner'
+  bot: [],
+  owner: [],
+  ownerContactSent: false
+};
+
+const chatFAQ = [
+  { keys: ['hi','hello','hey','salam','assalam'], reply: "Hey! 👋 I'm Saif's quick-answers bot. Ask me about his skills, projects, education, or how to reach him — or tap 'Message Saif' above to chat with him directly." },
+  { keys: ['skill','tool','stack','tech','programming'], reply: "Saif works with bioinformatics & computational genomics tools — sequence analysis, CRISPR design concepts, Python/R scripting, and web development for building tools like this portfolio itself. Check the 'Skills' section above for the full list." },
+  { keys: ['project','work','portfolio','built'], reply: "You can find Saif's featured projects in the 'Projects' section — flip the cards to see details, tech used, and links. Want me to point you to a specific one?" },
+  { keys: ['tool','toolbox','blast','orf','primer','restriction','motif','align','gc content'], reply: "Check the 'Tools' tab! It has 8 free, in-browser bioinformatics tools — reverse complement, GC/stats, ORF finder, 6-frame translator, restriction mapper, a primer design helper, motif finder, and a pairwise sequence aligner. Everything runs locally, nothing you paste is uploaded anywhere." },
+  { keys: ['education','study','university','iiui','degree'], reply: "Saif is a BS Biotechnology student at IIUI (International Islamic University Islamabad), Dept. of Bioinformatics & Biotechnology." },
+  { keys: ['resume','cv'], reply: "You can find the CV/resume download option in the site — look for a download/resume button in the header or About section. Want me to flag this chat to Saif to send you a copy directly?" },
+  { keys: ['contact','email','reach','phone','number'], reply: `You can email Saif directly at ${CHAT_OWNER_EMAIL}, or just switch to 'Message Saif' above and I'll deliver it straight to his inbox.` },
+  { keys: ['location','based','live','pakistan','jhelum'], reply: "Saif is based in Jhelum, Punjab, Pakistan, studying at IIUI in Islamabad." },
+  { keys: ['collab','collaborat','internship','hire','job','opportunity','research'], reply: "Saif is open to research collaborations, internships, and bioinformatics discussions. The best way forward is to switch to 'Message Saif' above so he gets your message directly." },
+  { keys: ['thank','thanks','shukriya'], reply: "You're welcome! Anything else you'd like to know about Saif's work?" },
+  { keys: ['bye','goodbye','ok bye'], reply: "Take care! Feel free to reopen this chat anytime. 👋" }
+];
+
+function findBotReply(text) {
+  const t = text.toLowerCase();
+  for (const entry of chatFAQ) {
+    if (entry.keys.some(k => t.includes(k))) return entry.reply;
+  }
+  return "I don't have a canned answer for that yet — but I can pass it along to Saif directly. Tap 'Message Saif' above and send it, and he'll personally get back to you.";
+}
+
+function loadChatHistory() {
+  try {
+    const raw = localStorage.getItem(CHAT_STORAGE_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      chatState.bot = parsed.bot || [];
+      chatState.owner = parsed.owner || [];
+      chatState.ownerContactSent = !!parsed.ownerContactSent;
+    }
+  } catch (e) { /* ignore corrupted storage */ }
+}
+
+function saveChatHistory() {
+  try {
+    localStorage.setItem(CHAT_STORAGE_KEY, JSON.stringify({
+      bot: chatState.bot, owner: chatState.owner, ownerContactSent: chatState.ownerContactSent
+    }));
+  } catch (e) { /* storage may be unavailable */ }
+}
+
+function toggleChat() {
+  const panel = document.getElementById('chat-panel');
+  const bubble = document.getElementById('chat-bubble');
+  const opening = !panel.classList.contains('open');
+  panel.classList.toggle('open');
+  bubble.classList.toggle('open');
+  if (opening && chatState.bot.length === 0 && chatState.owner.length === 0) {
+    loadChatHistory();
+    if (chatState.bot.length === 0) {
+      pushMessage('bot', 'bot', findBotReply('hi'), false);
+    }
+    renderChat();
+  } else if (opening) {
+    renderChat();
+  }
+}
+
+function switchChatMode(mode) {
+  chatState.mode = mode;
+  document.getElementById('tab-bot').classList.toggle('active', mode === 'bot');
+  document.getElementById('tab-owner').classList.toggle('active', mode === 'owner');
+  document.getElementById('chat-owner-intro').classList.toggle('hidden', mode !== 'owner');
+  document.getElementById('chat-owner-email-row').classList.toggle('hidden', mode !== 'owner' || chatState.ownerContactSent);
+  document.getElementById('chat-input').placeholder = mode === 'owner' ? 'Type your message to Saif...' : 'Type a message...';
+  if (mode === 'owner' && chatState.owner.length === 0) {
+    pushMessage('owner', 'bot', "Hi! Leave your message below and it'll be emailed straight to Saif — no signup needed on either side.", false);
+  }
+  renderChat();
+}
+
+function pushMessage(thread, sender, text, save = true) {
+  chatState[thread].push({ sender, text, ts: Date.now() });
+  if (save) saveChatHistory();
+}
+
+function renderChat() {
+  const body = document.getElementById('chat-body');
+  const list = chatState[chatState.mode];
+  body.innerHTML = '';
+  list.forEach(m => {
+    const div = document.createElement('div');
+    div.className = 'chat-msg ' + m.sender;
+    div.textContent = m.text;
+    body.appendChild(div);
+  });
+  renderQuickReplies();
+  body.scrollTop = body.scrollHeight;
+}
+
+function renderQuickReplies() {
+  const wrap = document.getElementById('chat-quick-replies');
+  wrap.innerHTML = '';
+  if (chatState.mode !== 'bot') { wrap.style.display = 'none'; return; }
+  wrap.style.display = 'flex';
+  const chips = ['Skills', 'Projects', 'Contact', 'Collaborate'];
+  chips.forEach(c => {
+    const chip = document.createElement('div');
+    chip.className = 'chat-chip';
+    chip.textContent = c;
+    chip.onclick = () => { document.getElementById('chat-input').value = c; sendChatMessage(); };
+    wrap.appendChild(chip);
+  });
+}
+
+function showTyping() {
+  const body = document.getElementById('chat-body');
+  const div = document.createElement('div');
+  div.className = 'chat-msg bot typing';
+  div.id = 'chat-typing-indicator';
+  div.innerHTML = '<span class="chat-typing-dots"><span></span><span></span><span></span></span>';
+  body.appendChild(div);
+  body.scrollTop = body.scrollHeight;
+}
+
+function removeTyping() {
+  const el = document.getElementById('chat-typing-indicator');
+  if (el) el.remove();
+}
+
+async function sendChatMessage() {
+  const input = document.getElementById('chat-input');
+  const text = input.value.trim();
+  if (!text) return;
+  input.value = '';
+
+  pushMessage(chatState.mode, 'user', text);
+  renderChat();
+
+  if (chatState.mode === 'bot') {
+    showTyping();
+    setTimeout(() => {
+      removeTyping();
+      const reply = findBotReply(text);
+      pushMessage('bot', 'bot', reply);
+      renderChat();
+    }, 500 + Math.random() * 400);
+  } else {
+    await sendToOwner(text);
+  }
+}
+
+async function sendToOwner(text) {
+  const sendBtn = document.getElementById('chat-send-btn');
+  const nameInput = document.getElementById('chat-owner-name');
+  const emailInput = document.getElementById('chat-owner-email');
+  const visitorName = (nameInput.value || '').trim() || 'Website visitor';
+  const visitorEmail = (emailInput.value || '').trim();
+
+  sendBtn.disabled = true;
+  showTyping();
+
+  try {
+    const response = await fetch(`https://formsubmit.co/ajax/${CHAT_OWNER_EMAIL}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify({
+        name: visitorName,
+        email: visitorEmail || 'not provided',
+        _subject: '[Live Chat] New message from website',
+        message: text
+      })
+    });
+    removeTyping();
+    if (response.ok) {
+      chatState.ownerContactSent = true;
+      document.getElementById('chat-owner-email-row').classList.add('hidden');
+      pushMessage('owner', 'bot', '✓ Delivered to Saif\'s inbox. He\'ll reply' + (visitorEmail ? ' to ' + visitorEmail : ' — leave your email above so he can reach you') + '.');
+    } else {
+      pushMessage('owner', 'bot', "Hmm, that didn't send. You can also email directly: " + CHAT_OWNER_EMAIL);
+    }
+  } catch (e) {
+    removeTyping();
+    pushMessage('owner', 'bot', "Network hiccup — your message wasn't sent. Try again, or email " + CHAT_OWNER_EMAIL + " directly.");
+  }
+  sendBtn.disabled = false;
+  renderChat();
+}
 </script>
 </body>
 </html>
