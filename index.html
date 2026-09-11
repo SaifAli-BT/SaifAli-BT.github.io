@@ -14,6 +14,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5.1.0/dist/tesseract.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+<script src="https://unpkg.com/peerjs@1.5.5/dist/peerjs.min.js"></script>
 <style>
 :root{--bg:#060a14;--panel:#0b1120;--panel2:#0e1729;--line:#1c2a42;--text:#e7eefc;--muted:#8797b2;--cyan:#00e5ff;--green:#39f58b;--violet:#a970ff;--amber:#ffd166;--pink:#ff5ea8;--red:#ff5577;--shadow:0 20px 70px rgba(0,0,0,.34)}
 *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(circle at 20% 0%,rgba(0,229,255,.07),transparent 25%),radial-gradient(circle at 100% 10%,rgba(169,112,255,.08),transparent 26%),var(--bg);color:var(--text);font-family:'DM Sans',sans-serif}a{text-decoration:none;color:inherit}button,input,textarea,select{font:inherit}.mono{font-family:'Fira Code',monospace}.shell{width:min(1400px,calc(100% - 32px));margin:auto}.nav{position:sticky;top:0;z-index:30;backdrop-filter:blur(16px);background:rgba(6,10,20,.82);border-bottom:1px solid var(--line)}.navin{display:flex;align-items:center;justify-content:space-between;min-height:68px}.brand{font:700 1rem 'Space Grotesk';letter-spacing:.04em}.brand b{color:var(--cyan)}.links{display:flex;gap:.35rem}.links a{padding:.6rem .8rem;border-radius:7px;color:var(--muted);font:.78rem 'Fira Code'}.links a:hover,.links a.active{color:var(--cyan);background:rgba(0,229,255,.06)}
@@ -71,10 +72,9 @@ footer{padding:38px 0;color:var(--muted);font-size:.78rem;border-top:1px solid v
 <div class="pane" id="pane-pdf"><div class="notice info">Client-side PDF editor. Text-layer PDFs can be clicked and edited in detected text lines; edits are patched into the original PDF with local overlays so untouched page content is not reflowed. Scanned PDFs can be OCR’d first. This approach preserves layout as a practical browser workflow, but it is not a byte-identical semantic PDF editor like a native desktop PDF engine.</div><div class="dropzone" id="pdf-drop"><input id="pdf-input" type="file" accept="application/pdf" hidden><button class="btn primary" onclick="$('#pdf-input').click()">Choose PDF</button><div class="small" style="margin-top:8px">or drag and drop a PDF here</div></div><div class="row"><button class="btn" id="pdf-ocr-btn" onclick="ocrPdf()" disabled>OCR scanned pages</button><button class="btn primary" id="pdf-save-btn" onclick="saveEditedPdf()" disabled>Save edited PDF</button></div><div id="pdf-status" class="small" style="margin-top:10px"></div><div class="pdf-layout" style="margin-top:12px"><div><div class="detail-card"><h4>Edit model</h4><div class="small">Click a text line in the preview. Type your replacement, then blur/click elsewhere to commit it. New text is wrapped within the original line/block box when the PDF is saved.</div></div><div class="detail-card" style="margin-top:10px"><h4>Detected edits</h4><div id="pdf-edit-list" class="small">None.</div></div></div><div id="pdf-pages" class="pdf-pages"></div></div></div>
 
 <!-- File sharing -->
-<div class="pane" id="pane-share"><div class="notice">Zero-backend secure share mode: the file is encrypted in your browser with AES-GCM before it is stored in IndexedDB. The human-readable code works between tabs/windows using BroadcastChannel and within the same browser profile/device. It does not provide cross-device cloud storage because that would require a storage/signaling backend.</div><div class="formgrid"><div><div class="dropzone"><input id="share-file-input" type="file" hidden><button class="btn primary" onclick="$('#share-file-input').click()">Choose file</button><div id="share-file-label" class="small" style="margin-top:8px">No file selected.</div></div><div class="row"><button class="btn primary" onclick="createShareCode()">Encrypt & create code</button><button class="btn" onclick="clearShareState()">Clear</button></div><div class="security-box" style="margin-top:12px"><strong>Encryption:</strong> AES-256-GCM, random 256-bit key, random 96-bit IV. File payload remains in browser storage.</div></div><div><div class="detail-card"><h4>Your share code</h4><div id="share-code-view" class="share-code">—</div><div id="share-created" class="small" style="margin-top:6px"></div></div><div class="detail-card" style="margin-top:10px"><h4>Receive a file</h4><input id="share-code-input" class="input" placeholder="ocean-tiger-42"><div class="row"><button class="btn primary" onclick="receiveShareCode()">Find & decrypt</button></div><div id="share-receive-status" class="small" style="margin-top:8px"></div></div><div class="detail-card" style="margin-top:10px"><h4>Lifecycle</h4><div class="small">Records self-expire after 60 minutes or after one successful download. Nothing is sent to a server.</div></div></div></div></div>
-
+<div class="pane" id="pane-share"><div class="notice info">Simple direct file sharing. Choose a file, create one short code, and give that code to the other device. Both devices stay on this page; no signaling endpoint is configured in the interface.</div><div class="formgrid"><div><div class="dropzone"><input id="share-file-input" type="file" hidden><button class="btn primary" onclick="$('#share-file-input').click()">Choose file</button><div id="share-file-label" class="small" style="margin-top:8px">No file selected.</div></div><div class="row" style="margin-top:10px"><button class="btn primary" onclick="createDirectShare()">Create share</button><button class="btn" onclick="copyDirectShareCode()">Copy code</button><button class="btn" onclick="clearDirectShare()">Clear</button></div><div class="security-box" style="margin-top:12px"><strong>Direct transfer:</strong> the actual file is sent browser-to-browser over a reliable WebRTC data channel. The page uses PeerJS Cloud only for the connection handshake; file bytes are not uploaded to a file-storage service.</div></div><div><div class="detail-card"><h4>Your connection code</h4><div id="share-code-view" class="share-code">—</div><div id="share-created" class="small" style="margin-top:6px"></div></div><div class="detail-card" style="margin-top:10px"><h4>Receive a file</h4><input id="share-code-input" class="input" placeholder="ocean-tiger-42" autocomplete="off" autocapitalize="none" spellcheck="false"><div class="row"><button class="btn primary" onclick="joinDirectShare()">Connect</button></div><div id="share-receive-status" class="small" style="margin-top:8px"></div><div id="share-received-file" class="small" style="margin-top:8px"></div><div id="share-download" style="margin-top:10px"></div></div></div></div></div>
 <!-- Signature -->
-<div class="pane" id="pane-signature"><div class="notice">Signature assistant for PDF/DOCX. The “AI” layer is intentionally heuristic: it finds signature-related phrases, underscore/dotted lines, and common approval labels rather than using a heavy remote model. The signature image is added on top; existing text and margins are not rewritten.</div><div class="formgrid"><div><div class="field"><label>Signature image</label><input id="sig-image-input" class="input" type="file" accept="image/png,image/jpeg"></div><div class="field" style="margin-top:10px"><label>PDF or DOCX document</label><input id="sig-doc-input" class="input" type="file" accept="application/pdf,.pdf,.docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document"></div><div class="row"><button class="btn primary" onclick="scanForSignatures()">Scan for signature fields</button><button class="btn" id="sig-download-btn" onclick="downloadSignedDocument()" disabled>Download signed file</button></div><div id="sig-status" class="small" style="margin-top:10px"></div></div><div class="detail-card"><h4>Placement preview</h4><div id="sig-preview-wrap" class="preview-stage"><div class="small" style="padding:18px">Upload a signature image and a PDF/DOCX file, then scan.</div></div></div></div></div>
+<div class="pane" id="pane-signature"><div class="notice">Signature assistant for PDF/DOCX. Detection is geometric and keyword-free for PDF rules: typed rule-like text and horizontal vector lines are ranked by location and width. DOCX also accepts bare underscore/dot/dash runs. The signature image is placed above the detected rule.</div><div class="formgrid"><div><div class="field"><label>Signature image</label><input id="sig-image-input" class="input" type="file" accept="image/png,image/jpeg"></div><div class="field" style="margin-top:10px"><label>PDF or DOCX document</label><input id="sig-doc-input" class="input" type="file" accept="application/pdf,.pdf,.docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document"></div><div class="row"><button class="btn primary" onclick="scanForSignatures()">Scan for signature fields</button><button class="btn" id="sig-download-btn" onclick="downloadSignedDocument()" disabled>Download signed file</button></div><div id="sig-status" class="small" style="margin-top:10px"></div></div><div class="detail-card"><h4>Placement preview</h4><div id="sig-preview-wrap" class="preview-stage"><div class="small" style="padding:18px">Upload a signature image and a PDF/DOCX file, then scan.</div></div></div></div></div>
 </div></div></div></section>
 
 <section id="projects"><div class="shell"><div class="section-head"><div><div class="eyebrow">// selected.work</div><h2>Projects</h2></div><div class="sub">Research and internship work kept intentionally compact so the interactive workbench remains the main technical showcase.</div></div><div class="cards"><div class="card"><div class="eyebrow">Enzymology · 2026</div><h3>Cas12a (Cpf1): Structure & Mechanism</h3><p>Study of CRISPR-Cas12a covering organism sources, 3D structure, EC classification, mechanism, and applications. The original portfolio identifies PDB 5B43 as the structure reference.</p></div><div class="card"><div class="eyebrow">Community Research · 2026</div><h3>Dengue Fever Prevention Awareness</h3><p>Cross-sectional community survey with structured questionnaire, descriptive statistics, situation analysis, and an action plan.</p></div><div class="card"><div class="eyebrow">Ongoing</div><h3>ML in Bioinformatics</h3><p>Self-learning project focused on combining Python-based machine learning with biological datasets and computational genomics workflows.</p></div></div></div></section>
@@ -86,6 +86,7 @@ footer{padding:38px 0;color:var(--muted);font-size:.78rem;border-top:1px solid v
 <footer><div class="shell foot"><span>Saif Ali · Biotechnology & Bioinformatics</span><span class="mono">single-file portfolio / live-data workbench</span></div></footer>
 
 <script>
+
 'use strict';
 const $=s=>document.querySelector(s);
 const $$=s=>[...document.querySelectorAll(s)];
@@ -263,41 +264,324 @@ function pdfSampleBackground(p,b){
     return PDFLib.rgb(1,1,1);
   }
 }
+</script>
+<!--
+  Direct WebRTC file sharing. The user does not configure a signaling endpoint.
+  PeerJS Cloud is used only as the WebRTC broker. After the handshake, the file
+  bytes travel over the browser-to-browser DataChannel. PeerJS documents that its
+  cloud service handles signaling, while the data connection itself is P2P.
+--> 
+<script>
+/*
+  Robust one-code P2P share:
+  - PeerJS Cloud is the hidden rendezvous service, so there is no /api/signal fetch.
+  - A short peer id is the only code the user needs to exchange.
+  - ECDH derives a fresh AES-256-GCM key after the peers connect.
+  - Files are encrypted in the browser, then sent as ordered/reliable 128 KiB packets.
+  - WebRTC back-pressure is respected to avoid overflowing the DataChannel buffer.
+  - The receiver verifies the exact byte count before exposing the download.
+*/
+const SHARE_A=['ocean','silver','amber','forest','quiet','nova','river','coral','polar','swift','cedar','lunar','meadow','maple','violet','solar','stone','aurora','mint','ember','cobalt'];
+const SHARE_B=['tiger','fox','owl','eagle','whale','otter','lynx','panda','wolf','shark','crane','koala','badger','gecko','orca','ibis','heron','rabbit','yak','seal','finch','dolphin','beaver'];
+const DS_CHUNK=128*1024, DS_HIGH_WATER=4*1024*1024, DS_LOW_WATER=512*1024;
+let dsFile=null,dsPeer=null,dsConn=null,dsRole=null,dsCodeValue=null,dsKeysPair=null,dsAesKey=null,dsMeta=null,dsParts=[],dsBytes=0,dsSending=false,dsDone=false,dsSendStarted=false,dsReceiveQueue=Promise.resolve(),dsSessionToken=0;
 
-/* Secure local file share */
-const SHARE_DB='saif-bio-share-v1',shareChannel=window.BroadcastChannel?new BroadcastChannel('saif-bio-share'):null;let shareFile=null,shareRecord=null;
-function openShareDb(){return new Promise((resolve,reject)=>{const req=indexedDB.open(SHARE_DB,1);req.onupgradeneeded=()=>{if(!req.result.objectStoreNames.contains('shares'))req.result.createObjectStore('shares',{keyPath:'code'})};req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error)})}
-function wordCode(){const a=['ocean','silver','amber','forest','quiet','nova','river','coral','polar','swift','cedar','lunar','meadow','tiger','falcon','maple','violet','solar','stone','aurora','mint','ember','cobalt'];const b=['tiger','fox','owl','eagle','whale','otter','lynx','panda','wolf','shark','crane','koala','badger','gecko','orca','ibis','heron','rabbit','yak','seal','finch','dolphin','beaver'];return `${a[Math.floor(Math.random()*a.length)]}-${b[Math.floor(Math.random()*b.length)]}-${Math.floor(10+Math.random()*90)}`}
-function fileToBytes(file){return file.arrayBuffer()}
-async function createShareCode(){if(!shareFile){setStatus('#share-created','Choose a file first.','error');return}try{const raw=await fileToBytes(shareFile),key=await crypto.subtle.generateKey({name:'AES-GCM',length:256},true,['encrypt','decrypt']);const iv=crypto.getRandomValues(new Uint8Array(12));const cipher=await crypto.subtle.encrypt({name:'AES-GCM',iv},key,raw);const keyBytes=await crypto.subtle.exportKey('raw',key);let code=wordCode();const db=await openShareDb();await new Promise((resolve,reject)=>{const tx=db.transaction('shares','readwrite');tx.objectStore('shares').put({code,filename:shareFile.name,size:shareFile.size,mime:shareFile.type||'application/octet-stream',created:Date.now(),expires:Date.now()+60*60*1000,downloadCount:0,iv:Array.from(iv),key:Array.from(new Uint8Array(keyBytes)),data:Array.from(new Uint8Array(cipher))});tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error)});shareRecord=code;$('#share-code-view').textContent=code;$('#share-created').textContent=`Encrypted ${fmtBytes(shareFile.size)} · expires in 60 minutes or after one successful download.`;if(shareChannel)shareChannel.postMessage({type:'share-created',code});setStatus('#share-receive-status','Share ready in this browser/device.','success')}catch(e){setStatus('#share-created',esc(e.message||'Unable to create encrypted share.'),'error')}}
-async function receiveShareCode(){const code=($('#share-code-input').value||'').trim();if(!code){setStatus('#share-receive-status','Enter a share code.','error');return}try{const db=await openShareDb(),rec=await new Promise((resolve,reject)=>{const tx=db.transaction('shares','readonly'),rq=tx.objectStore('shares').get(code);rq.onsuccess=()=>resolve(rq.result);rq.onerror=()=>reject(rq.error)});if(!rec){setStatus('#share-receive-status','No matching local share exists. This mode only works within the same browser profile/device.','error');return}if(Date.now()>rec.expires){await deleteShare(code);setStatus('#share-receive-status','That share has expired.','error');return}const key=await crypto.subtle.importKey('raw',new Uint8Array(rec.key),{name:'AES-GCM'},false,['decrypt']);const plain=await crypto.subtle.decrypt({name:'AES-GCM',iv:new Uint8Array(rec.iv)},key,new Uint8Array(rec.data));downloadBlob(new Blob([plain],{type:rec.mime}),rec.filename);rec.downloadCount=1;await putShare(rec);await deleteShare(code);setStatus('#share-receive-status',`Decrypted and downloaded ${esc(rec.filename)}. The one-time share has now been deleted.`,'success')}catch(e){setStatus('#share-receive-status',esc(e.message||'Unable to decrypt this share.'),'error')}}
-async function putShare(rec){const db=await openShareDb();return new Promise((resolve,reject)=>{const tx=db.transaction('shares','readwrite');tx.objectStore('shares').put(rec);tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error)})}
-async function deleteShare(code){const db=await openShareDb();return new Promise((resolve,reject)=>{const tx=db.transaction('shares','readwrite');tx.objectStore('shares').delete(code);tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error)})}
-function clearShareState(){shareFile=null;$('#share-file-label').textContent='No file selected.';$('#share-code-view').textContent='—';$('#share-created').textContent='';$('#share-code-input').value='';setStatus('#share-receive-status','')}
-$('#share-file-input')?.addEventListener('change',()=>{shareFile=$('#share-file-input').files?.[0]||null;$('#share-file-label').textContent=shareFile?`${shareFile.name} · ${fmtBytes(shareFile.size)}`:'No file selected.'});
-shareChannel?.addEventListener('message',ev=>{if(ev.data?.type==='share-created')setStatus('#share-receive-status',`A local share code is ready in another tab: ${esc(ev.data.code)}`,'success')});
+function makeCode(){return SHARE_A[Math.floor(Math.random()*SHARE_A.length)]+'-'+SHARE_B[Math.floor(Math.random()*SHARE_B.length)]+'-'+Math.floor(10+Math.random()*90)}
+function b64(a){let s='';for(const x of a)s+=String.fromCharCode(x);return btoa(s).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'')}
+function ub64(s){s=String(s).replace(/-/g,'+').replace(/_/g,'/');s+='='.repeat((4-s.length%4)%4);const x=atob(s);return Uint8Array.from(x,c=>c.charCodeAt(0))}
+async function newKeys(){return crypto.subtle.generateKey({name:'ECDH',namedCurve:'P-256'},true,['deriveKey'])}
+async function pub(k){return b64(new Uint8Array(await crypto.subtle.exportKey('raw',k.publicKey)))}
+async function derive(priv,publicB64){const publicKey=await crypto.subtle.importKey('raw',ub64(publicB64),{name:'ECDH',namedCurve:'P-256'},false,[]);return crypto.subtle.deriveKey({name:'ECDH',public:publicKey},priv,{name:'AES-GCM',length:256},false,['encrypt','decrypt'])}
+async function encryptPacket(seq,plain){const iv=new Uint8Array(12);crypto.getRandomValues(iv);const ct=new Uint8Array(await crypto.subtle.encrypt({name:'AES-GCM',iv},dsAesKey,plain));const out=new Uint8Array(20+ct.length);const dv=new DataView(out.buffer);dv.setUint32(0,seq);out.set(iv,4);out.set(ct,16);return out.buffer}
+async function decryptPacket(packet){const bytes=packet instanceof Uint8Array?packet:new Uint8Array(packet);if(bytes.byteLength<32)throw Error('Received an invalid encrypted packet.');const dv=new DataView(bytes.buffer,bytes.byteOffset,bytes.byteLength);const seq=dv.getUint32(0);const iv=bytes.slice(4,16),ct=bytes.slice(16);const plain=await crypto.subtle.decrypt({name:'AES-GCM',iv},dsAesKey,ct);return {seq,plain:new Uint8Array(plain)}}
+function cleanupPeer(){try{dsConn?.close()}catch(_){}try{dsPeer?.destroy()}catch(_){}dsConn=null;dsPeer=null}
+function resetDirect(){cleanupPeer();dsSessionToken++;dsKeysPair=null;dsAesKey=null;dsMeta=null;dsParts=[];dsBytes=0;dsSending=false;dsDone=false;dsSendStarted=false;dsReceiveQueue=Promise.resolve()}
+function peerErrorMessage(err){const t=err&&err.type;const m=err&&err.message;if(t==='peer-unavailable')return 'Code not found or the sender is no longer waiting.';if(t==='unavailable-id')return 'That share code is already in use. Creating a new code.';if(t==='network'||t==='server-error'||t==='socket-error')return 'Could not reach the connection service. Check the internet connection and try again.';if(t==='browser-incompatible')return 'This browser does not support WebRTC file sharing.';if(t==='webrtc')return 'WebRTC could not establish a direct connection on this network.';return m||'File sharing connection failed.'}
+function setShareStatus(text,kind=''){setStatus('#share-receive-status',esc(text),kind)}
 
-/* Signature assistant */
-const sigState={image:null,doc:null,kind:null,placements:[],signedBytes:null,fileName:''};
+function wireConnection(conn,role){
+  dsConn=conn;
+  conn.on('open',async()=>{
+    setShareStatus('🟢 Connected. Preparing secure file transfer…','success');
+    try{
+      if(role==='receiver'){
+        conn.send(JSON.stringify({t:'hello',pub:await pub(dsKeysPair)}));
+      }
+    }catch(e){failShare(e)}
+  });
+  conn.on('data',data=>{ const token=dsSessionToken; dsReceiveQueue=dsReceiveQueue.then(()=>{ if(token!==dsSessionToken) return; return handlePeerData(data); }).catch(e=>{ if(token===dsSessionToken) failShare(e); }); });
+  conn.on('error',failShare);
+  conn.on('close',()=>{if(!dsDone)setShareStatus('Connection closed before the file transfer finished.','error')});
+  try{
+    const dc=conn.dataChannel;
+    if(dc){dc.bufferedAmountLowThreshold=DS_LOW_WATER;}
+  }catch(_){}
+}
+
+async function handlePeerData(data){
+  if(typeof data==='string'){
+    let m;try{m=JSON.parse(data)}catch(e){throw Error('Received malformed connection data.')} 
+    if(m.t==='hello'&&dsRole==='sender'){
+      dsAesKey=await derive(dsKeysPair.privateKey,String(m.pub));
+      dsConn.send(JSON.stringify({t:'ready',pub:await pub(dsKeysPair)}));
+      await sendFile();
+      return;
+    }
+    if(m.t==='ready'&&dsRole==='receiver'){
+      dsAesKey=await derive(dsKeysPair.privateKey,String(m.pub));
+      return;
+    }
+    if(m.t==='meta'&&dsRole==='receiver'){
+      dsMeta=m;dsParts=new Array(Number(m.chunks));dsBytes=0;dsDone=false;dsSendStarted=false;
+      $('#share-download').innerHTML='';
+      $('#share-received-file').textContent=`Receiving ${m.name} · 0 / ${fmtBytes(m.size)}`;
+      return;
+    }
+    if(m.t==='received'&&dsRole==='sender'){
+      if(Number(m.size)!==dsFile?.size) throw Error('Receiver reported an incorrect file size.');
+      dsDone=true;
+      setShareStatus('🟢 File sent and verified by the other device.','success');
+      return;
+    }
+    if(m.t==='done'&&dsRole==='receiver'){
+      const expected=Number(m.size);
+      const complete=!!dsMeta&&dsBytes===expected&&dsParts.length===Number(m.chunks)&&dsParts.every(Boolean);
+      if(!complete){setShareStatus(`Transfer incomplete: ${fmtBytes(dsBytes)} / ${fmtBytes(expected)} received.`,'error');return}
+      const blob=new Blob(dsParts,{type:dsMeta.mime||'application/octet-stream'});
+      if(blob.size!==expected){setShareStatus(`File verification failed: received ${fmtBytes(blob.size)} instead of ${fmtBytes(expected)}.`,'error');return}
+      dsDone=true;
+      const url=URL.createObjectURL(blob),name=dsMeta.name||'shared-file';
+      const safeName=esc(name);
+      $('#share-download').innerHTML=`<a class="btn primary" href="${url}" download="${safeName}">Download ${safeName}</a>`;
+      $('#share-received-file').innerHTML=`<span class="good">Received:</span> ${safeName} · ${fmtBytes(blob.size)}`;
+      try{ if(dsConn?.open) dsConn.send(JSON.stringify({t:'received',size:expected,chunks:dsParts.length})); }catch(_){}
+      setShareStatus('🟢 File received completely. Use Download to save it.','success');
+      return;
+    }
+    return;
+  }
+  if(dsRole!=='receiver'||!dsAesKey||!dsMeta)return;
+  const {seq,plain}=await decryptPacket(data);
+  if(dsDone) return;
+  if(seq<0||seq>=dsParts.length)throw Error('Received an out-of-range file chunk.');
+  if(!dsParts[seq]){dsParts[seq]=plain;dsBytes+=plain.length}
+  $('#share-received-file').textContent=`Receiving ${dsMeta.name} · ${fmtBytes(dsBytes)} / ${fmtBytes(dsMeta.size)}`;
+}
+
+async function waitForSendBuffer(){const dc=dsConn?.dataChannel;if(!dc)return;while(dc.bufferedAmount>DS_HIGH_WATER&&dsConn?.open){await sleep(10)}}
+async function waitForDrain(){const dc=dsConn?.dataChannel;if(!dc)return;while(dc.bufferedAmount>0&&dsConn?.open){await sleep(15)}}
+
+async function sendFile(){
+  if(dsRole!=='sender'||dsSendStarted||!dsFile||!dsAesKey||!dsConn?.open)return;
+  dsSendStarted=true;dsSending=true;
+  try{
+    const chunks=Math.ceil(dsFile.size/DS_CHUNK);
+    dsConn.send(JSON.stringify({t:'meta',name:dsFile.name,size:dsFile.size,mime:dsFile.type||'application/octet-stream',chunks}));
+    let sent=0,seq=0;
+    for(let off=0;off<dsFile.size;off+=DS_CHUNK){
+      if(!dsConn?.open)throw Error('The direct connection closed during transfer.');
+      await waitForSendBuffer();
+      const plain=new Uint8Array(await dsFile.slice(off,Math.min(off+DS_CHUNK,dsFile.size)).arrayBuffer());
+      dsConn.send(await encryptPacket(seq++,plain));
+      sent+=plain.length;
+      const pct=dsFile.size?Math.round(sent/dsFile.size*100):100;
+      setShareStatus(`Sending ${fmtBytes(sent)} / ${fmtBytes(dsFile.size)} · ${pct}%`,'success');
+    }
+    await waitForDrain();
+    dsConn.send(JSON.stringify({t:'done',size:dsFile.size,chunks:chunks}));
+    await waitForDrain();
+    setShareStatus('Finishing transfer…','success');
+  }finally{dsSending=false}
+}
+
+function attachSenderPeer(code,attempt=0){
+  if(attempt>4){failShare(Error('Could not create a unique share code. Please try again.'));return}
+  dsPeer=new Peer(code,{debug:0,config:{iceServers:[{urls:'stun:stun.l.google.com:19302'}]}});
+  dsPeer.on('open',id=>{
+    dsCodeValue=id;
+    $('#share-code-view').textContent=id;
+    $('#share-created').textContent='Waiting for the other device… transfer starts automatically when it connects.';
+  });
+  dsPeer.on('connection',conn=>{
+    if(dsConn&&dsConn.open){conn.close();return}
+    dsRole='sender';wireConnection(conn,'sender');
+  });
+  dsPeer.on('error',err=>{
+    if(err?.type==='unavailable-id'){
+      try{dsPeer.destroy()}catch(_){}
+      dsCodeValue=makeCode();
+      attachSenderPeer(dsCodeValue,attempt+1);
+      return;
+    }
+    failShare(Error(peerErrorMessage(err)));
+  });
+  dsPeer.on('disconnected',()=>{if(!dsDone)setShareStatus('Connection service disconnected. Reconnecting…','error');try{dsPeer.reconnect()}catch(_){} });
+}
+
+async function createDirectShare(){
+  if(!dsFile){setStatus('#share-created','Choose a file first.','error');return}
+  if(typeof Peer!=='function'){setStatus('#share-created','The file-sharing library did not load. Reload the page and try again.','error');return}
+  try{
+    resetDirect();
+    dsRole='sender';dsCodeValue=makeCode();dsKeysPair=await newKeys();
+    $('#share-code-view').textContent='Connecting…';$('#share-created').textContent='Starting secure connection…';
+    attachSenderPeer(dsCodeValue);
+  }catch(e){failShare(e)}
+}
+
+async function joinDirectShare(){
+  const c=($('#share-code-input').value||'').trim().toLowerCase();
+  if(!c){setShareStatus('Enter the connection code.','error');return}
+  if(typeof Peer!=='function'){setShareStatus('The file-sharing library did not load. Reload the page and try again.','error');return}
+  if(!/^[a-z0-9](?:[a-z0-9_-]{2,62})$/i.test(c)){setShareStatus('That code is not valid.','error');return}
+  try{
+    resetDirect();dsRole='receiver';dsCodeValue=c;dsKeysPair=await newKeys();
+    dsPeer=new Peer(undefined,{debug:0,config:{iceServers:[{urls:'stun:stun.l.google.com:19302'}]}});
+    dsPeer.on('open',()=>{
+      setShareStatus('Connecting directly to the sender…','success');
+      const conn=dsPeer.connect(c,{label:'file',reliable:true,serialization:'none'});
+      wireConnection(conn,'receiver');
+    });
+    dsPeer.on('error',err=>failShare(Error(peerErrorMessage(err))));
+    dsPeer.on('disconnected',()=>{if(!dsDone)setShareStatus('Connection service disconnected. Reconnecting…','error');try{dsPeer.reconnect()}catch(_){} });
+  }catch(e){failShare(e)}
+}
+
+function failShare(e){
+  const message=e?.message||'File sharing failed.';
+  setShareStatus(message,'error');
+}
+function copyDirectShareCode(){
+  if(!dsCodeValue){setStatus('#share-created','Create a share first.','error');return}
+  navigator.clipboard?.writeText(dsCodeValue).then(()=>setShareStatus('Connection code copied.','success')).catch(()=>setStatus('#share-created','Connection code: '+esc(dsCodeValue),'info'))
+}
+function clearDirectShare(){
+  resetDirect();dsFile=null;dsRole=null;dsCodeValue=null;
+  $('#share-file-input').value='';$('#share-file-label').textContent='No file selected.';$('#share-code-view').textContent='—';$('#share-created').textContent='';$('#share-code-input').value='';$('#share-received-file').textContent='';$('#share-download').innerHTML='';setShareStatus('');
+}
+$('#share-file-input')?.addEventListener('change',()=>{dsFile=$('#share-file-input').files?.[0]||null;$('#share-file-label').textContent=dsFile?`${dsFile.name} · ${fmtBytes(dsFile.size)}`:'No file selected.'});
+</script>
+<script>
+/*
+  Geometric, keyword-free signature detection:
+  PDF text-layer rules are identified from rule-like glyph runs, while vector
+  operator lists are inspected for near-horizontal segments >=70 pt in the
+  lower half. Bottom-third candidates are preferred; candidates are ranked by
+  width, then by lower page position, with a maximum of 8. No signature words
+  are required. DOCX additionally accepts bare underscore/dot/dash runs.
+*/
+const sigState={image:null,doc:null,kind:null,placements:[],signedBytes:null,fileName:'',topCandidate:null};
 $('#sig-image-input')?.addEventListener('change',()=>{sigState.image=$('#sig-image-input').files?.[0]||null});
 $('#sig-doc-input')?.addEventListener('change',()=>{sigState.doc=$('#sig-doc-input').files?.[0]||null});
-async function scanForSignatures(){if(!sigState.image||!sigState.doc){setStatus('#sig-status','Choose both a signature image and a PDF/DOCX document.','error');return}sigState.placements=[];sigState.signedBytes=null;sigState.fileName=sigState.doc.name;try{if(/\.pdf$/i.test(sigState.doc.name)){sigState.kind='pdf';await scanPdfSignatureFields()}else if(/\.docx$/i.test(sigState.doc.name)){sigState.kind='docx';await scanDocxSignatureFields()}else throw new Error('Only PDF and DOCX are supported.');$('#sig-download-btn').disabled=false}catch(e){setStatus('#sig-status',esc(e.message||'Signature scan failed.'),'error')}}
-function signatureMatch(text){return /\b(signature|signed|authorized by|authorised by|approved by|sign here)\b/i.test(text)||/_{4,}|\.{5,}|-{5,}/.test(text)}
-async function scanPdfSignatureFields(){const bytes=await sigState.doc.arrayBuffer(),doc=await pdfjsLib.getDocument({data:bytes.slice(0)}).promise;const page=await doc.getPage(1),scale=1.5,viewport=page.getViewport({scale});const canvas=document.createElement('canvas');canvas.width=Math.floor(viewport.width);canvas.height=Math.floor(viewport.height);await page.render({canvasContext:canvas.getContext('2d'),viewport}).promise;$('#sig-preview-wrap').innerHTML='';$('#sig-preview-wrap').appendChild(canvas);const tc=await page.getTextContent();let hits=[];for(let p=1;p<=doc.numPages;p++){const pg=await doc.getPage(p),vp=pg.getViewport({scale:1});const t=await pg.getTextContent();t.items.filter(x=>x.str&&signatureMatch(x.str)).slice(0,8).forEach(x=>{const tr=x.transform||[1,0,0,1,0,0],h=Math.abs(tr[3]||12),w=Math.max(x.width||80,80);hits.push({page:p,x:tr[4],y:tr[5]-h,w:Math.min(w*1.3,240),h:Math.max(h*1.6,32),scale,viewport:vp,text:x.str})})}if(!hits.length){const worker=await Tesseract.createWorker('eng',1);const pg=await doc.getPage(1);const vp=pg.getViewport({scale});const can=document.createElement('canvas');can.width=Math.floor(vp.width);can.height=Math.floor(vp.height);await pg.render({canvasContext:can.getContext('2d'),viewport:vp}).promise;const res=await worker.recognize(can);await worker.terminate();(res.data.words||[]).filter(w=>signatureMatch(w.text)).slice(0,6).forEach(w=>hits.push({page:1,x:w.bbox.x0/scale,y:(can.height-w.bbox.y1)/scale,w:140,h:42,scale:1.0,viewport:pg.getViewport({scale:1}),text:w.text}))}sigState.placements=hits.slice(0,12);if(!sigState.placements.length){setStatus('#sig-status','No signature-like text or lines were detected. Nothing was altered.','error');return}const first=sigState.placements[0];if(first.page===1){renderSignaturePreview(canvas,first)}setStatus('#sig-status',`Detected ${sigState.placements.length} possible signature location${sigState.placements.length===1?'':'s'}. Preview shows the first candidate; placement uses the detected page coordinates.`,'success')}
-function renderSignaturePreview(canvas,placement){const wrap=$('#sig-preview-wrap');wrap.innerHTML='';wrap.appendChild(canvas);const ov=document.createElement('div');ov.className='signature-overlay';ov.style.left=(placement.x*placement.scale)+'px';ov.style.top=((placement.viewport.height-placement.y-placement.h)*placement.scale)+'px';ov.style.width=Math.max(80,placement.w*placement.scale)+'px';ov.style.height=Math.max(36,placement.h*placement.scale)+'px';const img=document.createElement('img');img.src=URL.createObjectURL(sigState.image);ov.appendChild(img);wrap.appendChild(ov);const badge=document.createElement('div');badge.className='preview-badge';badge.textContent='drag to adjust';wrap.appendChild(badge);enableDrag(ov,placement,canvas)}
-function enableDrag(el,placement,canvas){let sx=0,sy=0,ox=0,oy=0;el.addEventListener('pointerdown',e=>{el.setPointerCapture(e.pointerId);sx=e.clientX;sy=e.clientY;ox=parseFloat(el.style.left)||0;oy=parseFloat(el.style.top)||0});el.addEventListener('pointermove',e=>{if(!el.hasPointerCapture(e.pointerId))return;const dx=e.clientX-sx,dy=e.clientY-sy;el.style.left=Math.max(0,ox+dx)+'px';el.style.top=Math.max(0,oy+dy)+'px'});el.addEventListener('pointerup',()=>{placement.previewLeft=parseFloat(el.style.left);placement.previewTop=parseFloat(el.style.top)})}
-async function scanDocxSignatureFields(){const zip=await JSZip.loadAsync(await sigState.doc.arrayBuffer());const xml=await zip.file('word/document.xml').async('string');const pats=[];const textMatches=[...xml.matchAll(/<w:t[^>]*>([^<]*(?:Signature|Signed|Authorized by|Authorised by|Approved by|Sign here)[^<]*)<\/w:t>/gi)];textMatches.forEach(m=>pats.push(m[1]));const placeholders=[...xml.matchAll(/<w:t[^>]*>([^<]*_{4,}[^<]*)<\/w:t>/g)];placeholders.forEach(m=>pats.push(m[1]));$('#sig-preview-wrap').innerHTML='<div class="small" style="padding:18px">DOCX scan found '+pats.length+' signature-like location'+(pats.length===1?'':'s')+'. The image will be inserted inline next to the matched paragraph without rebuilding the rest of the package.</div>';sigState.placements=pats.slice(0,12).map((text,i)=>({paragraphText:text,index:i}));setStatus('#sig-status',pats.length?`Detected ${pats.length} DOCX signature placeholder${pats.length===1?'':'s'}.`:'No common DOCX signature placeholder was found.','success')}
-async function downloadSignedDocument(){if(!sigState.doc||!sigState.image||!sigState.kind)return;try{if(sigState.kind==='pdf')await buildSignedPdf();else await buildSignedDocx()}catch(e){setStatus('#sig-status',esc(e.message||'Could not build signed document.'),'error')}}
-async function buildSignedPdf(){const bytes=await sigState.doc.arrayBuffer(),doc=await PDFLib.PDFDocument.load(bytes),imgBytes=await sigState.image.arrayBuffer(),img=/\.png$/i.test(sigState.image.name)?await doc.embedPng(imgBytes):await doc.embedJpg(imgBytes);for(const p of sigState.placements.slice(0,12)){const page=doc.getPage((p.page||1)-1),w=Math.min(180,p.w||140),h=w*(img.height/img.width);page.drawImage(img,{x:p.x||60,y:p.y||60,width:w,height:h})}const out=await doc.save();downloadBlob(new Blob([out],{type:'application/pdf'}),sigState.doc.name.replace(/\.pdf$/i,'')+'-signed.pdf');setStatus('#sig-status','Signed PDF created. Only signature images were added.','success')}
-async function buildSignedDocx(){const zip=await JSZip.loadAsync(await sigState.doc.arrayBuffer()),docFile=zip.file('word/document.xml');const relsFile=zip.file('word/_rels/document.xml.rels');if(!docFile||!relsFile)throw new Error('DOCX package is missing the standard document XML parts.');let xml=await docFile.async('string'),rels=await relsFile.async('string');const imgPath='word/media/signature.png';zip.file(imgPath,await sigState.image.arrayBuffer());const rids=[...rels.matchAll(/Id="(rId\d+)"/g)].map(m=>+m[1].slice(3));const rid='rId'+((Math.max(0,...rids))+1);rels=rels.replace('</Relationships>',`<Relationship Id="${rid}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="media/signature.png"/></Relationships>`);const drawing=`<w:r><w:drawing><wp:inline xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing" xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" xmlns:pic="http://schemas.openxmlformats.org/drawingml/2006/picture"><wp:extent cx="1371600" cy="685800"/><wp:docPr id="99" name="Signature"/><a:graphic><a:graphicData uri="http://schemas.openxmlformats.org/drawingml/2006/picture"><pic:pic><pic:nvPicPr><pic:cNvPr id="0" name="signature.png"/><pic:cNvPicPr/></pic:nvPicPr><pic:blipFill><a:blip r:embed="${rid}"/><a:stretch><a:fillRect/></a:stretch></pic:blipFill><pic:spPr><a:xfrm><a:off x="0" y="0"/><a:ext cx="1371600" cy="685800"/></a:xfrm><a:prstGeom prst="rect"><a:avLst/></a:prstGeom></pic:spPr></pic:pic></a:graphicData></a:graphic></wp:inline></w:drawing></w:r>`;let inserted=0;for(const p of sigState.placements.slice(0,12)){const rx=new RegExp(`(<w:p[\\s\\S]*?<w:t[^>]*>${escapeRegExp(p.paragraphText||'')}[\\s\\S]*?</w:p>)`,'i');if(rx.test(xml)){xml=xml.replace(rx,m=>m.replace('</w:p>',drawing+'</w:p>'));inserted++}else{const generic=/<w:p[\s\S]*?<\/w:p>/gi;let count=0;xml=xml.replace(generic,m=>{if(count===p.index&&!m.includes('<w:drawing>')){count++;return m.replace('</w:p>',drawing+'</w:p>')}count++;return m})}}if(!inserted&&sigState.placements.length)throw new Error('DOCX signature field text could not be matched safely.');zip.file('word/document.xml',xml);zip.file('word/_rels/document.xml.rels',rels);const out=await zip.generateAsync({type:'blob'});downloadBlob(out,sigState.doc.name.replace(/\.docx$/i,'')+'-signed.docx');setStatus('#sig-status','Signed DOCX created. Existing document XML was retained and the signature image was inserted inline.','success')}
-function escapeRegExp(s){return String(s).replace(/[.*+?^${}()|[\]\\]/g,'\\$&')}
 
+function signatureRuleText(text){
+  const t=String(text||'').trim();if(!t)return false;
+  if(/[_\.\-=\u00b7]{6,}/.test(t))return true;
+  const ns=t.replace(/\s/g,'');
+  return ns.length>=6&&((ns.match(/[_\.\-=\u00b7]/g)||[]).length/ns.length)>=.6;
+}
+function sigCandidateRank(a,b){
+  const ab=a.bottomThird?1:0,bb=b.bottomThird?1:0;
+  if(ab!==bb)return bb-ab;
+  if(Math.abs(a.w-b.w)>.01)return b.w-a.w;
+  return a.lineY-b.lineY;
+}
+async function pdfVectorSignatureLines(page,pageNo,viewport){
+  const op=await page.getOperatorList(),ops=pdfjsLib.OPS||{},out=[],items=op.fnArray||[],args=op.argsArray||[];let move=null;
+  for(let i=0;i<items.length;i++){
+    const fn=items[i],a=args[i]||[];
+    if(fn===ops.moveTo){move={x:Number(a[0]),y:Number(a[1])};continue}
+    if(fn===ops.lineTo&&move){
+      const x=Number(a[0]),y=Number(a[1]),dx=x-move.x,dy=y-move.y,len=Math.hypot(dx,dy);
+      if(Number.isFinite(len)&&len>=70&&Math.abs(dy)<=1.2){
+        const lineY=(move.y+y)/2,pageH=viewport.height/(viewport.scale||1);
+        if(lineY<=pageH/2)out.push({page:pageNo,x:Math.min(move.x,x),lineY,w:Math.abs(dx),h:0,source:'vector',bottomThird:lineY<=pageH/3});
+      }
+      move={x,y};continue
+    }
+    if(fn===ops.stroke||fn===ops.closeStroke||fn===ops.fill||fn===ops.eoFill)move=null;
+  }
+  return out;
+}
+async function pdfTextSignatureLines(page,pageNo,viewport){
+  const tc=await page.getTextContent(),items=tc.items||[],scale=viewport.scale||1,pageH=viewport.height/scale;
+  return items.filter(i=>signatureRuleText(i.str)).map(it=>{
+    const tr=it.transform||[1,0,0,1,0,0],x=tr[4],y=tr[5],fs=Math.max(7,Math.hypot(tr[0],tr[1])),w=Math.max(1,it.width||fs*.6*String(it.str).length),h=Math.max(fs*1.15,Math.abs(tr[3]||fs));
+    return {page:pageNo,x,lineY:y,w,h,source:'text',bottomThird:y<=pageH/3,text:String(it.str).trim()};
+  });
+}
+async function scanPdfSignatureFields(){
+  const bytes=await sigState.doc.arrayBuffer(),pdf=await pdfjsLib.getDocument({data:bytes.slice(0)}).promise,candidates=[];
+  for(let pageNo=1;pageNo<=pdf.numPages;pageNo++){const page=await pdf.getPage(pageNo),viewport=page.getViewport({scale:1});candidates.push(...await pdfTextSignatureLines(page,pageNo,viewport),...await pdfVectorSignatureLines(page,pageNo,viewport))}
+  const unique=[];
+  for(const c of candidates){if(c.w<70)continue;const same=unique.find(x=>x.page===c.page&&Math.abs(x.lineY-c.lineY)<2&&Math.abs(x.x-c.x)<3);if(!same)unique.push(c);else if(c.w>same.w)same.w=c.w}
+  unique.sort(sigCandidateRank);sigState.placements=unique.slice(0,8);sigState.topCandidate=sigState.placements[0]||null;
+  if(!sigState.topCandidate){$('#sig-preview-wrap').innerHTML='<div class="notice error" style="margin:0">No underscore, dotted, or ruled signature lines were found. Nothing was altered.</div>';setStatus('#sig-status','No underscore, dotted, or ruled signature lines were found. Nothing was altered.','error');return}
+  await renderSignaturePreview(sigState.topCandidate);$('#sig-download-btn').disabled=false;setStatus('#sig-status',`Found ${sigState.placements.length} candidate line${sigState.placements.length===1?'':'s'}. The preview shows the top candidate; the signature sits 4 pt above its rule.`,'success');
+}
+function signatureImageSize(img,candidate){const ratio=(img.height&&img.width)?img.height/img.width:.3,w=Math.max(70,Math.min(200,candidate.w));return {w,h:w*ratio}}
+async function loadImageElement(file){return await new Promise((resolve,reject)=>{const u=URL.createObjectURL(file),img=new Image();img.onload=()=>{URL.revokeObjectURL(u);resolve(img)};img.onerror=e=>{URL.revokeObjectURL(u);reject(e)};img.src=u})}
+async function renderSignaturePreview(candidate){
+  if(sigState.kind==='docx'){renderDocxSignaturePreview(candidate);return}
+  const pdf=await pdfjsLib.getDocument({data:await sigState.doc.arrayBuffer()}).promise,page=await pdf.getPage(candidate.page),scale=1.4,viewport=page.getViewport({scale}),wrap=$('#sig-preview-wrap');
+  wrap.innerHTML='';const canvas=document.createElement('canvas');canvas.width=Math.floor(viewport.width);canvas.height=Math.floor(viewport.height);canvas.style.width='100%';canvas.className='pdf-canvas';wrap.appendChild(canvas);await page.render({canvasContext:canvas.getContext('2d'),viewport}).promise;
+  const img=await loadImageElement(sigState.image),size=signatureImageSize(img,candidate),overlay=document.createElement('div');overlay.className='signature-overlay';overlay.dataset.page=candidate.page;overlay.style.width=(size.w*scale)+'px';overlay.style.height=(size.h*scale)+'px';
+  overlay.style.left=(candidate.x*scale)+'px';
+  overlay.style.top=((viewport.height-candidate.lineY*scale)-size.h*scale-4*scale)+'px';
+  const oi=document.createElement('img');oi.src=URL.createObjectURL(sigState.image);oi.alt='Signature placement';overlay.appendChild(oi);wrap.appendChild(overlay);
+  const badge=document.createElement('div');badge.className='preview-badge';badge.textContent='drag to adjust · sits above line';wrap.appendChild(badge);enableSignatureDrag(overlay,candidate,scale,size);
+}
+function enableSignatureDrag(overlay,candidate,scale,size){
+  let dragging=false,sx=0,sy=0,sl=0,st=0;
+  overlay.addEventListener('pointerdown',e=>{dragging=true;overlay.setPointerCapture(e.pointerId);sx=e.clientX;sy=e.clientY;sl=overlay.offsetLeft;st=overlay.offsetTop;e.preventDefault()});
+  overlay.addEventListener('pointermove',e=>{if(dragging){overlay.style.left=Math.max(0,sl+e.clientX-sx)+'px';overlay.style.top=Math.max(0,st+e.clientY-sy)+'px'}});
+  overlay.addEventListener('pointerup',()=>{if(!dragging)return;dragging=false;candidate.previewLeft=overlay.offsetLeft/scale;candidate.previewTop=overlay.offsetTop/scale;candidate.previewW=size.w});
+  overlay.addEventListener('pointercancel',()=>{dragging=false});
+}
+function renderDocxSignaturePreview(){ $('#sig-preview-wrap').innerHTML=`<div class="small" style="padding:18px">DOCX geometric scan found ${sigState.placements.length} candidate rule${sigState.placements.length===1?'':'s'}. The top candidate is shown conceptually; the image will be inserted in the matched paragraph.</div><div class="preview-badge">drag to adjust · sits above line</div>`}
+async function scanDocxSignatureFields(){
+  const zip=await JSZip.loadAsync(await sigState.doc.arrayBuffer()),xmlFile=zip.file('word/document.xml');if(!xmlFile)throw new Error('DOCX package is missing word/document.xml.');
+  const xml=await xmlFile.async('string'),pats=[],paragraphs=[...xml.matchAll(/<w:p(?:\s[^>]*)?>[\s\S]*?<\/w:p>/gi)];
+  paragraphs.forEach((m,index)=>{const texts=[...m[0].matchAll(/<w:t[^>]*>([^<]*)<\/w:t>/gi)].map(x=>x[1]).join('');if(signatureRuleText(texts))pats.push({paragraphText:texts,index})});
+  sigState.placements=pats.slice(0,8).map(p=>({...p,source:'docx-text',w:Math.max(70,Math.min(200,p.paragraphText.replace(/\s/g,'').length*6)),lineY:0}));sigState.topCandidate=sigState.placements[0]||null;
+  if(!sigState.topCandidate){$('#sig-preview-wrap').innerHTML='<div class="notice error" style="margin:0">No underscore, dotted, or ruled signature lines were found. Nothing was altered.</div>';setStatus('#sig-status','No underscore, dotted, or ruled signature lines were found. Nothing was altered.','error');return}
+  renderDocxSignaturePreview();$('#sig-download-btn').disabled=false;setStatus('#sig-status',`Found ${sigState.placements.length} candidate DOCX line${sigState.placements.length===1?'':'s'}. The preview shows the top candidate.`,'success');
+}
+async function scanForSignatures(){
+  if(!sigState.image||!sigState.doc){setStatus('#sig-status','Choose both a signature image and a PDF/DOCX document.','error');return}
+  sigState.placements=[];sigState.signedBytes=null;sigState.fileName=sigState.doc.name;sigState.topCandidate=null;
+  try{if(/\.pdf$/i.test(sigState.doc.name)){sigState.kind='pdf';await scanPdfSignatureFields()}else if(/\.docx$/i.test(sigState.doc.name)){sigState.kind='docx';await scanDocxSignatureFields()}else throw new Error('Only PDF and DOCX are supported.')}catch(e){setStatus('#sig-status',esc(e.message||'Signature scan failed.'),'error');$('#sig-download-btn').disabled=true}
+}
+async function downloadSignedDocument(){if(!sigState.doc||!sigState.image||!sigState.kind||!sigState.placements.length)return;try{if(sigState.kind==='pdf')await buildSignedPdf();else await buildSignedDocx()}catch(e){setStatus('#sig-status',esc(e.message||'Could not build signed document.'),'error')}}
+async function buildSignedPdf(){
+  const bytes=await sigState.doc.arrayBuffer(),doc=await PDFLib.PDFDocument.load(bytes),imgBytes=await sigState.image.arrayBuffer(),img=/\.png$/i.test(sigState.image.name)?await doc.embedPng(imgBytes):await doc.embedJpg(imgBytes);
+  for(const p of sigState.placements.slice(0,8)){
+    const page=doc.getPage(p.page-1),ratio=img.height/img.width,w=Math.max(70,Math.min(200,p.w)),h=w*ratio;
+    let x=p.x,y=p.lineY+4;
+    if(p.previewLeft!=null){x=p.previewLeft;y=page.getHeight()-(p.previewTop||0)-h}
+    page.drawImage(img,{x,y,width:w,height:h});
+  }
+  const out=await doc.save();downloadBlob(new Blob([out],{type:'application/pdf'}),sigState.doc.name.replace(/\.pdf$/i,'')+'-signed.pdf');setStatus('#sig-status',`Signed PDF created from ${sigState.placements.length} detected candidate line${sigState.placements.length===1?'':'s'}. Signature images were placed 4 pt above the detected rules.`,'success');
+}
+async function buildSignedDocx(){
+  const zip=await JSZip.loadAsync(await sigState.doc.arrayBuffer()),docFile=zip.file('word/document.xml'),relsFile=zip.file('word/_rels/document.xml.rels');if(!docFile||!relsFile)throw new Error('DOCX package is missing the standard document XML parts.');
+  let xml=await docFile.async('string'),rels=await relsFile.async('string');zip.file('word/media/signature.png',await sigState.image.arrayBuffer());
+  const rids=[...rels.matchAll(/Id="(rId\d+)"/g)].map(m=>+m[1].slice(3)),rid='rId'+(Math.max(0,...rids)+1);
+  rels=rels.replace('</Relationships>',`<Relationship Id="${rid}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="media/signature.png"/></Relationships>`);
+  const drawing=`<w:r><w:drawing><wp:inline xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing" xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" xmlns:pic="http://schemas.openxmlformats.org/drawingml/2006/picture"><wp:extent cx="1371600" cy="685800"/><wp:docPr id="99" name="Signature"/><a:graphic><a:graphicData uri="http://schemas.openxmlformats.org/drawingml/2006/picture"><pic:pic><pic:nvPicPr><pic:cNvPr id="0" name="signature.png"/><pic:cNvPicPr/></pic:nvPicPr><pic:blipFill><a:blip r:embed="${rid}"/><a:stretch><a:fillRect/></a:stretch></pic:blipFill><pic:spPr><a:xfrm><a:off x="0" y="0"/><a:ext cx="1371600" cy="685800"/></a:xfrm><a:prstGeom prst="rect"><a:avLst/></a:prstGeom></pic:spPr></pic:pic></a:graphicData></a:graphic></wp:inline></w:drawing></w:r>`;
+  let inserted=0;const paragraphs=[...xml.matchAll(/<w:p(?:\s[^>]*)?>[\s\S]*?<\/w:p>/gi)];
+  for(const p of sigState.placements.slice(0,8)){const target=paragraphs[p.index];if(!target)continue;const old=target[0],plain=[...old.matchAll(/<w:t[^>]*>([^<]*)<\/w:t>/gi)].map(x=>x[1]).join('');if(!signatureRuleText(plain))continue;xml=xml.replace(old,old.replace(/(<\/w:p>)$/,drawing+'$1'));inserted++}
+  if(!inserted)throw new Error('DOCX signature field text could not be matched safely. Nothing was altered.');
+  zip.file('word/document.xml',xml);zip.file('word/_rels/document.xml.rels',rels);const out=await zip.generateAsync({type:'blob'});downloadBlob(out,sigState.doc.name.replace(/\.docx$/i,'')+'-signed.docx');setStatus('#sig-status',`Signed DOCX created from ${inserted} detected candidate line${inserted===1?'':'s'}. Existing package parts were retained.`,'success');
+}
+function escapeRegExp(s){return String(s).replace(/[.*+?^${}()|[\]\\]/g,'\\$&')}
 /* Helpers */
 function downloadBlob(blob,name){const a=document.createElement('a');const url=URL.createObjectURL(blob);a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),2000)}
 
 /* Init */
 bindPdfDrop();
 analyzeSequence();
+(function autoReceiveShare(){const h=readShareHash();if(!h)return;const tab=$('.wb-tab[data-pane="share"]');if(tab){tab.click();setTimeout(()=>receiveShareCode(h),80)}})();
 loadRestrictionExample();
 analyzeCodons();
 runMutation();
