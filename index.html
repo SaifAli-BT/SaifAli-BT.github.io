@@ -1,365 +1,1341 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Saif Ali — Biotechnology & Bioinformatics Workbench</title>
-<meta name="description" content="Saif Ali — Biotechnology & Bioinformatics portfolio with client-side bioinformatics, PDF, file sharing, and signature tools.">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Saif Ali — Biotechnology &amp; Bioinformatics Portfolio</title>
+<meta name="description" content="Saif Ali — BS Biotechnology student at IIUI, Pakistan. Bioinformatics enthusiast with hands-on experience in genomics, PCR, primer design and computational biology.">
+<meta name="keywords" content="Bioinformatics, Biotechnology, Computational Genomics, CRISPR, Pakistan, IIUI, Saif Ali">
+<meta name="author" content="Saif Ali">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="Saif Ali — Biotechnology &amp; Bioinformatics">
+<meta property="og:description" content="BS Biotechnology student at IIUI exploring computational genomics, PCR and bioinformatics.">
+<meta property="og:image" content="saif-ali.jpg">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Saif Ali — Biotechnology &amp; Bioinformatics">
+<meta name="twitter:description" content="BS Biotechnology student at IIUI exploring computational genomics, PCR and bioinformatics.">
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Fira+Code:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
-<!-- External libraries are consumed from their public CDNs; application logic below is original. -->
-<script src="https://3Dmol.csb.pitt.edu/build/3Dmol-min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5.1.0/dist/tesseract.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=DM+Sans:wght@400;500;600&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/typed.js@2.1.0/dist/typed.umd.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
+
 <style>
-:root{--bg:#060a14;--panel:#0b1120;--panel2:#0e1729;--line:#1c2a42;--text:#e7eefc;--muted:#8797b2;--cyan:#00e5ff;--green:#39f58b;--violet:#a970ff;--amber:#ffd166;--pink:#ff5ea8;--red:#ff5577;--shadow:0 20px 70px rgba(0,0,0,.34)}
-*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(circle at 20% 0%,rgba(0,229,255,.07),transparent 25%),radial-gradient(circle at 100% 10%,rgba(169,112,255,.08),transparent 26%),var(--bg);color:var(--text);font-family:'DM Sans',sans-serif}a{text-decoration:none;color:inherit}button,input,textarea,select{font:inherit}.mono{font-family:'Fira Code',monospace}.shell{width:min(1400px,calc(100% - 32px));margin:auto}.nav{position:sticky;top:0;z-index:30;backdrop-filter:blur(16px);background:rgba(6,10,20,.82);border-bottom:1px solid var(--line)}.navin{display:flex;align-items:center;justify-content:space-between;min-height:68px}.brand{font:700 1rem 'Space Grotesk';letter-spacing:.04em}.brand b{color:var(--cyan)}.links{display:flex;gap:.35rem}.links a{padding:.6rem .8rem;border-radius:7px;color:var(--muted);font:.78rem 'Fira Code'}.links a:hover,.links a.active{color:var(--cyan);background:rgba(0,229,255,.06)}
-.hero{padding:74px 0 40px}.hero-grid{display:grid;grid-template-columns:1.3fr .7fr;gap:28px;align-items:center}.eyebrow{color:var(--cyan);font:600 .74rem 'Fira Code';letter-spacing:.12em;text-transform:uppercase}.hero h1{font:700 clamp(2.9rem,7vw,6rem) 'Space Grotesk';line-height:.94;margin:.7rem 0 1rem}.hero h1 span{color:var(--cyan)}.hero p{max-width:760px;color:#b2bfd4;line-height:1.8;font-size:1.05rem}.chips{display:flex;flex-wrap:wrap;gap:.5rem;margin:1.2rem 0}.chip{border:1px solid var(--line);padding:.45rem .65rem;border-radius:999px;color:var(--muted);font:600 .7rem 'Fira Code'}.actions{display:flex;gap:.6rem;flex-wrap:wrap}.btn{border:1px solid var(--line);padding:.72rem .95rem;border-radius:8px;background:transparent;color:var(--text);cursor:pointer}.btn.primary{background:rgba(0,229,255,.1);border-color:var(--cyan);color:var(--cyan)}.btn:hover{transform:translateY(-1px)}.btn:disabled{opacity:.45;cursor:not-allowed;transform:none}.hero-card{background:linear-gradient(160deg,rgba(0,229,255,.06),rgba(169,112,255,.05));border:1px solid var(--line);border-radius:18px;padding:18px;box-shadow:var(--shadow)}.terminal{background:#04070f;border:1px solid var(--line);border-radius:12px;padding:15px}.term-line{font:500 .76rem 'Fira Code';color:#9fb0ca;line-height:1.7}.term-line b{color:var(--green)}.term-line .c{color:var(--cyan)}
-section{padding:54px 0}.section-head{display:flex;align-items:end;justify-content:space-between;gap:1rem;margin-bottom:18px}.section-head h2{margin:.25rem 0 0;font:700 2rem 'Space Grotesk'}.sub{color:var(--muted);max-width:780px;line-height:1.7}.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px}.card h3{margin:.2rem 0 .65rem;font:600 1rem 'Space Grotesk'}.card p{margin:0;color:var(--muted);font-size:.9rem;line-height:1.7}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-#workbench{padding-top:26px}.wb{background:var(--panel);border:1px solid var(--line);border-radius:18px;overflow:hidden;box-shadow:var(--shadow)}.wb-top{padding:16px;border-bottom:1px solid var(--line);display:flex;gap:.5rem;align-items:center;justify-content:space-between;flex-wrap:wrap}.wb-title{font:700 1.05rem 'Space Grotesk'}.wb-tabs{display:flex;gap:.35rem;overflow:auto;scrollbar-width:thin}.wb-tab{white-space:nowrap;border:1px solid var(--line);background:transparent;color:var(--muted);padding:.55rem .7rem;border-radius:7px;cursor:pointer;font:.68rem 'Fira Code'}.wb-tab.active,.wb-tab:hover{color:var(--cyan);border-color:var(--cyan);background:rgba(0,229,255,.05)}.pane{display:none;padding:16px}.pane.active{display:block}.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.field label{display:block;color:var(--muted);font:.66rem 'Fira Code';text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px}.input,.textarea,.select{width:100%;background:#050913;border:1px solid var(--line);color:var(--text);padding:.72rem;border-radius:8px;outline:none}.textarea{min-height:180px;resize:vertical;font:500 .74rem 'Fira Code';line-height:1.7}.input:focus,.textarea:focus,.select:focus{border-color:var(--cyan);box-shadow:0 0 0 3px rgba(0,229,255,.06)}.row{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:10px}.stats{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-top:12px}.stat{background:#070d19;border:1px solid var(--line);padding:10px;border-radius:8px}.stat b{display:block;font:600 1rem 'Space Grotesk';color:var(--cyan)}.stat span{color:var(--muted);font:.6rem 'Fira Code'}.output{margin-top:12px;background:#04070f;border:1px solid var(--line);border-radius:10px;padding:12px;overflow:auto}.notice{border-left:3px solid var(--amber);padding:10px 12px;background:rgba(255,209,102,.05);color:#c8d2e2;font-size:.82rem;line-height:1.6;margin-bottom:12px}.notice.info{border-left-color:var(--cyan);background:rgba(0,229,255,.035)}.notice.success{border-left-color:var(--green);background:rgba(57,245,139,.035)}.notice.error{border-left-color:var(--red);background:rgba(255,85,119,.05)}.seq{font:500 .72rem 'Fira Code';line-height:1.9;white-space:pre-wrap;word-break:break-word}.A{color:#ff6b7d}.T{color:#68a6ff}.G{color:#52f69a}.C{color:#ffe26b}.U{color:#ff7cc6}.small{font-size:.74rem;color:var(--muted);line-height:1.6}.muted{color:var(--muted)}.danger{color:var(--red)}.good{color:var(--green)}.codepill{display:inline-block;border:1px solid var(--line);border-radius:999px;padding:.25rem .5rem;font:.68rem 'Fira Code';color:var(--cyan);background:#070d19}.spinner{display:inline-block;width:14px;height:14px;border:2px solid #31405a;border-top-color:var(--cyan);border-radius:50%;animation:spin .8s linear infinite;vertical-align:-2px;margin-right:6px}@keyframes spin{to{transform:rotate(360deg)}}.progress{height:8px;border-radius:999px;overflow:hidden;border:1px solid var(--line);background:#050913}.progress i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--violet),var(--cyan));transition:width .25s ease}
-/* Gene */.gene-toolbar{display:grid;grid-template-columns:1.2fr .8fr auto auto;gap:.5rem;align-items:end;margin-bottom:12px}.gene-map{background:#04070f;border:1px solid var(--line);border-radius:10px;padding:14px}.track{position:relative;height:68px;border-top:1px solid #18243a;margin-top:16px}.track:first-child{margin-top:0}.track-label{position:absolute;left:0;top:-18px;color:var(--muted);font:600 .63rem 'Fira Code'}.axis{display:flex;justify-content:space-between;color:#5f708b;font:500 .6rem 'Fira Code';margin-top:7px}.feature{position:absolute;top:17px;height:26px;border-radius:6px;border:1px solid;overflow:hidden}.exon{background:rgba(0,229,255,.15);border-color:var(--cyan)}.utr{background:rgba(57,245,139,.14);border-color:var(--green)}.intron{background:rgba(169,112,255,.08);border-color:#7647b8}.prom{background:rgba(255,209,102,.12);border-color:var(--amber)}.feature-label{position:absolute;top:22px;left:6px;font:600 .58rem 'Fira Code';color:#dce7f8;white-space:nowrap}.gene-panels{display:grid;grid-template-columns:1.1fr .9fr;gap:12px;margin-top:12px}.sequence-window{max-height:430px;overflow:auto}.seqline{display:grid;grid-template-columns:78px 1fr 60px;gap:10px;padding:3px 0;border-bottom:1px dashed #162238}.pos{color:#596b85;font:.6rem 'Fira Code'}.seqchars{font:.68rem 'Fira Code';letter-spacing:.03em}.codons{color:#8ca0bc;font:.58rem 'Fira Code';text-align:right}.detail-card{background:#070d19;border:1px solid var(--line);border-radius:9px;padding:12px}.detail-card h4{margin:0 0 8px;font:600 .8rem 'Space Grotesk';color:var(--cyan)}.kv{display:grid;grid-template-columns:125px 1fr;gap:5px;font-size:.74rem}.kv span{color:var(--muted)}
-/* Protein */.protein-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:12px;align-items:start}.viewer{height:560px;min-height:560px;position:relative;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#01040a}.viewer-tools{position:absolute;left:0;right:0;top:0;z-index:5;display:flex;flex-wrap:wrap;gap:.4rem;padding:8px;background:rgba(7,13,25,.94);border-bottom:1px solid var(--line)}.viewer-tools button{padding:.45rem .6rem;font:.64rem 'Fira Code';border:1px solid var(--line);background:rgba(1,4,10,.72);color:var(--muted);border-radius:6px;cursor:pointer}.viewer-tools button:hover{color:var(--cyan);border-color:var(--cyan)}.protein-info{display:grid;gap:10px}.seqbar{background:#070d19;border:1px solid var(--line);border-radius:9px;padding:10px}.seqbar pre{white-space:pre-wrap;color:#b8c5d9;font:.62rem 'Fira Code';line-height:1.7;max-height:240px;overflow:auto;margin:0}.metric-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-/* General output tables */.table{width:100%;border-collapse:collapse;font:.68rem 'Fira Code'}.table th,.table td{padding:8px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}.table th{color:var(--cyan)}.table a{color:var(--cyan)}.table a:hover{text-decoration:underline}.nowrap{white-space:nowrap}
-/* ORF */.orf-controls{display:grid;grid-template-columns:1.2fr .6fr auto;gap:.5rem;align-items:end}.orf-track{position:relative;background:#050913;border:1px solid var(--line);border-radius:10px;padding:34px 10px 18px;margin-top:12px;min-height:190px}.frame-row{position:relative;height:36px;border-top:1px solid #18243a}.frame-label{position:absolute;left:0;top:7px;color:var(--muted);font:.62rem 'Fira Code'}.orf-bar{position:absolute;height:18px;top:9px;border-radius:4px;background:rgba(0,229,255,.16);border:1px solid var(--cyan);min-width:3px}.orf-bar.rev{background:rgba(169,112,255,.18);border-color:var(--violet)}.orf-bar:hover{filter:brightness(1.3)}.orf-meta{position:absolute;left:0;right:0;bottom:-18px;display:flex;justify-content:space-between;color:#52647e;font:.55rem 'Fira Code'}
-/* Primer */.candidate-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.primer-score{height:10px;border-radius:999px;background:#16253a;overflow:hidden}.primer-score i{display:block;height:100%;background:linear-gradient(90deg,var(--amber),var(--cyan))}
-/* File/PDF */.dropzone{border:1px dashed #30425f;border-radius:10px;padding:22px;text-align:center;background:#050913}.dropzone.drag{border-color:var(--cyan);background:rgba(0,229,255,.05)}.pdf-layout{display:grid;grid-template-columns:340px 1fr;gap:12px;align-items:start}.pdf-pages{display:grid;gap:12px;max-height:780px;overflow:auto}.pdf-page-card{background:#050913;border:1px solid var(--line);border-radius:10px;padding:8px}.pdf-page-head{display:flex;justify-content:space-between;gap:8px;align-items:center;margin-bottom:6px}.pdf-page-wrap{position:relative;width:100%;overflow:auto;background:#0a0f1a;border:1px solid var(--line);border-radius:7px}.pdf-canvas{display:block;width:100%;height:auto}.text-hit-layer{position:absolute;inset:0}.text-hit{position:absolute;border:1px solid transparent;color:transparent;background:transparent;cursor:text;overflow:visible;white-space:pre}.text-hit:hover{border-color:rgba(0,229,255,.5);background:rgba(0,229,255,.06)}.text-editor{position:absolute;z-index:10;border:1px solid var(--cyan);background:#060a14;color:var(--text);padding:2px 4px;resize:none;overflow:hidden;font:500 14px 'Fira Code';outline:none}.edit-note{border-left:3px solid var(--violet);padding:10px 12px;background:rgba(169,112,255,.05);font-size:.8rem;line-height:1.6}.signature-overlay{position:absolute;border:2px dashed var(--green);background:rgba(57,245,139,.08);cursor:move}.signature-overlay img{max-width:100%;max-height:100%;display:block;pointer-events:none}.preview-stage{position:relative;background:#0a0f1a;border:1px solid var(--line);border-radius:10px;overflow:hidden}.preview-stage canvas{display:block;width:100%;height:auto}.preview-badge{position:absolute;top:8px;right:8px;background:rgba(6,10,20,.9);border:1px solid var(--line);border-radius:999px;padding:4px 7px;font:.6rem 'Fira Code';color:var(--green)}
-/* Sharing */.share-code{font:700 clamp(1.15rem,3vw,2rem) 'Fira Code';letter-spacing:.08em;color:var(--cyan);word-break:break-word}.security-box{background:#050913;border:1px solid var(--line);border-radius:9px;padding:10px}.security-box strong{color:var(--green)}
-footer{padding:38px 0;color:var(--muted);font-size:.78rem;border-top:1px solid var(--line);margin-top:32px}.foot{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap}
-@media(max-width:1050px){.hero-grid,.protein-grid,.gene-panels,.pdf-layout{grid-template-columns:1fr}.cards{grid-template-columns:1fr 1fr}.stats{grid-template-columns:repeat(3,1fr)}.gene-toolbar{grid-template-columns:1fr 1fr}.orf-controls{grid-template-columns:1fr 1fr}.orf-controls .btn{grid-column:1/-1}}
-@media(max-width:720px){.links{display:none}.hero{padding-top:44px}.cards,.formgrid,.candidate-grid{grid-template-columns:1fr}.stats{grid-template-columns:1fr 1fr}.shell{width:min(100% - 20px,1400px)}.viewer{height:420px;min-height:420px}.seqline{grid-template-columns:55px 1fr 50px}.kv{grid-template-columns:100px 1fr}.gene-toolbar{grid-template-columns:1fr}.orf-controls{grid-template-columns:1fr}.viewer-tools button{padding:.4rem .5rem}.table{font-size:.62rem}}
+/* ============================================================
+   TOKENS
+   ============================================================ */
+:root{
+  --void:#060a1a;
+  --deep:#0c1228;
+  --card:#0f1526;
+  --card-hover:#131b33;
+  --glass:rgba(255,255,255,.03);
+  --border:rgba(140,170,220,.14);
+  --border-hover:rgba(0,229,255,.4);
+
+  --cyan:#00e5ff;
+  --violet:#9d4edd;
+  --green:#39ff14;
+
+  --ink-1:#eef2fb;
+  --ink-2:#93a1bd;
+  --ink-3:#4d5a76;
+
+  --sidebar-w:236px;
+
+  --f-head:'Space Grotesk',sans-serif;
+  --f-body:'DM Sans',sans-serif;
+  --f-code:'Fira Code',monospace;
+
+  --ease:cubic-bezier(.16,.84,.44,1);
+}
+
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:auto;}
+body{
+  background:radial-gradient(ellipse 120% 80% at 20% 0%, var(--deep), var(--void) 60%);
+  color:var(--ink-1);
+  font-family:var(--f-body);
+  min-height:100vh;
+  overflow-x:hidden;
+  position:relative;
+}
+body::before{
+  content:'';
+  position:fixed; inset:0;
+  background-image:
+    linear-gradient(rgba(0,229,255,.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,229,255,.035) 1px, transparent 1px);
+  background-size:42px 42px;
+  pointer-events:none;
+  z-index:0;
+  mask-image:radial-gradient(ellipse 80% 60% at 50% 20%, #000 20%, transparent 80%);
+}
+a{color:inherit;text-decoration:none;}
+ul{list-style:none;}
+button{font:inherit;cursor:pointer;border:none;background:none;color:inherit;}
+input,textarea{font:inherit;}
+::selection{background:var(--cyan);color:var(--void);}
+
+h1,h2,h3,h4{font-family:var(--f-head);font-weight:600;letter-spacing:-.01em;}
+.mono{font-family:var(--f-code);}
+
+:focus-visible{outline:2px solid var(--cyan);outline-offset:3px;border-radius:4px;}
+
+/* ============================================================
+   PRELOADER
+   ============================================================ */
+#preloader{
+  position:fixed;inset:0;z-index:9999;
+  background:var(--void);
+  display:flex;align-items:center;justify-content:center;
+  flex-direction:column;gap:18px;
+  transition:opacity .5s var(--ease), visibility .5s var(--ease);
+}
+#preloader.done{opacity:0;visibility:hidden;pointer-events:none;}
+#preloader svg{width:64px;height:64px;}
+#preloader .helix-strand{transform-origin:32px 32px;}
+#preloader .pre-label{font-family:var(--f-code);font-size:.72rem;letter-spacing:.08em;color:var(--ink-3);}
+
+/* ============================================================
+   MAGNETIC CURSOR
+   ============================================================ */
+.cursor-dot,.cursor-ring{
+  position:fixed;top:0;left:0;pointer-events:none;z-index:9000;
+  border-radius:50%;transform:translate(-50%,-50%);
+}
+.cursor-dot{width:6px;height:6px;background:var(--cyan);}
+.cursor-ring{width:32px;height:32px;border:1px solid var(--border-hover);transition:width .25s var(--ease),height .25s var(--ease),border-color .25s var(--ease),background .25s var(--ease);}
+.cursor-ring.active{width:52px;height:52px;background:rgba(0,229,255,.08);border-color:var(--cyan);}
+@media (hover:none), (pointer:coarse){ .cursor-dot,.cursor-ring{display:none;} }
+
+/* ============================================================
+   LAYOUT SHELL
+   ============================================================ */
+.app{display:flex;min-height:100vh;position:relative;z-index:1;}
+
+/* Sidebar */
+.sidebar{
+  width:var(--sidebar-w);flex-shrink:0;
+  position:fixed;top:0;left:0;height:100vh;
+  background:rgba(9,13,26,.7);
+  backdrop-filter:blur(18px);
+  border-right:1px solid var(--border);
+  display:flex;flex-direction:column;
+  padding:28px 18px;
+  z-index:100;
+  transition:transform .4s var(--ease);
+}
+.brand{display:flex;align-items:center;gap:11px;padding:0 6px 26px;}
+.brand-mark{
+  width:36px;height:36px;border-radius:10px;
+  background:linear-gradient(135deg,var(--cyan),var(--violet));
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--f-head);font-weight:700;color:var(--void);font-size:.95rem;
+  flex-shrink:0;
+}
+.brand-text{line-height:1.15;}
+.brand-text strong{display:block;font-family:var(--f-head);font-size:.95rem;}
+.brand-text span{display:block;font-size:.68rem;color:var(--ink-3);}
+
+.nav-list{display:flex;flex-direction:column;gap:4px;position:relative;flex:1;}
+.nav-item{
+  position:relative;display:flex;align-items:center;gap:12px;
+  padding:11px 14px;border-radius:10px;
+  color:var(--ink-2);font-size:.88rem;font-weight:500;
+  z-index:1;transition:color .25s;
+}
+.nav-item i{width:18px;text-align:center;font-size:.9rem;}
+.nav-item:hover{color:var(--ink-1);}
+.nav-item[aria-current="page"]{color:var(--void);}
+.nav-glow{
+  position:absolute;left:0;top:0;width:100%;height:0;
+  background:linear-gradient(90deg,var(--cyan),#33e0ff);
+  border-radius:10px;z-index:0;
+  box-shadow:0 0 20px rgba(0,229,255,.45);
+}
+
+.sidebar-foot{padding-top:16px;border-top:1px solid var(--border);display:flex;gap:10px;}
+.foot-link{
+  width:34px;height:34px;border-radius:9px;border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;color:var(--ink-2);
+  transition:border-color .25s,color .25s,transform .25s;
+}
+.foot-link:hover{border-color:var(--cyan);color:var(--cyan);transform:translateY(-2px);}
+
+.sidebar-toggle{
+  display:none;position:fixed;top:18px;left:18px;z-index:120;
+  width:42px;height:42px;border-radius:10px;
+  background:rgba(15,21,38,.85);border:1px solid var(--border);
+  align-items:center;justify-content:center;color:var(--ink-1);
+  backdrop-filter:blur(10px);
+}
+.sidebar-overlay{
+  display:none;position:fixed;inset:0;background:rgba(2,4,10,.6);z-index:99;
+  opacity:0;transition:opacity .3s;
+}
+.sidebar-overlay.show{display:block;opacity:1;}
+
+/* Main content */
+.main{
+  margin-left:var(--sidebar-w);
+  flex:1;min-height:100vh;position:relative;
+  padding:56px 60px 90px;
+}
+.panel{display:none;}
+.panel.active{display:block;}
+
+.eyebrow-tag{
+  display:inline-flex;align-items:center;gap:7px;
+  font-family:var(--f-code);font-size:.74rem;color:var(--cyan);
+  background:rgba(0,229,255,.08);border:1px solid rgba(0,229,255,.22);
+  padding:5px 12px;border-radius:100px;margin-bottom:18px;
+}
+.eyebrow-tag i{font-size:.7rem;}
+
+.section-head{max-width:640px;margin-bottom:38px;}
+.section-head h2{font-size:clamp(1.7rem,3vw,2.3rem);margin-bottom:10px;}
+.section-head p{color:var(--ink-2);font-size:1rem;line-height:1.6;}
+
+/* Glass card base */
+.glass-card{
+  position:relative;
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:16px;
+  padding:26px;
+  overflow:hidden;
+  transition:border-color .3s,transform .3s,box-shadow .3s;
+}
+.glass-card::after{
+  content:'';position:absolute;inset:0;border-radius:inherit;pointer-events:none;
+  background:radial-gradient(220px circle at var(--mx,50%) var(--my,50%), rgba(0,229,255,.08), transparent 60%);
+  opacity:0;transition:opacity .3s;
+}
+.glass-card:hover::after{opacity:1;}
+.glass-card:hover{border-color:var(--border-hover);}
+
+/* ============================================================
+   HOME
+   ============================================================ */
+.hero{
+  display:grid;grid-template-columns:1fr 260px;gap:56px;
+  align-items:center;padding:20px 0 64px;
+  border-bottom:1px solid var(--border);
+}
+.hero-eyebrow{font-family:var(--f-code);color:var(--green);font-size:.82rem;display:flex;align-items:center;gap:8px;margin-bottom:22px;}
+.hero-eyebrow .dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);}
+.hero h1{font-size:clamp(2.4rem,5vw,4rem);line-height:1.05;margin-bottom:16px;}
+.hero h1 .letter{display:inline-block;}
+.typed-role{
+  font-family:var(--f-code);font-size:clamp(1rem,1.6vw,1.25rem);color:var(--cyan);
+  min-height:1.6em;margin-bottom:20px;
+}
+.typed-cursor{color:var(--violet);}
+.hero-bio{color:var(--ink-2);font-size:1.02rem;line-height:1.65;max-width:520px;margin-bottom:32px;}
+.hero-ctas{display:flex;gap:14px;flex-wrap:wrap;}
+
+.btn{
+  position:relative;overflow:hidden;
+  display:inline-flex;align-items:center;gap:9px;
+  padding:13px 26px;border-radius:10px;font-weight:600;font-size:.92rem;
+  transition:transform .25s,box-shadow .25s;
+}
+.btn-primary{background:linear-gradient(135deg,var(--cyan),#20c9ea);color:#03131a;}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 10px 26px rgba(0,229,255,.25);}
+.btn-ghost{border:1px solid var(--border);color:var(--ink-1);}
+.btn-ghost:hover{border-color:var(--border-hover);transform:translateY(-2px);}
+.ripple{position:absolute;border-radius:50%;background:rgba(255,255,255,.5);transform:scale(0);animation:rip .6s ease-out;pointer-events:none;}
+@keyframes rip{to{transform:scale(3.5);opacity:0;}}
+
+.portrait-wrap{
+  position:relative;width:230px;height:230px;justify-self:center;
+}
+.portrait-ring{
+  position:absolute;inset:-10px;border-radius:26px;
+  background:conic-gradient(from 0deg,var(--cyan),var(--violet),var(--green),var(--cyan));
+  filter:blur(18px);opacity:.55;
+  animation:pulseGlow 3.4s ease-in-out infinite;
+}
+@keyframes pulseGlow{0%,100%{opacity:.4;transform:scale(1);}50%{opacity:.7;transform:scale(1.04);}}
+.portrait{
+  position:relative;width:100%;height:100%;border-radius:22px;
+  border:1px solid var(--border-hover);
+  background:linear-gradient(145deg,var(--card),var(--deep));
+  display:flex;align-items:center;justify-content:center;
+  overflow:hidden;
+}
+.portrait img{width:100%;height:100%;object-fit:cover;display:block;}
+.portrait .fallback{
+  font-family:var(--f-head);font-size:3.2rem;font-weight:700;
+  color:var(--cyan);letter-spacing:.02em;
+}
+
+.stat-row{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;padding:52px 0;}
+.stat-card{text-align:left;}
+.stat-num{
+  font-family:var(--f-head);font-size:clamp(1.9rem,3.4vw,2.6rem);font-weight:700;
+  background:linear-gradient(135deg,var(--cyan),var(--violet));
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  line-height:1;
+}
+.stat-label{color:var(--ink-2);font-size:.85rem;margin-top:8px;}
+
+/* ============================================================
+   ABOUT
+   ============================================================ */
+.about-grid{display:grid;grid-template-columns:1.3fr 1fr;gap:44px;}
+.about-bio p{color:var(--ink-2);line-height:1.75;margin-bottom:16px;font-size:1rem;}
+.about-bio p strong{color:var(--ink-1);font-weight:600;}
+
+.timeline{position:relative;margin-top:10px;padding-left:26px;}
+.timeline::before{content:'';position:absolute;left:5px;top:6px;bottom:6px;width:2px;background:linear-gradient(var(--cyan),var(--violet));}
+.tl-item{position:relative;padding-bottom:26px;}
+.tl-item:last-child{padding-bottom:0;}
+.tl-item::before{content:'';position:absolute;left:-26px;top:4px;width:12px;height:12px;border-radius:50%;background:var(--void);border:2px solid var(--cyan);}
+.tl-item h4{font-size:.98rem;margin-bottom:3px;}
+.tl-item span{color:var(--ink-3);font-size:.8rem;font-family:var(--f-code);}
+
+.contact-list{display:flex;flex-direction:column;gap:12px;margin-top:6px;}
+.contact-list li{display:flex;align-items:center;gap:12px;color:var(--ink-2);font-size:.92rem;}
+.contact-list i{width:32px;height:32px;border-radius:9px;background:rgba(0,229,255,.08);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--cyan);flex-shrink:0;}
+
+.chip-row{display:flex;flex-wrap:wrap;gap:9px;margin-top:14px;}
+.chip{
+  padding:7px 14px;border-radius:100px;font-size:.8rem;
+  border:1px solid var(--border);color:var(--ink-2);
+  transition:border-color .25s,color .25s;
+}
+.chip:hover{border-color:var(--border-hover);color:var(--cyan);}
+
+.side-block{margin-bottom:34px;}
+.side-block h3{font-size:1.05rem;margin-bottom:16px;display:flex;align-items:center;gap:9px;}
+.side-block h3 i{color:var(--violet);font-size:.9rem;}
+
+/* ============================================================
+   EXPERIENCE
+   ============================================================ */
+.exp-timeline{position:relative;padding-left:36px;}
+.exp-timeline::before{content:'';position:absolute;left:9px;top:8px;bottom:8px;width:2px;background:linear-gradient(var(--cyan),var(--violet),var(--green));}
+.exp-item{position:relative;margin-bottom:36px;}
+.exp-item:last-child{margin-bottom:0;}
+.exp-dot{
+  position:absolute;left:-36px;top:6px;width:20px;height:20px;border-radius:50%;
+  background:var(--void);border:2px solid var(--cyan);
+  display:flex;align-items:center;justify-content:center;
+}
+.exp-dot i{font-size:.6rem;color:var(--cyan);}
+.exp-card{padding:24px 26px;}
+.exp-top{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:12px;}
+.exp-org{font-size:1.12rem;font-family:var(--f-head);font-weight:600;}
+.exp-role{color:var(--cyan);font-size:.86rem;margin-top:2px;}
+.exp-dates{font-family:var(--f-code);font-size:.78rem;color:var(--ink-3);white-space:nowrap;}
+.exp-bullets{margin:14px 0 16px;padding-left:18px;color:var(--ink-2);font-size:.92rem;line-height:1.7;}
+.exp-bullets li{margin-bottom:5px;list-style:disc;}
+.exp-sup{font-size:.82rem;color:var(--ink-3);margin-bottom:14px;}
+.exp-sup strong{color:var(--ink-2);font-weight:500;}
+
+/* ============================================================
+   PROJECTS
+   ============================================================ */
+.proj-controls{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;margin-bottom:30px;}
+.filter-row{display:flex;gap:8px;flex-wrap:wrap;}
+.filter-btn{
+  padding:9px 17px;border-radius:100px;font-size:.83rem;font-weight:500;
+  border:1px solid var(--border);color:var(--ink-2);transition:.25s;
+}
+.filter-btn.active,.filter-btn:hover{border-color:var(--cyan);color:var(--cyan);background:rgba(0,229,255,.06);}
+.search-box{
+  position:relative;min-width:220px;
+}
+.search-box input{
+  width:100%;padding:10px 16px 10px 38px;border-radius:100px;
+  background:var(--card);border:1px solid var(--border);color:var(--ink-1);font-size:.86rem;
+}
+.search-box input:focus{border-color:var(--border-hover);}
+.search-box i{position:absolute;left:15px;top:50%;transform:translateY(-50%);color:var(--ink-3);font-size:.82rem;}
+
+.proj-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:22px;}
+.proj-card-outer{perspective:1400px;height:250px;}
+.proj-card-outer.hidden{display:none;}
+.proj-card-inner{
+  position:relative;width:100%;height:100%;transition:transform .65s var(--ease);
+  transform-style:preserve-3d;cursor:pointer;
+}
+.proj-card-outer.flipped .proj-card-inner{transform:rotateY(180deg);}
+.proj-face{
+  position:absolute;inset:0;backface-visibility:hidden;
+  border-radius:16px;border:1px solid var(--border);
+  padding:24px;display:flex;flex-direction:column;
+}
+.proj-front{background:var(--card);}
+.proj-back{background:linear-gradient(160deg,var(--card),#0c1730);transform:rotateY(180deg);justify-content:center;}
+.proj-tag{
+  align-self:flex-start;font-family:var(--f-code);font-size:.68rem;padding:4px 10px;
+  border-radius:100px;background:rgba(157,78,221,.12);color:var(--violet);border:1px solid rgba(157,78,221,.3);
+  margin-bottom:14px;
+}
+.proj-front h4{font-size:1.08rem;margin-bottom:10px;line-height:1.3;}
+.proj-front p{color:var(--ink-2);font-size:.86rem;line-height:1.55;flex:1;}
+.proj-hint{font-size:.72rem;color:var(--ink-3);font-family:var(--f-code);display:flex;align-items:center;gap:6px;margin-top:10px;}
+.proj-back p{color:var(--ink-2);font-size:.87rem;line-height:1.65;}
+.proj-back .proj-tags-mini{display:flex;flex-wrap:wrap;gap:6px;margin-top:14px;}
+.proj-status{font-size:.7rem;font-family:var(--f-code);color:var(--green);margin-top:12px;}
+.no-results{color:var(--ink-3);grid-column:1/-1;text-align:center;padding:40px 0;font-size:.92rem;}
+
+/* ============================================================
+   SKILLS
+   ============================================================ */
+.skills-layout{display:grid;grid-template-columns:1.3fr 1fr;gap:44px;align-items:start;}
+.skill-group{margin-bottom:30px;}
+.skill-group:last-child{margin-bottom:0;}
+.skill-group h3{font-size:1rem;margin-bottom:16px;color:var(--ink-1);}
+.skill-row{margin-bottom:14px;}
+.skill-row:last-child{margin-bottom:0;}
+.skill-top{display:flex;justify-content:space-between;font-size:.85rem;margin-bottom:6px;color:var(--ink-2);}
+.skill-track{height:7px;border-radius:100px;background:rgba(255,255,255,.06);overflow:hidden;}
+.skill-fill{
+  height:100%;border-radius:100px;width:0;
+  background:linear-gradient(90deg,var(--cyan),var(--violet));
+}
+.radar-card{position:sticky;top:56px;}
+.radar-card canvas{max-height:340px;}
+
+/* ============================================================
+   CONTACT
+   ============================================================ */
+.contact-layout{display:grid;grid-template-columns:1.2fr .8fr;gap:44px;}
+.form-row{margin-bottom:20px;}
+.form-row label{display:block;font-size:.84rem;color:var(--ink-2);margin-bottom:8px;}
+.form-row input,.form-row textarea{
+  width:100%;padding:13px 16px;border-radius:10px;
+  background:var(--deep);border:1px solid var(--border);color:var(--ink-1);
+  transition:border-color .25s;
+}
+.form-row input:focus,.form-row textarea:focus{border-color:var(--cyan);}
+.form-row textarea{resize:vertical;min-height:120px;}
+.field-error{color:#ff6b6b;font-size:.76rem;margin-top:6px;min-height:1em;}
+.form-row.error input,.form-row.error textarea{border-color:#ff6b6b;}
+.form-status{margin-top:16px;font-size:.88rem;padding:12px 16px;border-radius:10px;display:none;}
+.form-status.success{display:block;background:rgba(57,255,20,.08);border:1px solid rgba(57,255,20,.3);color:var(--green);}
+.form-status.failure{display:block;background:rgba(255,107,107,.08);border:1px solid rgba(255,107,107,.3);color:#ff6b6b;}
+
+.contact-side .side-block{margin-bottom:0;}
+.social-row{display:flex;gap:12px;margin-top:16px;}
+.social-btn{
+  display:flex;align-items:center;gap:10px;padding:12px 18px;border-radius:10px;
+  border:1px solid var(--border);font-size:.87rem;flex:1;justify-content:center;
+  transition:.25s;
+}
+.social-btn:hover{border-color:var(--border-hover);color:var(--cyan);transform:translateY(-2px);}
+
+/* footer note */
+.footer-note{margin-top:70px;padding-top:22px;border-top:1px solid var(--border);color:var(--ink-3);font-size:.8rem;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;}
+
+/* Confetti canvas */
+#confetti-canvas{position:fixed;inset:0;pointer-events:none;z-index:8000;}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width:1080px){
+  .hero{grid-template-columns:1fr;}
+  .portrait-wrap{justify-self:start;}
+  .about-grid,.skills-layout,.contact-layout{grid-template-columns:1fr;}
+  .radar-card{position:static;}
+}
+@media (max-width:820px){
+  .sidebar{transform:translateX(-100%);}
+  .sidebar.open{transform:translateX(0);}
+  .sidebar-toggle{display:flex;}
+  .main{margin-left:0;padding:88px 24px 70px;}
+  .stat-row{grid-template-columns:repeat(2,1fr);}
+}
+@media (max-width:520px){
+  .stat-row{grid-template-columns:1fr 1fr;gap:14px;}
+  .hero-ctas{flex-direction:column;}
+  .btn{width:100%;justify-content:center;}
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion:reduce){
+  *{animation-duration:.001ms !important;animation-iteration-count:1 !important;transition-duration:.001ms !important;scroll-behavior:auto !important;}
+}
 </style>
 </head>
 <body>
-<nav class="nav"><div class="shell navin"><div class="brand">SAIF<b>//BIO</b></div><div class="links"><a href="#home">home</a><a href="#workbench">workbench</a><a href="#projects">projects</a><a href="#experience">experience</a><a href="#contact">contact</a></div></div></nav>
-<main id="home">
-<section class="hero"><div class="shell hero-grid"><div><div class="eyebrow">// biotechnology × bioinformatics</div><h1>Saif <span>Ali</span></h1><p>BS Biotechnology student at IIUI focused on integrating computational tools with biological research, with interests in bioinformatics, computational genomics, molecular biology, and practical data analysis.</p><div class="chips"><span class="chip">DNA extraction</span><span class="chip">PCR</span><span class="chip">gel electrophoresis</span><span class="chip">primer design</span><span class="chip">Python</span><span class="chip">R</span><span class="chip">computational genomics</span></div><div class="actions"><a class="btn primary" href="#workbench">Open Workbench</a><a class="btn" href="#projects">View Projects</a></div></div><div class="hero-card"><div class="terminal"><div class="term-line"><b>$ boot bio-workbench</b></div><div class="term-line">status: <span class="c">online</span></div><div class="term-line">sequence engine: <span class="c">ready</span></div><div class="term-line">NCBI E-utilities: <span class="c">live</span></div><div class="term-line">RCSB PDB: <span class="c">live</span></div><div class="term-line">document tools: <span class="c">local-only</span></div><div class="term-line">privacy: <span class="c">no upload by default</span></div></div></div></div></section>
 
-<section id="workbench"><div class="shell"><div class="section-head"><div><div class="eyebrow">// interactive.lab</div><h2>Bioinformatics Workbench</h2></div><div class="sub">Browser-based analysis tools for sequences, live NCBI genes, real PDB structures, homology search, ORFs, primers, restriction mapping, codon usage, mutations, documents, and secure local file sharing.</div></div>
-<div class="wb"><div class="wb-top"><div class="wb-title">Workbench Console</div><div class="wb-tabs"><button class="wb-tab active" data-pane="sequence">Sequence</button><button class="wb-tab" data-pane="gene">Gene Viewer</button><button class="wb-tab" data-pane="protein">3D Protein</button><button class="wb-tab" data-pane="blast">BLAST Search</button><button class="wb-tab" data-pane="orf">ORF Finder</button><button class="wb-tab" data-pane="primer">Primer Design</button><button class="wb-tab" data-pane="restriction">Restriction</button><button class="wb-tab" data-pane="codon">Codon Usage</button><button class="wb-tab" data-pane="mutation">Mutation</button><button class="wb-tab" data-pane="pdf">PDF Editor</button><button class="wb-tab" data-pane="share">File Share</button><button class="wb-tab" data-pane="signature">AI Signature</button></div></div>
+<div id="preloader" aria-hidden="true">
+  <svg viewBox="0 0 64 64" fill="none">
+    <g class="helix-strand">
+      <path d="M20 6 C40 16, 24 32, 20 42 C16 52, 40 52, 44 58" stroke="#00e5ff" stroke-width="2.4" stroke-linecap="round"/>
+      <path d="M44 6 C24 16, 40 32, 44 42 C48 52, 24 52, 20 58" stroke="#9d4edd" stroke-width="2.4" stroke-linecap="round"/>
+      <line x1="20" y1="10" x2="44" y2="10" stroke="#39ff14" stroke-width="1.6" opacity=".8"/>
+      <line x1="22" y1="22" x2="42" y2="20" stroke="#39ff14" stroke-width="1.6" opacity=".6"/>
+      <line x1="17" y1="34" x2="47" y2="36" stroke="#39ff14" stroke-width="1.6" opacity=".6"/>
+      <line x1="20" y1="48" x2="44" y2="48" stroke="#39ff14" stroke-width="1.6" opacity=".8"/>
+    </g>
+  </svg>
+  <span class="pre-label">LOADING SEQUENCE…</span>
+</div>
 
-<!-- Sequence -->
-<div class="pane active" id="pane-sequence"><div class="notice">Paste DNA/RNA using A/C/G/T/U. IUPAC ambiguity symbols are tolerated for display. Analysis is heuristic for educational use and is not clinical or experimental validation.</div><div class="formgrid"><div class="field"><label>Input sequence</label><textarea id="seq-input" class="textarea">ATGCGTACGTTAGCCGTAAGCTTGGATCCATGCGTACGTTAGCCGTAAGCTTGGATCC</textarea></div><div><div class="field"><label>Sequence preview</label><div class="output" id="seq-preview" style="min-height:180px"></div></div><div class="row"><button class="btn primary" onclick="analyzeSequence()">Analyze</button><button class="btn" onclick="loadSeq('ATGGCCATTGTAATGGGCCGCTGAAAGGGTGCCCGATAG')">Load example</button><button class="btn" onclick="clearSeq()">Clear</button></div></div></div><div id="seq-stats" class="stats"></div><div class="output" id="seq-analysis"></div></div>
+<div class="cursor-dot" id="cursorDot"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+<canvas id="confetti-canvas" aria-hidden="true"></canvas>
 
-<!-- Gene -->
-<div class="pane" id="pane-gene"><div class="notice info">Live NCBI Gene workflow: ESearch resolves the GeneID, ESummary reads metadata, EFetch reads the Gene Table and nucleotide sequence through linked RefSeq records. NCBI is rate-limited here to one request about every 400 ms. No coordinates or annotations are fabricated.</div><div class="gene-toolbar"><div class="field"><label>Gene symbol / name</label><input id="gene-query" class="input" value="BRCA1" placeholder="BRCA1"></div><div class="field"><label>Organism</label><select id="gene-organism" class="select"><option>Homo sapiens</option><option>Mus musculus</option><option>Rattus norvegicus</option><option>Arabidopsis thaliana</option><option>Oryza sativa</option><option>Escherichia coli</option></select></div><button class="btn primary" id="gene-load-btn" onclick="loadGeneLive()">Load live gene</button><button class="btn" onclick="toggleGeneStrand()">Toggle Strand</button></div><div id="gene-status" class="small"></div><div class="gene-map" id="gene-map"><div class="small">No gene loaded.</div></div><div class="gene-panels"><div class="gene-map sequence-window" id="gene-seq-window"><div class="small">Live RefSeq sequence will appear here.</div></div><div><div class="detail-card" id="gene-detail"><h4>Gene details</h4><div class="small">Load a gene to populate this panel.</div></div><div class="detail-card" style="margin-top:10px" id="gene-features"><h4>Features</h4><div class="small">No feature data yet.</div></div></div></div></div>
+<button class="sidebar-toggle" id="sidebarToggle" aria-label="Open navigation" aria-expanded="false">
+  <i class="fa-solid fa-bars"></i>
+</button>
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-<!-- Protein -->
-<div class="pane" id="pane-protein"><div class="notice info">The 3D viewer uses 3Dmol.js in the browser and fetches the real PDB text from RCSB PDB. Default structure: 1CRN (Crambin). Invalid IDs and network errors are reported without substituting a fake structure.</div><div class="protein-grid"><div><div class="viewer"><div class="viewer-tools"><button onclick="proteinStyle('cartoon')">Cartoon</button><button onclick="proteinStyle('stick')">Stick</button><button onclick="proteinStyle('sphere')">Spacefill</button><button onclick="proteinColor('spectrum')">Spectrum</button><button onclick="proteinColor('chain')">Chain</button><button onclick="proteinSurface(true)">Surface</button><button onclick="proteinSurface(false)">Hide Surface</button><button onclick="proteinSpin()">Spin</button><button onclick="proteinReset()">Reset</button></div><div id="protein-viewer" style="height:508px"></div></div></div><div class="protein-info"><div class="field"><label>PDB ID</label><input id="pdb-id" class="input" value="1CRN" maxlength="8" autocomplete="off"><div class="row"><button class="btn primary" onclick="loadPDB()">Load PDB</button></div></div><div id="protein-status" class="small"></div><div class="metric-grid"><div class="stat"><b id="prot-atoms">—</b><span>atoms loaded</span></div><div class="stat"><b id="prot-res">—</b><span>residues</span></div><div class="stat"><b id="prot-chain">—</b><span>chains</span></div><div class="stat"><b id="prot-ss">—</b><span>structure record</span></div></div><div class="detail-card"><h4>Protein details</h4><div id="protein-details" class="small"></div></div><div class="seqbar"><h4 style="margin:0 0 8px;color:var(--cyan);font:600 .8rem 'Space Grotesk'">Residue sequence</h4><pre id="protein-sequence">Loading…</pre></div></div></div></div>
+<div class="app">
+  <nav class="sidebar" id="sidebar" aria-label="Primary">
+    <div class="brand">
+      <div class="brand-mark">SA</div>
+      <div class="brand-text">
+        <strong>Saif Ali</strong>
+        <span>Biotechnology · IIUI</span>
+      </div>
+    </div>
 
-<!-- BLAST -->
-<div class="pane" id="pane-blast"><div class="notice">This uses NCBI's public BLAST REST interface. Submissions can remain queued for several minutes. To respect NCBI's public service, the first status check is delayed at least 60 seconds and later checks at least 30 seconds.</div><div class="formgrid"><div><div class="field"><label>Program</label><select id="blast-program" class="select"><option value="blastn">BLASTN — nucleotide</option><option value="blastp">BLASTP — protein</option></select></div><div class="field" style="margin-top:10px"><label>Database</label><select id="blast-db" class="select"><option value="nt">nt</option><option value="refseq_rna">refseq_rna</option><option value="refseq_protein">refseq_protein</option><option value="nr">nr</option></select></div><div class="field" style="margin-top:10px"><label>Sequence</label><textarea id="blast-seq" class="textarea" placeholder=">query\nATGGCC..."></textarea></div><div class="row"><button class="btn primary" id="blast-submit-btn" onclick="submitBlast()">Submit BLAST</button><button class="btn" onclick="cancelBlastPolling()">Stop polling</button></div></div><div><div id="blast-status" class="small"></div><div class="progress"><i id="blast-progress"></i></div><div class="output" id="blast-output" style="margin-top:10px">No BLAST job yet.</div></div></div></div>
+    <ul class="nav-list" id="navList" role="tablist" aria-orientation="vertical">
+      <div class="nav-glow" id="navGlow"></div>
+      <li role="presentation"><a href="#home" class="nav-item" role="tab" data-tab="home" aria-current="page"><i class="fa-solid fa-house"></i>Home</a></li>
+      <li role="presentation"><a href="#about" class="nav-item" role="tab" data-tab="about"><i class="fa-solid fa-user"></i>About</a></li>
+      <li role="presentation"><a href="#experience" class="nav-item" role="tab" data-tab="experience"><i class="fa-solid fa-briefcase"></i>Experience</a></li>
+      <li role="presentation"><a href="#projects" class="nav-item" role="tab" data-tab="projects"><i class="fa-solid fa-flask"></i>Projects</a></li>
+      <li role="presentation"><a href="#skills" class="nav-item" role="tab" data-tab="skills"><i class="fa-solid fa-chart-simple"></i>Skills</a></li>
+      <li role="presentation"><a href="#contact" class="nav-item" role="tab" data-tab="contact"><i class="fa-solid fa-envelope"></i>Contact</a></li>
+    </ul>
 
-<!-- ORF -->
-<div class="pane" id="pane-orf"><div class="notice">Six-frame ORF finder. Bars are computed from the submitted sequence in the browser; no database search is performed.</div><div class="orf-controls"><div class="field"><label>Sequence</label><textarea id="orf-seq" class="textarea" style="min-height:110px">ATGGCCATTGTAATGGGCCGCTGAAAGGGTGCCCGATAG</textarea></div><div class="field"><label>Minimum ORF length</label><select id="orf-min" class="select"><option value="30">30 nt</option><option value="45">45 nt</option><option value="60">60 nt</option><option value="90">90 nt</option><option value="150">150 nt</option></select></div><button class="btn primary" onclick="runORF()">Find ORFs</button></div><div id="orf-summary" class="small" style="margin-top:10px"></div><div id="orf-track" class="orf-track"></div><div class="output" id="orf-output"></div></div>
+    <div class="sidebar-foot">
+      <a class="foot-link" href="https://linkedin.com/in/saif-ali-421b20369" target="_blank" rel="noopener" aria-label="LinkedIn"><i class="fa-brands fa-linkedin-in"></i></a>
+      <a class="foot-link" href="mailto:saifali15874@gmail.com" aria-label="Email"><i class="fa-solid fa-envelope"></i></a>
+    </div>
+  </nav>
 
-<!-- Primer -->
-<div class="pane" id="pane-primer"><div class="notice">Educational primer design only. Candidates follow simple rules for length, GC, approximate Tm, homopolymers, and self-complementarity. Do not treat these candidates as laboratory-validated primers.</div><div class="formgrid"><div><div class="field"><label>Target sequence</label><textarea id="primer-seq" class="textarea" placeholder="Enter DNA sequence">ATGGCCATTGTAATGGGCCGCTGAAAGGGTGCCCGATAGCTGACCTAGGTCAGCTAGGC</textarea></div><div class="formgrid"><div class="field"><label>Min length</label><input id="primer-min" class="input" type="number" min="18" max="24" value="18"></div><div class="field"><label>Max length</label><input id="primer-max" class="input" type="number" min="18" max="24" value="22"></div></div><div class="row"><button class="btn primary" onclick="designPrimers()">Find candidates</button></div></div><div id="primer-output" class="output">No candidates generated.</div></div></div>
+  <main class="main">
 
-<!-- Restriction -->
-<div class="pane" id="pane-restriction"><div class="notice">Embedded enzyme list contains common restriction endonucleases. Positions use 1-based sequence coordinates; cut-site notation is relative to the recognition motif.</div><div class="formgrid"><div><div class="field"><label>Sequence</label><textarea id="restriction-seq" class="textarea">GAATTCGGATCCGCGGAAGCTTGAATTCGCGGATCC</textarea></div><div class="row"><button class="btn primary" onclick="mapRestrictionSites()">Map sites</button><button class="btn" onclick="loadRestrictionExample()">Load example</button></div></div><div><div id="restriction-summary" class="small"></div><div class="output" id="restriction-output"></div></div></div></div>
+    <!-- ============ HOME ============ -->
+    <section class="panel active" id="panel-home" data-panel="home">
+      <div class="hero">
+        <div>
+          <div class="hero-eyebrow"><span class="dot"></span>Available for research &amp; internship roles</div>
+          <h1 id="heroName">Saif Ali</h1>
+          <div class="typed-role"><span id="typedRoles"></span></div>
+          <p class="hero-bio">BS Biotechnology student at IIUI, building a bridge between wet-lab genomics and computational biology — from primer design to Python-driven analysis.</p>
+          <div class="hero-ctas">
+            <a href="#projects" class="btn btn-primary js-tab-link" data-tab="projects"><i class="fa-solid fa-diagram-project"></i>View Projects</a>
+            <a href="#contact" class="btn btn-ghost js-tab-link" data-tab="contact"><i class="fa-solid fa-paper-plane"></i>Contact Me</a>
+          </div>
+        </div>
+        <div class="portrait-wrap">
+          <div class="portrait-ring"></div>
+          <div class="portrait">
+            <img src="saif-ali.jpg" alt="Portrait of Saif Ali" onerror="this.style.display='none';this.parentElement.querySelector('.fallback').style.display='flex';">
+            <div class="fallback" style="display:none;">SA</div>
+          </div>
+        </div>
+      </div>
 
-<!-- Codon -->
-<div class="pane" id="pane-codon"><div class="notice">Paste a coding sequence in-frame. Codon usage is computed directly from the sequence. “Rare” here is defined relative to the most frequent codon in the entered sequence, not to a species-wide codon-use table.</div><div class="formgrid"><div><div class="field"><label>Coding sequence</label><textarea id="codon-seq" class="textarea">ATGGCCGCCGCCGCTGGTGGTGGTGTTATCAAAGAA</textarea></div><div class="row"><button class="btn primary" onclick="analyzeCodons()">Analyze codons</button></div></div><div><div id="codon-summary" class="stats" style="grid-template-columns:repeat(3,1fr)"></div><div class="output" id="codon-output"></div></div></div></div>
+      <div class="stat-row">
+        <div class="stat-card"><div class="stat-num" data-count="3">0</div><div class="stat-label">Internships completed</div></div>
+        <div class="stat-card"><div class="stat-num" data-count="6">0</div><div class="stat-label">Projects &amp; reports</div></div>
+        <div class="stat-card"><div class="stat-num" data-count="4">0</div><div class="stat-label">Labs trained in</div></div>
+        <div class="stat-card"><div class="stat-num" data-count="4">0</div><div class="stat-label">Years of BS Biotechnology</div></div>
+      </div>
+    </section>
 
-<!-- Mutation -->
-<div class="pane" id="pane-mutation"><div class="notice">Compares two sequences, reports substitutions/insertions/deletions, and translates frame +1. This is an educational comparison, not a clinical variant interpretation service.</div><div class="formgrid"><div class="field"><label>Reference</label><textarea id="mut-ref" class="textarea">ATGGCCATTGTAATGGGCCGCTGAAAGGGTGCCCGATAG</textarea></div><div class="field"><label>Mutant</label><textarea id="mut-alt" class="textarea">ATGGCCATTGTAATGGGCCGCTGAAAGGGTGCCCGATAC</textarea></div></div><div class="row"><button class="btn primary" onclick="runMutation()">Compare</button></div><div class="output" id="mut-output"></div></div>
+    <!-- ============ ABOUT ============ -->
+    <section class="panel" id="panel-about" data-panel="about">
+      <div class="eyebrow-tag"><i class="fa-solid fa-dna"></i>About</div>
+      <div class="section-head">
+        <h2>The person behind the pipette and the terminal</h2>
+      </div>
 
-<!-- PDF -->
-<div class="pane" id="pane-pdf"><div class="notice info">Client-side PDF editor. Text-layer PDFs can be clicked and edited in detected text lines; edits are patched into the original PDF with local overlays so untouched page content is not reflowed. Scanned PDFs can be OCR’d first. This approach preserves layout as a practical browser workflow, but it is not a byte-identical semantic PDF editor like a native desktop PDF engine.</div><div class="dropzone" id="pdf-drop"><input id="pdf-input" type="file" accept="application/pdf" hidden><button class="btn primary" onclick="$('#pdf-input').click()">Choose PDF</button><div class="small" style="margin-top:8px">or drag and drop a PDF here</div></div><div class="row"><button class="btn" id="pdf-ocr-btn" onclick="ocrPdf()" disabled>OCR scanned pages</button><button class="btn primary" id="pdf-save-btn" onclick="saveEditedPdf()" disabled>Save edited PDF</button></div><div id="pdf-status" class="small" style="margin-top:10px"></div><div class="pdf-layout" style="margin-top:12px"><div><div class="detail-card"><h4>Edit model</h4><div class="small">Click a text line in the preview. Type your replacement, then blur/click elsewhere to commit it. New text is wrapped within the original line/block box when the PDF is saved.</div></div><div class="detail-card" style="margin-top:10px"><h4>Detected edits</h4><div id="pdf-edit-list" class="small">None.</div></div></div><div id="pdf-pages" class="pdf-pages"></div></div></div>
+      <div class="about-grid">
+        <div>
+          <div class="about-bio">
+            <p>I'm a <strong>BS Biotechnology</strong> student at the International Islamic University, Islamabad, driven by a desire to integrate computational tools with biological research. Most of my current focus sits at the intersection of <strong>bioinformatics</strong> and <strong>computational genomics</strong> — using data to ask better biological questions.</p>
+            <p>I've picked up hands-on experience at <strong>NIGAB-NARC</strong>, <strong>PCSIR</strong>, and the <strong>NIH Pakistan</strong>, working across DNA extraction, gel electrophoresis, PCR and primer design, while building parallel comfort with Python and R for biological data.</p>
+          </div>
 
-<!-- File sharing -->
-<div class="pane" id="pane-share"><div class="notice info">Cross-device secure share: your browser encrypts the file with AES-256-GCM, then uploads only the ciphertext to the relay server. The decryption key stays in the share link fragment and is never sent to the server. This works across different Wi-Fi/mobile networks.</div><div class="formgrid"><div><div class="dropzone"><input id="share-file-input" type="file" hidden><button class="btn primary" onclick="$('#share-file-input').click()">Choose file</button><div id="share-file-label" class="small" style="margin-top:8px">No file selected.</div></div><div class="row"><button class="btn primary" onclick="createShareCode()">Encrypt & create share</button><button class="btn" onclick="clearShareState()">Clear</button></div><div class="security-box" style="margin-top:12px"><strong>Encryption:</strong> AES-256-GCM, random 256-bit key, random 96-bit IV. The server stores ciphertext only and automatically expires shares after 60 minutes or one download.</div></div><div><div class="detail-card"><h4>Share link</h4><input id="share-link-view" class="input" readonly placeholder="A secure link will appear here"><div class="row"><button class="btn" onclick="copyShareLink()">Copy link</button><button class="btn" onclick="openShareLink()">Open</button></div><div id="share-code-view" class="share-code" style="margin-top:10px">—</div><div id="share-created" class="small" style="margin-top:6px"></div></div><div class="detail-card" style="margin-top:10px"><h4>Receive a file</h4><input id="share-code-input" class="input" placeholder="Paste a share link or share code"><div class="row"><button class="btn primary" onclick="receiveShareCode()">Find & decrypt</button></div><div id="share-receive-status" class="small" style="margin-top:8px"></div></div><div class="detail-card" style="margin-top:10px"><h4>Lifecycle</h4><div class="small">Shares self-expire after 60 minutes or after one successful download. The relay never receives the AES key or plaintext file.</div></div></div></div></div>
+          <div class="side-block" style="margin-top:34px;">
+            <h3><i class="fa-solid fa-microscope"></i>Research interests</h3>
+            <div class="chip-row">
+              <span class="chip">Bioinformatics &amp; Computational Genomics</span>
+              <span class="chip">Machine Learning in Biology</span>
+              <span class="chip">Computational Drug Discovery</span>
+              <span class="chip">CRISPR &amp; Genome Editing</span>
+              <span class="chip">NGS Data Analysis</span>
+              <span class="chip">R Programming for Omics</span>
+            </div>
+          </div>
+        </div>
 
-<!-- Signature -->
-<div class="pane" id="pane-signature"><div class="notice">Signature assistant for PDF/DOCX. The “AI” layer is intentionally heuristic: it finds signature-related phrases, underscore/dotted lines, and common approval labels rather than using a heavy remote model. The signature image is added on top; existing text and margins are not rewritten.</div><div class="formgrid"><div><div class="field"><label>Signature image</label><input id="sig-image-input" class="input" type="file" accept="image/png,image/jpeg"></div><div class="field" style="margin-top:10px"><label>PDF or DOCX document</label><input id="sig-doc-input" class="input" type="file" accept="application/pdf,.pdf,.docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document"></div><div class="row"><button class="btn primary" onclick="scanForSignatures()">Scan for signature fields</button><button class="btn" id="sig-download-btn" onclick="downloadSignedDocument()" disabled>Download signed file</button></div><div id="sig-status" class="small" style="margin-top:10px"></div></div><div class="detail-card"><h4>Placement preview</h4><div id="sig-preview-wrap" class="preview-stage"><div class="small" style="padding:18px">Upload a signature image and a PDF/DOCX file, then scan.</div></div></div></div></div>
-</div></div></div></section>
+        <div>
+          <div class="side-block">
+            <h3><i class="fa-solid fa-graduation-cap"></i>Education</h3>
+            <div class="timeline">
+              <div class="tl-item">
+                <h4>BS Biotechnology</h4>
+                <span>International Islamic University, Islamabad · Sept 2023 – Sept 2027 (expected)</span>
+              </div>
+              <div class="tl-item">
+                <h4>FSc Pre-Medical</h4>
+                <span>Higher secondary education</span>
+              </div>
+              <div class="tl-item">
+                <h4>Matriculation</h4>
+                <span>Secondary school</span>
+              </div>
+            </div>
+          </div>
 
-<section id="projects"><div class="shell"><div class="section-head"><div><div class="eyebrow">// selected.work</div><h2>Projects</h2></div><div class="sub">Research and internship work kept intentionally compact so the interactive workbench remains the main technical showcase.</div></div><div class="cards"><div class="card"><div class="eyebrow">Enzymology · 2026</div><h3>Cas12a (Cpf1): Structure & Mechanism</h3><p>Study of CRISPR-Cas12a covering organism sources, 3D structure, EC classification, mechanism, and applications. The original portfolio identifies PDB 5B43 as the structure reference.</p></div><div class="card"><div class="eyebrow">Community Research · 2026</div><h3>Dengue Fever Prevention Awareness</h3><p>Cross-sectional community survey with structured questionnaire, descriptive statistics, situation analysis, and an action plan.</p></div><div class="card"><div class="eyebrow">Ongoing</div><h3>ML in Bioinformatics</h3><p>Self-learning project focused on combining Python-based machine learning with biological datasets and computational genomics workflows.</p></div></div></div></section>
+          <div class="side-block">
+            <h3><i class="fa-solid fa-address-card"></i>Contact</h3>
+            <ul class="contact-list">
+              <li><i class="fa-solid fa-envelope"></i>saifali15874@gmail.com</li>
+              <li><i class="fa-brands fa-linkedin-in"></i>linkedin.com/in/saif-ali-421b20369</li>
+              <li><i class="fa-solid fa-location-dot"></i>Jhelum, Punjab, Pakistan</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
 
-<section id="experience"><div class="shell"><div class="section-head"><div><div class="eyebrow">// experience</div><h2>Lab & Research Exposure</h2></div></div><div class="grid2"><div class="card"><h3>NIGAB — NARC</h3><p>Molecular and genomics-focused exposure, supporting the portfolio's interest in sequence-level and computational biology workflows.</p></div><div class="card"><h3>PCSIR — Multi-Lab Rotation</h3><p>Environmental, chemical/food, microbiology, and biotechnology work including water quality testing, nutritional/heavy-metal analyses, microbiological methods, and ZnO nanoparticle synthesis.</p></div><div class="card"><h3>NIH</h3><p>Internship experience included in the original portfolio's biotechnology and laboratory exposure track.</p></div><div class="card"><h3>Core methods</h3><p>DNA extraction, gel electrophoresis, PCR, primer design, sequence analysis, Python/R, and computational biology concepts.</p></div></div></div></section>
+    <!-- ============ EXPERIENCE ============ -->
+    <section class="panel" id="panel-experience" data-panel="experience">
+      <div class="eyebrow-tag"><i class="fa-solid fa-vial"></i>Experience</div>
+      <div class="section-head">
+        <h2>Internships &amp; lab rotations</h2>
+        <p>Three placements across genomics, health sciences and multi-disciplinary lab work.</p>
+      </div>
 
-<section id="contact"><div class="shell"><div class="section-head"><div><div class="eyebrow">// contact</div><h2>Let's connect</h2></div><div class="sub">For research, internship, computational biology, or biotechnology opportunities.</div></div><div class="card"><form action="https://formsubmit.co/saifali15874@gmail.com" method="POST"><div class="formgrid"><div><div class="field"><label>Name</label><input class="input" name="name" required></div><div class="field" style="margin-top:10px"><label>Email <span style="color:var(--pink)">*</span></label><input class="input" type="email" name="email" required autocomplete="email" placeholder="you@example.com" aria-required="true"></div></div><div class="field"><label>Message</label><textarea class="textarea" name="message" required></textarea></div></div><div class="row"><button class="btn primary" type="submit">Send inquiry</button></div></form></div></div></section>
-</main>
-<footer><div class="shell foot"><span>Saif Ali · Biotechnology & Bioinformatics</span><span class="mono">single-file portfolio / live-data workbench</span></div></footer>
+      <div class="exp-timeline">
+        <div class="exp-item">
+          <div class="exp-dot"><i class="fa-solid fa-dna"></i></div>
+          <div class="glass-card exp-card">
+            <div class="exp-top">
+              <div><div class="exp-org">NIGAB — National Institute for Genomics &amp; Advanced Biotechnology, NARC</div><div class="exp-role">Genomics Research Intern</div></div>
+              <div class="exp-dates">Jul – Sep 2026</div>
+            </div>
+            <div class="exp-sup">Supervisor: <strong>Dr. Zaheer Abbas</strong></div>
+            <ul class="exp-bullets">
+              <li>Designed and validated PCR primers for the <em>OsARF11</em> gene using Primer-BLAST and NCBI databases.</li>
+              <li>Ran gel electrophoresis to confirm amplification products and assess primer specificity.</li>
+              <li>Performed DNA extraction and PCR optimization across multiple rice genotype samples.</li>
+              <li>Documented protocols and results for genomics workflows under supervisor review.</li>
+            </ul>
+            <div class="chip-row">
+              <span class="chip">Genomics</span><span class="chip">Primer Design</span><span class="chip">PCR</span><span class="chip">Gel Electrophoresis</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="exp-item">
+          <div class="exp-dot"><i class="fa-solid fa-heart-pulse"></i></div>
+          <div class="glass-card exp-card">
+            <div class="exp-top">
+              <div><div class="exp-org">National Institutes of Health (NIH), Pakistan</div><div class="exp-role">Health Sciences Intern</div></div>
+              <div class="exp-dates">Jul – Aug 2026</div>
+            </div>
+            <ul class="exp-bullets">
+              <li>Rotated through health sciences laboratories, observing diagnostic and research workflows.</li>
+              <li>Assisted with sample handling and basic lab documentation practices.</li>
+              <li>Gained exposure to public-health-oriented lab operations and quality standards.</li>
+            </ul>
+            <div class="chip-row">
+              <span class="chip">Health Sciences</span><span class="chip">Lab Operations</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="exp-item">
+          <div class="exp-dot"><i class="fa-solid fa-flask-vial"></i></div>
+          <div class="glass-card exp-card">
+            <div class="exp-top">
+              <div><div class="exp-org">PCSIR — Pakistan Council of Scientific &amp; Industrial Research</div><div class="exp-role">Multi-Lab Rotation Intern</div></div>
+              <div class="exp-dates">Mar 2026 · 8 weeks</div>
+            </div>
+            <div class="exp-sup">Supervisors: <strong>Mrs. Razia Kalsoom</strong>, <strong>Dr. Fouzia Noureen</strong>, <strong>Miss Fouzia Hussain</strong>, <strong>Dr. Uzma Rashid</strong></div>
+            <ul class="exp-bullets">
+              <li>Rotated across multiple analytical and microbiology labs over an 8-week placement.</li>
+              <li>Practiced titration, NanoDrop quantification, and general instrumental analysis techniques.</li>
+              <li>Learned media preparation and core microbiology handling protocols.</li>
+              <li>Compiled a multi-lab techniques report summarizing methods and findings.</li>
+            </ul>
+            <div class="chip-row">
+              <span class="chip">Analytical Chemistry</span><span class="chip">Microbiology</span><span class="chip">Instrumentation</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ PROJECTS ============ -->
+    <section class="panel" id="panel-projects" data-panel="projects">
+      <div class="eyebrow-tag"><i class="fa-solid fa-flask-vial"></i>Projects</div>
+      <div class="section-head">
+        <h2>Reports, studies &amp; ongoing work</h2>
+        <p>Click a card to flip it and read the details.</p>
+      </div>
+
+      <div class="proj-controls">
+        <div class="filter-row" id="filterRow">
+          <button class="filter-btn active" data-filter="all">All</button>
+          <button class="filter-btn" data-filter="Research">Research</button>
+          <button class="filter-btn" data-filter="Internship">Internship</button>
+          <button class="filter-btn" data-filter="Molecular">Molecular</button>
+          <button class="filter-btn" data-filter="ML">ML</button>
+        </div>
+        <div class="search-box">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <input type="text" id="projSearch" placeholder="Search projects…" aria-label="Search projects">
+        </div>
+      </div>
+
+      <div class="proj-grid" id="projGrid">
+
+        <div class="proj-card-outer" data-cat="Research" data-title="dengue fever awareness survey">
+          <div class="proj-card-inner">
+            <div class="glass-card proj-face proj-front">
+              <span class="proj-tag">Research</span>
+              <h4>Dengue Fever Awareness Survey</h4>
+              <p>Community-level survey assessing public knowledge and prevention practices around dengue fever.</p>
+              <span class="proj-hint"><i class="fa-solid fa-rotate"></i>Click to flip</span>
+            </div>
+            <div class="glass-card proj-face proj-back">
+              <p>Designed and distributed a structured questionnaire to evaluate awareness of dengue transmission, symptoms and prevention within the local community, then analyzed responses to identify knowledge gaps.</p>
+              <div class="proj-tags-mini"><span class="chip">Survey Design</span><span class="chip">Public Health</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="proj-card-outer" data-cat="Molecular" data-title="cas12a cpf1 nuclease study">
+          <div class="proj-card-inner">
+            <div class="glass-card proj-face proj-front">
+              <span class="proj-tag">Molecular</span>
+              <h4>Cas12a (Cpf1) Nuclease Study</h4>
+              <p>Literature-based study on the structure, mechanism and applications of the Cas12a nuclease in genome editing.</p>
+              <span class="proj-hint"><i class="fa-solid fa-rotate"></i>Click to flip</span>
+            </div>
+            <div class="glass-card proj-face proj-back">
+              <p>Reviewed how Cas12a's single RNA-guided nuclease mechanism differs from Cas9, its staggered-cut DNA repair implications, and its growing role in diagnostics and genome engineering.</p>
+              <div class="proj-tags-mini"><span class="chip">CRISPR</span><span class="chip">Genome Editing</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="proj-card-outer" data-cat="Internship" data-title="pcsir lab techniques report">
+          <div class="proj-card-inner">
+            <div class="glass-card proj-face proj-front">
+              <span class="proj-tag">Internship</span>
+              <h4>PCSIR Lab Techniques Report</h4>
+              <p>Consolidated report covering the analytical and microbiology techniques practiced during the PCSIR rotation.</p>
+              <span class="proj-hint"><i class="fa-solid fa-rotate"></i>Click to flip</span>
+            </div>
+            <div class="glass-card proj-face proj-back">
+              <p>Documented titration procedures, NanoDrop quantification, media preparation and instrumentation basics across the 8-week, multi-lab PCSIR rotation.</p>
+              <div class="proj-tags-mini"><span class="chip">Analytical Chemistry</span><span class="chip">Reporting</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="proj-card-outer" data-cat="Internship" data-title="nigab genomics report">
+          <div class="proj-card-inner">
+            <div class="glass-card proj-face proj-front">
+              <span class="proj-tag">Internship</span>
+              <h4>NIGAB Genomics Report</h4>
+              <p>Summary report of primer design and PCR-based genomics work carried out at NIGAB-NARC.</p>
+              <span class="proj-hint"><i class="fa-solid fa-rotate"></i>Click to flip</span>
+            </div>
+            <div class="glass-card proj-face proj-back">
+              <p>Detailed the primer design workflow for OsARF11 using Primer-BLAST, the PCR optimization steps taken, and gel electrophoresis results confirming amplification.</p>
+              <div class="proj-tags-mini"><span class="chip">Genomics</span><span class="chip">PCR</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="proj-card-outer" data-cat="ML" data-title="ml in bioinformatics">
+          <div class="proj-card-inner">
+            <div class="glass-card proj-face proj-front">
+              <span class="proj-tag">ML</span>
+              <h4>ML in Bioinformatics</h4>
+              <p>Exploring machine learning approaches applied to biological and genomic datasets.</p>
+              <span class="proj-hint"><i class="fa-solid fa-rotate"></i>Click to flip</span>
+            </div>
+            <div class="glass-card proj-face proj-back">
+              <p>Currently studying how classification and clustering methods can be applied to genomic and expression data as a foundation for future computational biology work.</p>
+              <div class="proj-status"><i class="fa-solid fa-circle-dot"></i> In progress</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="proj-card-outer" data-cat="ML" data-title="r programming for biological data">
+          <div class="proj-card-inner">
+            <div class="glass-card proj-face proj-front">
+              <span class="proj-tag">ML</span>
+              <h4>R Programming for Biological Data</h4>
+              <p>Building fluency in R for statistical analysis and visualization of biological datasets.</p>
+              <span class="proj-hint"><i class="fa-solid fa-rotate"></i>Click to flip</span>
+            </div>
+            <div class="glass-card proj-face proj-back">
+              <p>Working through R fundamentals — data wrangling, statistical tests and plotting — with a focus on applying them to omics-style datasets.</p>
+              <div class="proj-status"><i class="fa-solid fa-circle-dot"></i> In progress</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ============ SKILLS ============ -->
+    <section class="panel" id="panel-skills" data-panel="skills">
+      <div class="eyebrow-tag"><i class="fa-solid fa-gauge-high"></i>Skills</div>
+      <div class="section-head">
+        <h2>Lab, computational &amp; analytical toolkit</h2>
+      </div>
+
+      <div class="skills-layout">
+        <div>
+          <div class="skill-group">
+            <h3>Lab Techniques</h3>
+            <div class="skill-row" data-value="95"><div class="skill-top"><span>DNA Extraction (CTAB)</span><span>95%</span></div><div class="skill-track"><div class="skill-fill"></div></div></div>
+            <div class="skill-row" data-value="95"><div class="skill-top"><span>Agarose Gel Preparation</span><span>95%</span></div><div class="skill-track"><div class="skill-fill"></div></div></div>
+            <div class="skill-row" data-value="90"><div class="skill-top"><span>Gel Electrophoresis</span><span>90%</span></div><div class="skill-track"><div class="skill-fill"></div></div></div>
+            <div class="skill-row" data-value="85"><div class="skill-top"><span>PCR</span><span>85%</span></div><div class="skill-track"><div class="skill-fill"></div></div></div>
+            <div class="skill-row" data-value="85"><div class="skill-top"><span>Primer Designing</span><span>85%</span></div><div class="skill-track"><div class="skill-fill"></div></div></div>
+            <div class="skill-row" data-value="80"><div class="skill-top"><span>Media Preparation</span><span>80%</span></div><div class="skill-track"><div class="skill-fill"></div></div></div>
+            <div class="skill-row" data-value="70"><div class="skill-top"><span>qPCR</span><span>70%</span></div><div class="skill-track"><div class="skill-fill"></div></div></div>
+            <div class="skill-row" data-value="65"><div class="skill-top"><span>Tissue Culture</span><span>65%</span></div><div class="skill-track"><div class="skill-fill"></div></div></div>
+          </div>
+
+          <div class="skill-group">
+            <h3>Bioinformatics</h3>
+            <div class="skill-row" data-value="85"><div class="skill-top"><span>Primer-BLAST / NCBI</span><span>85%</span></div><div class="skill-track"><div class="skill-fill"></div></div></div>
+            <div class="skill-row" data-value="80"><div class="skill-top"><span>SnapGene</span><span>80%</span></div><div class="skill-track"><div class="skill-fill"></div></div></div>
+            <div class="skill-row" data-value="80"><div class="skill-top"><span>Computational Genomics</span><span>80%</span></div><div class="skill-track"><div class="skill-fill"></div></div></div>
+            <div class="skill-row" data-value="70"><div class="skill-top"><span>Bioinformatics Tools</span><span>70%</span></div><div class="skill-track"><div class="skill-fill"></div></div></div>
+            <div class="skill-row" data-value="70"><div class="skill-top"><span>Data Analysis</span><span>70%</span></div><div class="skill-track"><div class="skill-fill"></div></div></div>
+            <div class="skill-row" data-value="65"><div class="skill-top"><span>R Basics</span><span>65%</span></div><div class="skill-track"><div class="skill-fill"></div></div></div>
+          </div>
+
+          <div class="skill-group">
+            <h3>Programming</h3>
+            <div class="skill-row" data-value="75"><div class="skill-top"><span>Python</span><span>75%</span></div><div class="skill-track"><div class="skill-fill"></div></div></div>
+            <div class="skill-row" data-value="80"><div class="skill-top"><span>MS Excel</span><span>80%</span></div><div class="skill-track"><div class="skill-fill"></div></div></div>
+            <div class="skill-row" data-value="65"><div class="skill-top"><span>AutoDock</span><span>65%</span></div><div class="skill-track"><div class="skill-fill"></div></div></div>
+            <div class="skill-row" data-value="50"><div class="skill-top"><span>Machine Learning</span><span>50%</span></div><div class="skill-track"><div class="skill-fill"></div></div></div>
+            <div class="skill-row" data-value="60"><div class="skill-top"><span>CAD</span><span>60%</span></div><div class="skill-track"><div class="skill-fill"></div></div></div>
+          </div>
+
+          <div class="skill-group">
+            <h3>Analytical</h3>
+            <div class="skill-row" data-value="80"><div class="skill-top"><span>NanoDrop</span><span>80%</span></div><div class="skill-track"><div class="skill-fill"></div></div></div>
+            <div class="skill-row" data-value="80"><div class="skill-top"><span>Titration</span><span>80%</span></div><div class="skill-track"><div class="skill-fill"></div></div></div>
+            <div class="skill-row" data-value="65"><div class="skill-top"><span>HPLC</span><span>65%</span></div><div class="skill-track"><div class="skill-fill"></div></div></div>
+            <div class="skill-row" data-value="65"><div class="skill-top"><span>ICP-OES / ICP-MS</span><span>65%</span></div><div class="skill-track"><div class="skill-fill"></div></div></div>
+            <div class="skill-row" data-value="50"><div class="skill-top"><span>NGS Analysis</span><span>50%</span></div><div class="skill-track"><div class="skill-fill"></div></div></div>
+          </div>
+        </div>
+
+        <div class="glass-card radar-card">
+          <h3 style="font-size:1rem;margin-bottom:14px;">Skill overview</h3>
+          <canvas id="radarChart" width="320" height="320"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ CONTACT ============ -->
+    <section class="panel" id="panel-contact" data-panel="contact">
+      <div class="eyebrow-tag"><i class="fa-solid fa-paper-plane"></i>Contact</div>
+      <div class="section-head">
+        <h2>Let's talk research, internships or collaboration</h2>
+      </div>
+
+      <div class="contact-layout">
+        <form class="glass-card" id="contactForm" action="https://formsubmit.co/ajax/saifali15874@gmail.com" method="POST" novalidate>
+          <div class="form-row">
+            <label for="cf-name">Name</label>
+            <input type="text" id="cf-name" name="name" autocomplete="name">
+            <div class="field-error" id="err-name"></div>
+          </div>
+          <div class="form-row">
+            <label for="cf-email">Email</label>
+            <input type="email" id="cf-email" name="email" autocomplete="email">
+            <div class="field-error" id="err-email"></div>
+          </div>
+          <div class="form-row">
+            <label for="cf-subject">Subject</label>
+            <input type="text" id="cf-subject" name="subject">
+            <div class="field-error" id="err-subject"></div>
+          </div>
+          <div class="form-row">
+            <label for="cf-message">Message</label>
+            <textarea id="cf-message" name="message"></textarea>
+            <div class="field-error" id="err-message"></div>
+          </div>
+          <input type="hidden" name="_subject" value="New portfolio message from Saif Ali's site">
+          <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off">
+
+          <button type="submit" class="btn btn-primary" id="cf-submit"><i class="fa-solid fa-paper-plane"></i>Send Message</button>
+          <div class="form-status" id="formStatus"></div>
+        </form>
+
+        <div class="contact-side">
+          <div class="side-block">
+            <h3><i class="fa-solid fa-address-card"></i>Direct contact</h3>
+            <ul class="contact-list">
+              <li><i class="fa-solid fa-envelope"></i>saifali15874@gmail.com</li>
+              <li><i class="fa-solid fa-location-dot"></i>Jhelum, Punjab, Pakistan</li>
+            </ul>
+          </div>
+          <div class="side-block">
+            <h3><i class="fa-solid fa-share-nodes"></i>Elsewhere</h3>
+            <div class="social-row">
+              <a class="social-btn" href="https://linkedin.com/in/saif-ali-421b20369" target="_blank" rel="noopener"><i class="fa-brands fa-linkedin-in"></i>LinkedIn</a>
+              <a class="social-btn" href="mailto:saifali15874@gmail.com"><i class="fa-solid fa-envelope"></i>Email</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-note">
+        <span>© 2026 Saif Ali. Built with care.</span>
+        <span>Jhelum, Punjab, Pakistan</span>
+      </div>
+    </section>
+
+  </main>
+</div>
 
 <script>
-'use strict';
-const $=s=>document.querySelector(s);
-const $$=s=>[...document.querySelectorAll(s)];
-const sleep=ms=>new Promise(r=>setTimeout(r,ms));
-const esc=s=>String(s??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
-const fmtInt=n=>Number(n).toLocaleString();
-const fmtBytes=n=>{if(!Number.isFinite(n))return '—';const u=['B','KB','MB','GB'];let i=0,v=n;while(v>=1024&&i<u.length-1){v/=1024;i++;}return `${v.toFixed(i?1:0)} ${u[i]}`};
-const cleanSeq=s=>(s||'').toUpperCase().replace(/^>.*$/gm,'').replace(/[^ACGTUNRYSWKMBDHV]/g,'');
-const cleanProteinSeq=s=>(s||'').toUpperCase().replace(/^>.*$/gm,'').replace(/[^A-Z*]/g,'');
-const revcomp=s=>{const m={A:'T',T:'A',G:'C',C:'G',U:'A',N:'N',R:'Y',Y:'R',S:'S',W:'W',K:'M',M:'K',B:'V',D:'H',H:'D',V:'B'};return [...s].reverse().map(x=>m[x]||x).join('')};
-const geneticCode={TTT:'F',TTC:'F',TTA:'L',TTG:'L',TCT:'S',TCC:'S',TCA:'S',TCG:'S',TAT:'Y',TAC:'Y',TAA:'*',TAG:'*',TGT:'C',TGC:'C',TGA:'*',TGG:'W',CTT:'L',CTC:'L',CTA:'L',CTG:'L',CCT:'P',CCC:'P',CCA:'P',CCG:'P',CAT:'H',CAC:'H',CAA:'Q',CAG:'Q',CGT:'R',CGC:'R',CGA:'R',CGG:'R',ATT:'I',ATC:'I',ATA:'I',ATG:'M',ACT:'T',ACC:'T',ACA:'T',ACG:'T',AAT:'N',AAC:'N',AAA:'K',AAG:'K',AGT:'S',AGC:'S',AGA:'R',AGG:'R',GTT:'V',GTC:'V',GTA:'V',GTG:'V',GCT:'A',GCC:'A',GCA:'A',GCG:'A',GAT:'D',GAC:'D',GAA:'E',GAG:'E',GGT:'G',GGC:'G',GGA:'G',GGG:'G'};
-const aa3to1={ALA:'A',ARG:'R',ASN:'N',ASP:'D',CYS:'C',GLN:'Q',GLU:'E',GLY:'G',HIS:'H',ILE:'I',LEU:'L',LYS:'K',MET:'M',PHE:'F',PRO:'P',SER:'S',THR:'T',TRP:'W',TYR:'Y',VAL:'V'};
-function translate(s,frame=0,stopAtStop=true){s=(s||'').replace(/U/g,'T');let p='';for(let i=frame;i+2<s.length;i+=3){const aa=geneticCode[s.slice(i,i+3)]||'X';p+=aa;if(stopAtStop&&aa==='*')break;}return p}
-function seqHTML(s){return [...s].map(c=>`<span class="${c}">${c}</span>`).join('')}
-function setStatus(id,msg,type=''){const el=$(id);if(!el)return;el.className='small '+(type==='error'?'danger':type==='success'?'good':'');el.innerHTML=msg}
+gsap.registerPlugin(ScrollTrigger);
+const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-/* Tabs */
-$$('.wb-tab').forEach(b=>b.addEventListener('click',()=>{$$('.wb-tab').forEach(x=>x.classList.remove('active'));$$('.pane').forEach(x=>x.classList.remove('active'));b.classList.add('active');$('#pane-'+b.dataset.pane).classList.add('active');if(b.dataset.pane==='protein')initProtein();if(b.dataset.pane==='gene'&&!geneState.loaded)setTimeout(()=>loadGeneLive(),80)}));
+/* ---------- Preloader ---------- */
+window.addEventListener('load', () => {
+  const pre = document.getElementById('preloader');
+  const helix = pre.querySelector('.helix-strand');
+  if(!reduceMotion){
+    gsap.to(helix, {rotate: 360, duration: 1.4, ease:'power1.inOut', transformOrigin:'50% 50%'});
+  }
+  setTimeout(() => { pre.classList.add('done'); startHero(); }, reduceMotion ? 100 : 1500);
+});
 
-/* Sequence analyzer */
-function analyzeSequence(){const s=cleanSeq($('#seq-input').value);$('#seq-preview').innerHTML='<div class="seq">'+seqHTML(s.slice(0,1200))+'</div>'+(s.length>1200?'<div class="small">Preview limited to 1200 bases.</div>':'');if(!s){$('#seq-stats').innerHTML='';$('#seq-analysis').innerHTML='<div class="small">No sequence.</div>';return}const gc=(s.match(/[GC]/g)||[]).length;const at=(s.match(/[ATU]/g)||[]).length;const amb=s.length-gc-at;const starts=[...s.matchAll(/ATG/g)].length;const stops=[...s.matchAll(/T(?:AA|AG|GA)/g)].length;const r=revcomp(s);let orfs=[];for(let f=0;f<3;f++){for(let i=f;i+5<s.length;i+=3){if(s.slice(i,i+3)!=='ATG')continue;for(let j=i+3;j+2<s.length;j+=3){if(['TAA','TAG','TGA'].includes(s.slice(j,j+3))){if(j+3-i>=30)orfs.push({frame:f+1,start:i+1,end:j+3,len:j+3-i});break}}}}const prot=translate(s);$('#seq-stats').innerHTML=[[''+fmtInt(s.length),'bp'],[(gc/s.length*100).toFixed(2)+'%','GC'],[(at/s.length*100).toFixed(2)+'%','AT'],[amb,'ambiguity'],[starts,'ATG motifs'],[stops,'stop motifs']].map(([a,b])=>`<div class="stat"><b>${a}</b><span>${b}</span></div>`).join('');$('#seq-analysis').innerHTML=`<div class="small">Reverse complement</div><div class="seq">${seqHTML(r.slice(0,4000))}</div><hr style="border-color:var(--line);border-style:solid;border-width:1px 0 0;margin:12px 0"><div class="small">Forward translation (+1, first stop shown)</div><div class="seq">${esc(prot.slice(0,1600))}</div><div class="small" style="margin-top:10px">Forward ORFs ≥ 30 nt</div>${orfs.length?'<table class="table"><tr><th>Frame</th><th>Start</th><th>End</th><th>Length</th></tr>'+orfs.map(o=>`<tr><td>+${o.frame}</td><td>${o.start}</td><td>${o.end}</td><td>${o.len}</td></tr>`).join('')+'</table>':'<div class="small">No qualifying ORF found in the forward strand.</div>'}`}
-function loadSeq(x){$('#seq-input').value=x;analyzeSequence()}
-function clearSeq(){$('#seq-input').value='';analyzeSequence()}
+/* ---------- Lenis smooth scroll ---------- */
+if(!reduceMotion && window.Lenis){
+  const lenis = new Lenis({smoothWheel:true, lerp:0.11});
+  function raf(time){ lenis.raf(time); requestAnimationFrame(raf); }
+  requestAnimationFrame(raf);
+}
 
-/* NCBI client */
-const NCBI_BASE='https://eutils.ncbi.nlm.nih.gov/entrez/eutils/';
-let ncbiQueue=Promise.resolve(),lastNcbiCall=0;
-function ncbiFetch(path,init={}){const task=ncbiQueue.then(async()=>{const gap=400-(Date.now()-lastNcbiCall);if(gap>0)await sleep(gap);lastNcbiCall=Date.now();const res=await fetch(NCBI_BASE+path,{...init,cache:'no-store'});if(!res.ok)throw new Error(`NCBI HTTP ${res.status}`);return res});ncbiQueue=task.catch(()=>{});return task}
-async function ncbiJSON(path){const r=await ncbiFetch(path);return r.json()}
-async function ncbiText(path){const r=await ncbiFetch(path);return r.text()}
-const ncbiParam=o=>new URLSearchParams(o).toString();
+/* ---------- Magnetic cursor ---------- */
+const dot = document.getElementById('cursorDot');
+const ring = document.getElementById('cursorRing');
+if(window.matchMedia('(hover:hover)').matches){
+  let mx=0,my=0, rx=0, ry=0;
+  window.addEventListener('mousemove', e=>{
+    mx=e.clientX; my=e.clientY;
+    dot.style.left=mx+'px'; dot.style.top=my+'px';
+  });
+  (function loop(){
+    rx += (mx-rx)*0.18; ry += (my-ry)*0.18;
+    ring.style.left=rx+'px'; ring.style.top=ry+'px';
+    requestAnimationFrame(loop);
+  })();
+  document.querySelectorAll('a, button, .nav-item, .proj-card-outer').forEach(el=>{
+    el.addEventListener('mouseenter', ()=>ring.classList.add('active'));
+    el.addEventListener('mouseleave', ()=>ring.classList.remove('active'));
+  });
+}
 
-const geneState={loaded:false,data:null,reverse:false};
-async function loadGeneLive(){const q=($('#gene-query').value||'').trim(),org=($('#gene-organism').value||'').trim();if(!q){setStatus('#gene-status','Enter a gene symbol/name first.','error');return}const btn=$('#gene-load-btn');btn.disabled=true;btn.innerHTML='<span class="spinner"></span>Fetching';setStatus('#gene-status','Searching NCBI Gene…');$('#gene-map').innerHTML='';$('#gene-seq-window').innerHTML='';try{
-const term=`${q}[Gene Name] AND ${org}[Organism]`;const es=await ncbiJSON('esearch.fcgi?'+ncbiParam({db:'gene',term,retmode:'json',retmax:5,sort:'relevance'}));const ids=es?.esearchresult?.idlist||[];if(!ids.length)throw new Error(`No NCBI Gene record found for ${q} in ${org}.`);const uid=ids[0];setStatus('#gene-status',`Found GeneID ${esc(uid)}. Reading summary and annotation…`);const sm=await ncbiJSON('esummary.fcgi?'+ncbiParam({db:'gene',id:uid,retmode:'json'}));const doc=sm?.result?.[uid];if(!doc)throw new Error('NCBI returned no Gene summary for the selected UID.');
-const gt=await ncbiText('efetch.fcgi?'+ncbiParam({db:'gene',id:uid,rettype:'gene_table',retmode:'text'}));const links=await ncbiJSON('elink.fcgi?'+ncbiParam({dbfrom:'gene',db:'nuccore',id:uid,retmode:'json',linkname:'gene_nuccore'}));const nuccoreIds=links?.linksets?.[0]?.linksetdbs?.flatMap(x=>x.links||[])||[];
-let accession='';let nuccoreCandidates=[];if(nuccoreIds.length){const ns=await ncbiJSON('esummary.fcgi?'+ncbiParam({db:'nuccore',id:nuccoreIds.slice(0,20).join(','),retmode:'json'}));const result=ns?.result||{};nuccoreCandidates=Object.values(result).filter(x=>x&&x.accessionversion).sort((a,b)=>{const score=x=>/^NM_/.test(x.accessionversion)?0:/^NR_/.test(x.accessionversion)?1:/^XM_/.test(x.accessionversion)?2:3;return score(a)-score(b)});accession=nuccoreCandidates[0]?.accessionversion||''}
-if(!accession)throw new Error('NCBI found the gene, but no linked nucleotide RefSeq record was returned.');
-setStatus('#gene-status',`GeneID ${esc(uid)} found. Fetching RefSeq ${esc(accession)} sequence…`);const fasta=await ncbiText('efetch.fcgi?'+ncbiParam({db:'nuccore',id:accession,rettype:'fasta',retmode:'text'}));const seq=cleanSeq(fasta);if(!seq)throw new Error(`RefSeq ${accession} contained no nucleotide sequence.`);
-const features=parseGeneTable(gt);geneState.loaded=true;geneState.data={uid,doc,accession,fasta,seq,geneTable:gt,features,nuccoreCandidates};renderLiveGene();setStatus('#gene-status',`Loaded live NCBI GeneID ${esc(uid)} · RefSeq ${esc(accession)} · ${fmtInt(seq.length)} nt.`,`success`);
-}catch(err){geneState.loaded=false;geneState.data=null;$('#gene-map').innerHTML='<div class="notice error">'+esc(err.message||'Unable to load this gene.')+'</div>';$('#gene-seq-window').innerHTML='';$('#gene-detail').innerHTML='<h4>Gene details</h4><div class="small">No live record loaded.</div>';$('#gene-features').innerHTML='<h4>Features</h4><div class="small">No feature data available.</div>';setStatus('#gene-status','Live NCBI request failed. The page did not substitute demo coordinates or sequences.','error');}finally{btn.disabled=false;btn.textContent='Load live gene'}}
-function parseGeneTable(text){const rows=[];const lines=(text||'').split(/\r?\n/);let currentTranscript='';for(const line of lines){const s=line.trim();if(!s)continue;if(/^(NM_|NR_|XM_|XR_)/.test(s))currentTranscript=s.split(/\s+/)[0];const em=s.match(/\bexon\b[^0-9]*(\d+)\D+(\d+)/i);const im=s.match(/\bintron\b[^0-9]*(\d+)\D+(\d+)/i);if(em)rows.push({type:'exon',start:+em[1],end:+em[2],transcript:currentTranscript});if(im)rows.push({type:'intron',start:+im[1],end:+im[2],transcript:currentTranscript});}
-return rows.filter(r=>r.end>=r.start).slice(0,500)}
-function renderLiveGene(){const d=geneState.data;if(!d)return;const doc=d.doc||{},gi=Array.isArray(doc.genomicinfo)?doc.genomicinfo[0]||{}:doc.genomicinfo||{};let gStart=gi.chrstart!=null?Number(gi.chrstart)+1:null,gStop=gi.chrstop!=null?Number(gi.chrstop)+1:null;const chr=doc.chromosome||gi.chrloc||'not reported',strand=(gStart!=null&&gStop!=null)?(Number(gi.chrstart)<=Number(gi.chrstop)?'+':'−'):'not reported';const span=gStart!=null&&gStop!=null?Math.abs(gStop-gStart)+1:d.seq.length;const feats=d.features.length?d.features.filter(f=>f.start>=0&&f.end<=Math.max(span*2,span)):[];let map='<div class="track"><div class="track-label">NCBI Gene / RefSeq annotation</div>';if(gStart!=null&&gStop!=null)map+='<div class="feature prom" style="left:0%;width:100%;opacity:.07" title="Genomic gene span"></div>';if(feats.length){const min=Math.min(...feats.map(f=>f.start)),max=Math.max(...feats.map(f=>f.end));const denom=Math.max(1,max-min+1);feats.slice(0,120).forEach((f,i)=>{const left=(f.start-min)/denom*100,width=(f.end-f.start+1)/denom*100;const cls=f.type==='exon'?'exon':'intron';map+=`<div class="feature ${cls}" style="left:${left}%;width:${Math.max(.35,width)}%" title="${esc(f.type)} ${f.start}-${f.end}"><span class="feature-label">${i<10?esc(f.type):''}</span></div>`});map+='</div><div class="axis"><span>'+fmtInt(min)+'</span><span>'+fmtInt(Math.round(min+denom*.25))+'</span><span>'+fmtInt(Math.round(min+denom*.5))+'</span><span>'+fmtInt(Math.round(min+denom*.75))+'</span><span>'+fmtInt(max)+'</span></div><div class="small" style="margin-top:12px">Structure bars are parsed from the returned NCBI Gene Table. If NCBI did not return parseable exon/intron rows, this area reports that limitation instead of inventing features.</div>'}else map+='</div><div class="axis"><span>'+esc(gStart!=null?fmtInt(gStart):'—')+'</span><span>genomic start</span><span>gene span</span><span>genomic end</span><span>'+esc(gStop!=null?fmtInt(gStop):'—')+'</span></div><div class="small" style="margin-top:12px">NCBI returned no parseable exon/intron rows for this record in the Gene Table response.</div>';$('#gene-map').innerHTML=map;
-let seq=d.seq;if(geneState.reverse)seq=revcomp(seq);let lines='';for(let i=0;i<seq.length;i+=60){const chunk=seq.slice(i,i+60);let cod='';for(let j=0;j<chunk.length;j+=3)cod+=chunk.slice(j,j+3)+' ';lines+=`<div class="seqline"><div class="pos">${fmtInt(i+1)}-${fmtInt(Math.min(i+60,seq.length))}</div><div class="seqchars">${seqHTML(chunk)}</div><div class="codons">${esc(cod)}</div></div>`};$('#gene-seq-window').innerHTML='<div class="small" style="margin-bottom:8px">'+(geneState.reverse?'Reverse complement view':'RefSeq transcript sequence')+' · '+esc(d.accession)+'</div>'+lines;
-const gc=((d.seq.match(/[GC]/g)||[]).length/Math.max(1,d.seq.length)*100).toFixed(2),aliases=doc.otheraliases||doc.otherdesignations||'—',summary=doc.summary||'No summary returned by NCBI.';$('#gene-detail').innerHTML=`<h4>${esc(doc.name||doc.nomenclaturesymbol||'Gene')}</h4><div class="kv"><span>GeneID</span><b>${esc(d.uid)}</b><span>Description</span><b>${esc(doc.description||'—')}</b><span>Organism</span><b>${esc(doc.organism?.scientificname||'—')}</b><span>Chromosome</span><b>${esc(chr)}</b><span>Map location</span><b>${esc(doc.maplocation||'—')}</b><span>Coordinates</span><b>${gStart!=null&&gStop!=null?`${fmtInt(Math.min(gStart,gStop))}-${fmtInt(Math.max(gStart,gStop))}`:'not returned'}</b><span>Strand</span><b>${esc(strand)}</b><span>RefSeq</span><b>${esc(d.accession)}</b><span>Transcript length</span><b>${fmtInt(d.seq.length)} nt</b><span>GC content</span><b>${gc}%</b><span>Aliases</span><b>${esc(Array.isArray(aliases)?aliases.join('; '):String(aliases||'—'))}</b></div><div class="small" style="margin-top:10px">${esc(summary)}</div>`;
-let fh='<h4>Annotation</h4><table class="table"><tr><th>Type</th><th>Start</th><th>End</th><th>Length</th><th>Transcript</th></tr>';if(feats.length)fh+=feats.slice(0,120).map(f=>`<tr><td>${esc(f.type)}</td><td>${fmtInt(f.start)}</td><td>${fmtInt(f.end)}</td><td>${fmtInt(f.end-f.start+1)}</td><td>${esc(f.transcript||'—')}</td></tr>`).join('');else fh+='<tr><td colspan="5">NCBI returned no parseable exon/intron rows in this response.</td></tr>';fh+='</table><div class="small" style="margin-top:10px">Linked RefSeq candidates considered: '+esc(d.nuccoreCandidates?.slice(0,8).map(x=>x.accessionversion).join(', ')||d.accession)+'</div>';$('#gene-features').innerHTML=fh}
-function toggleGeneStrand(){if(!geneState.loaded)return;geneState.reverse=!geneState.reverse;renderLiveGene()}
+/* ---------- Ripple on buttons ---------- */
+document.querySelectorAll('.btn, .filter-btn').forEach(btn=>{
+  btn.addEventListener('click', function(e){
+    const rect = this.getBoundingClientRect();
+    const r = document.createElement('span');
+    r.className='ripple';
+    r.style.left = (e.clientX-rect.left)+'px';
+    r.style.top = (e.clientY-rect.top)+'px';
+    this.style.position='relative';
+    this.appendChild(r);
+    setTimeout(()=>r.remove(),650);
+  });
+});
 
-/* Protein */
-let viewer=null,spinning=false,proteinResizeObserver=null,currentPdbText='';
-function proteinFit(){if(!viewer)return;try{viewer.resize();viewer.zoomTo({});viewer.center({});viewer.render()}catch(e){try{viewer.resize();viewer.zoomTo();viewer.render()}catch(_){}}}
-function initProtein(){if(viewer)return;const el=$('#protein-viewer');if(!el||!window.$3Dmol){setStatus('#protein-status','3Dmol.js did not load from the public CDN.','error');return}viewer=$3Dmol.createViewer(el,{backgroundColor:'#01040a',antialias:true});proteinResizeObserver=window.ResizeObserver?new ResizeObserver(()=>proteinFit()):null;if(proteinResizeObserver)proteinResizeObserver.observe(el);window.addEventListener('resize',proteinFit,{passive:true});requestAnimationFrame(()=>{proteinFit();loadPDB(true)})}
-function setProteinModel(pdb,id){if(!viewer)return;viewer.removeAllModels();viewer.removeAllSurfaces();viewer.removeAllLabels();viewer.addModel(pdb,'pdb');viewer.setStyle({}, {cartoon:{color:'spectrum'},stick:{radius:.12}});currentPdbText=pdb;$('#pdb-id').value=id;requestAnimationFrame(()=>proteinFit());updateProteinInfo(pdb,id)}
-async function loadPDB(silent=false){const id=($('#pdb-id').value||'').trim().toUpperCase();if(!viewer)initProtein();if(!/^[0-9A-Z]{4}$/.test(id)){setStatus('#protein-status','Use a four-character PDB identifier, e.g. 1CRN.','error');return}const btn=document.querySelector('#pane-protein .btn.primary');if(btn)btn.disabled=true;if(!silent)setStatus('#protein-status','Fetching '+esc(id)+' from RCSB PDB…');try{const res=await fetch(`https://files.rcsb.org/download/${encodeURIComponent(id)}.pdb`,{cache:'no-store'});if(!res.ok)throw new Error(`RCSB returned HTTP ${res.status}`);const pdb=await res.text();if(!/^ATOM|^HETATM/m.test(pdb))throw new Error('The downloaded PDB text contained no coordinate records.');setProteinModel(pdb,id);setStatus('#protein-status',`Loaded real PDB ${esc(id)} from RCSB PDB.`,'success')}catch(err){setStatus('#protein-status',esc(err.message||'Could not load this PDB.'),'error')}finally{if(btn)btn.disabled=false}}
-function proteinStyle(kind){if(!viewer)return;viewer.setStyle({},kind==='cartoon'?{cartoon:{color:'spectrum'}}:kind==='stick'?{stick:{radius:.13}}:{sphere:{scale:.28}});viewer.render()}
-function proteinColor(kind){if(!viewer)return;if(kind==='spectrum')viewer.setStyle({}, {cartoon:{color:'spectrum'}});else viewer.setStyle({}, {cartoon:{colorscheme:'chain'}});viewer.render()}
-function proteinSurface(show){if(!viewer)return;if(show)viewer.addSurface($3Dmol.SurfaceType.VDW,{opacity:.62,color:'white'});else viewer.removeAllSurfaces();viewer.render()}
-function proteinSpin(){if(!viewer)return;spinning=!spinning;viewer.spin(spinning?'y':false,1)}
-function proteinReset(){if(!viewer)return;spinning=false;viewer.spin(false);viewer.removeAllSurfaces();loadPDB(true)}
-function updateProteinInfo(pdb,id){const lines=pdb.split(/\r?\n/),atomLines=lines.filter(l=>/^(ATOM|HETATM)/.test(l));const residueSet=new Set(),chainSet=new Set(),resSeq=[];for(const l of atomLines){const res=(l.slice(17,20)||'').trim();const chain=(l.slice(21,22)||'').trim()||' ';const rs=(l.slice(22,26)||'').trim();if(/^ATOM/.test(l)&&aa3to1[res]){const key=`${chain}|${rs}`;if(!residueSet.has(key)){residueSet.add(key);resSeq.push(aa3to1[res])}}chainSet.add(chain)}const ss=(pdb.match(/^HELIX/gm)||[]).length+(pdb.match(/^SHEET/gm)||[]).length;$('#prot-atoms').textContent=fmtInt(atomLines.length)||'—';$('#prot-res').textContent=fmtInt(residueSet.size)||'—';$('#prot-chain').textContent=fmtInt(chainSet.size)||'—';$('#prot-ss').textContent=ss?`${ss} records`:'not annotated';$('#protein-details').innerHTML=`Source: <b>RCSB PDB ${esc(id)}</b><br>Coordinate atoms: <b>${fmtInt(atomLines.length)}</b><br>Polymer residues: <b>${fmtInt(residueSet.size)}</b><br>Chains: <b>${esc([...chainSet].join(', ')||'—')}</b><br>HELIX/SHEET records: <b>${fmtInt(ss)}</b>`;$('#protein-sequence').textContent=resSeq.join('')||'No standard amino-acid residues parsed.'}
-
-/* BLAST REST */
-let blastTimer=null,blastRId='';
-function cancelBlastPolling(){if(blastTimer){clearTimeout(blastTimer);blastTimer=null}setStatus('#blast-status','BLAST polling stopped. The remote job, if still queued, remains on NCBI until it expires.');$('#blast-submit-btn').disabled=false}
-$('#blast-program')?.addEventListener('change',()=>{const p=$('#blast-program').value;$('#blast-db').value=p==='blastp'?'refseq_protein':'nt'});
-async function submitBlast(){const program=$('#blast-program').value,db=$('#blast-db').value,raw=$('#blast-seq').value,seq=program==='blastp'?cleanProteinSeq(raw):cleanSeq(raw);if(!seq){setStatus('#blast-status','Enter a DNA or protein sequence first.','error');return}cancelBlastPolling();$('#blast-output').innerHTML='';$('#blast-progress').style.width='0%';$('#blast-submit-btn').disabled=true;setStatus('#blast-status','Submitting sequence to NCBI BLAST…');try{const body=new URLSearchParams({CMD:'Put',PROGRAM:program,DATABASE:db,QUERY:seq,FORMAT_TYPE:'XML'});const r=await fetch('https://blast.ncbi.nlm.nih.gov/Blast.cgi',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded;charset=UTF-8'},body});if(!r.ok)throw new Error(`BLAST submission HTTP ${r.status}`);const txt=await r.text();const rid=(txt.match(/RID = (\S+)/)||[])[1];if(!rid)throw new Error('NCBI did not return a BLAST request ID.');blastRId=rid;setStatus('#blast-status',`Submitted <span class="codepill">${esc(rid)}</span>. First status check will occur after 60 seconds.`);$('#blast-progress').style.width='10%';blastTimer=setTimeout(()=>pollBlast(1),60000)}catch(e){setStatus('#blast-status',esc(e.message||'BLAST submission failed.'),'error');$('#blast-submit-btn').disabled=false}}
-async function pollBlast(attempt){if(!blastRId)return;try{const statusRes=await fetch('https://blast.ncbi.nlm.nih.gov/Blast.cgi?'+new URLSearchParams({CMD:'Get',FORMAT_OBJECT:'SearchInfo',RID:blastRId}));if(!statusRes.ok)throw new Error(`BLAST status HTTP ${statusRes.status}`);const st=await statusRes.text();if(/Status=WAITING/.test(st)){const pct=Math.min(90,10+attempt*8);$('#blast-progress').style.width=pct+'%';setStatus('#blast-status',`BLAST job <span class="codepill">${esc(blastRId)}</span> is still queued. Next status check in 30 seconds.`);blastTimer=setTimeout(()=>pollBlast(attempt+1),30000);return}if(/Status=FAILED/.test(st))throw new Error('NCBI reports that the BLAST job failed.');if(!/Status=READY/.test(st)){blastTimer=setTimeout(()=>pollBlast(attempt+1),30000);return}setStatus('#blast-status',`BLAST job <span class="codepill">${esc(blastRId)}</span> is ready. Downloading XML results…`);const rr=await fetch('https://blast.ncbi.nlm.nih.gov/Blast.cgi?'+new URLSearchParams({CMD:'Get',FORMAT_TYPE:'XML',RID:blastRId}));if(!rr.ok)throw new Error(`BLAST result HTTP ${rr.status}`);const xml=await rr.text();renderBlastResults(xml);$('#blast-progress').style.width='100%';$('#blast-submit-btn').disabled=false;blastTimer=null}catch(e){setStatus('#blast-status',esc(e.message||'BLAST polling failed.'),'error');$('#blast-submit-btn').disabled=false;blastTimer=null}}
-function renderBlastResults(xml){const doc=new DOMParser().parseFromString(xml,'application/xml');if(doc.querySelector('parsererror'))throw new Error('BLAST returned malformed XML.');const hits=[...doc.querySelectorAll('Hit')].slice(0,25).map(hit=>{const accession=hit.querySelector('Hit_accession')?.textContent?.trim()||'';const title=hit.querySelector('Hit_def')?.textContent?.trim()||accession;const hsps=[...hit.querySelectorAll('Hsp')];const best=hsps[0];const e=best?.querySelector('Hsp_evalue')?.textContent||'—',iden=Number(best?.querySelector('Hsp_identity')?.textContent||0),alen=Number(best?.querySelector('Hsp_align-len')?.textContent||0);return {accession,title,e,identity:alen?((iden/alen)*100).toFixed(1)+'%':'—',align:alen}});if(!hits.length){$('#blast-output').innerHTML='<div class="small">No hits were returned in the BLAST XML.</div>';return}$('#blast-output').innerHTML='<table class="table"><tr><th>Hit</th><th>E-value</th><th>Identity</th><th>Aligned</th></tr>'+hits.map(h=>`<tr><td><a href="https://www.ncbi.nlm.nih.gov/${/^[AN]M_/.test(h.accession)?'nuccore':'protein'}/${encodeURIComponent(h.accession)}" target="_blank" rel="noopener">${esc(h.accession||'—')}</a><br><span class="small">${esc(h.title)}</span></td><td>${esc(h.e)}</td><td>${esc(h.identity)}</td><td>${fmtInt(h.align)}</td></tr>`).join('')+'</table>'}
-
-/* ORF Finder */
-function findOrfs(s,minLen){const all=[];const strands=[{seq:s,label:'+ '},{seq:revcomp(s),label:'- '}];strands.forEach((st,si)=>{for(let f=0;f<3;f++){for(let i=f;i+2<st.seq.length;i+=3){if(st.seq.slice(i,i+3)!=='ATG')continue;for(let j=i+3;j+2<st.seq.length;j+=3){if(['TAA','TAG','TGA'].includes(st.seq.slice(j,j+3))){const len=j+3-i;if(len>=minLen){const start=si===0?i+1:s.length-(j+3)+1,end=si===0?j+3:s.length-i;all.push({strand:si===0?'+':'-',frame:f+1,start,end,len,seq:st.seq.slice(i,j+3),protein:translate(st.seq.slice(i,j+3))})}break}}}}});return all}
-function runORF(){const s=cleanSeq($('#orf-seq').value),min=Number($('#orf-min').value);if(!s){$('#orf-output').innerHTML='<div class="small">Enter a sequence.</div>';return}const orfs=findOrfs(s,min);$('#orf-summary').textContent=`${fmtInt(orfs.length)} ORF${orfs.length===1?'':'s'} ≥ ${min} nt across six frames.`;let html='';for(let f=1;f<=3;f++)html+=frameRow(orfs.filter(o=>o.strand==='+'&&o.frame===f),f,false,s.length);for(let f=1;f<=3;f++)html+=frameRow(orfs.filter(o=>o.strand==='-'&&o.frame===f),f,true,s.length);$('#orf-track').innerHTML=html;$('#orf-output').innerHTML=orfs.length?'<table class="table"><tr><th>Strand</th><th>Frame</th><th>Start</th><th>End</th><th>Length</th><th>Protein</th></tr>'+orfs.sort((a,b)=>a.start-b.start).map(o=>`<tr><td>${o.strand}</td><td>${o.frame}</td><td>${fmtInt(o.start)}</td><td>${fmtInt(o.end)}</td><td>${fmtInt(o.len)}</td><td class="mono">${esc(o.protein.slice(0,160))}</td></tr>`).join('')+'</table>':'<div class="small">No ORFs met the selected minimum length.</div>'}
-function frameRow(orfs,f,rev,len){let inner=`<div class="frame-row"><div class="frame-label">${rev?'−':'+'}${f}</div>`;orfs.forEach(o=>{const l=Math.min(o.start,o.end)-1,w=o.len/len*100;const left=(Math.max(0,l)/len*100);inner+=`<div class="orf-bar ${rev?'rev':''}" title="${o.strand}${o.frame} ${o.start}-${o.end} (${o.len} nt)" style="left:${left}%;width:${Math.max(.8,w)}%"></div>`});inner+='</div>';return inner}
-
-/* Primer design */
-function tmWallace(s){return 2*((s.match(/[AT]/g)||[]).length)+4*((s.match(/[GC]/g)||[]).length)}
-function maxHomopolymer(s){let m=1,c=1;for(let i=1;i<s.length;i++){if(s[i]===s[i-1]){c++;m=Math.max(m,c)}else c=1}return m}
-function selfComplementScore(s){let rc=revcomp(s),best=0;for(let k=0;k<=s.length-4;k++){let run=0;for(let i=k;i<s.length;i++){if(s[i]===rc[i-k]){run++;best=Math.max(best,run)}else run=0}}return best}
-function primerCandidates(seq,min,max,orientation){const out=[];for(let len=min;len<=max;len++){for(let i=0;i+len<=seq.length && out.length<20;i++){const p=seq.slice(i,i+len),gc=((p.match(/[GC]/g)||[]).length/p.length*100),tm=tmWallace(p),hom=maxHomopolymer(p),self=selfComplementScore(p),endGC=(p.slice(-5).match(/[GC]/g)||[]).length;if(gc<40||gc>60||hom>4||self>4)continue;let score=100-Math.abs(gc-50)*1.2-Math.abs(tm-60)*.8-(hom-1)*6-self*5+endGC*2;if(orientation==='reverse'){score-=Math.abs(tm-60)*.1}out.push({seq:p,start:i+1,end:i+len,len,gc:+gc.toFixed(1),tm,hom,self,score:+Math.max(0,score).toFixed(1)})}}return out.sort((a,b)=>b.score-a.score).slice(0,8)}
-function designPrimers(){const s=cleanSeq($('#primer-seq').value),min=Math.max(18,Math.min(24,+$('#primer-min').value||18)),max=Math.max(min,Math.min(24,+$('#primer-max').value||22));if(!s||s.length<max){setStatus('#primer-output','Enter a target sequence long enough to scan.','error');return}const f=primerCandidates(s,min,max,'forward'),r=primerCandidates(revcomp(s),min,max,'reverse');const render=(arr,title)=>`<div class="detail-card"><h4>${title}</h4>${arr.length?'<table class="table"><tr><th>Primer</th><th>Pos</th><th>Length</th><th>GC</th><th>Tm</th><th>Self</th><th>Score</th></tr>'+arr.map(p=>`<tr><td class="mono">${esc(p.seq)}</td><td>${p.start}-${p.end}</td><td>${p.len}</td><td>${p.gc}%</td><td>${p.tm}°C</td><td>${p.self}</td><td><div>${p.score}</div><div class="primer-score"><i style="width:${Math.min(100,p.score)}%"></i></div></td></tr>`).join('')+'</table>':'<div class="small">No candidates passed the simple filters.</div>'}</div>`;$('#primer-output').outerHTML=render(f,'Forward candidates')+render(r,'Reverse candidates')}
-
-/* Restriction mapper */
-const enzymes=[['EcoRI','GAATTC',1],['BamHI','GGATCC',1],['HindIII','AAGCTT',1],['EcoRV','GATATC',3],['PstI','CTGCAG',5],['XhoI','CTCGAG',1],['NotI','GCGGCCGC',2],['SmaI','CCCGGG',3],['KpnI','GGTACC',5],['SalI','GTCGAC',1],['NdeI','CATATG',2],['SpeI','ACTAGT',1],['XbaI','TCTAGA',1],['BglII','AGATCT',1],['SacI','GAGCTC',1]];
-function mapRestrictionSites(){const s=cleanSeq($('#restriction-seq').value);if(!s){setStatus('#restriction-summary','Enter a sequence.','error');return}const rows=[];enzymes.forEach(([name,motif,cut])=>{let i=0;while((i=s.indexOf(motif,i))!==-1){rows.push({name,motif,site:i+1,cut:i+cut+1});i++}});rows.sort((a,b)=>a.site-b.site);let fragments=[];const sites=[...new Set(rows.map(r=>r.cut))].sort((a,b)=>a-b);if(sites.length)fragments=[sites[0]-1,...sites.slice(1).map((x,i)=>x-sites[i]),s.length-sites.at(-1)+1];else fragments=[s.length];$('#restriction-summary').textContent=`${fmtInt(rows.length)} recognition site${rows.length===1?'':'s'} across ${fmtInt(enzymes.length)} enzymes. Unique cut positions: ${fmtInt(sites.length)}.`;$('#restriction-output').innerHTML=rows.length?'<table class="table"><tr><th>Enzyme</th><th>Recognition</th><th>Site start</th><th>Cut position</th></tr>'+rows.map(r=>`<tr><td>${r.name}</td><td class="mono">${r.motif}</td><td>${fmtInt(r.site)}</td><td>${fmtInt(r.cut)}</td></tr>`).join('')+'</table><div class="small" style="margin-top:10px">All cut sites combined → predicted fragment sizes (bp): <b>'+fragments.sort((a,b)=>b-a).join(', ')+'</b></div>':'<div class="small">No sites from the embedded enzyme list were found.</div>'}
-function loadRestrictionExample(){$('#restriction-seq').value='GAATTCGGATCCGCGGAAGCTTGAATTCGCGGATCC';mapRestrictionSites()}
-
-/* Codon usage */
-function analyzeCodons(){const s=cleanSeq($('#codon-seq').value),usable=s.slice(0,s.length-s.length%3);if(!usable){$('#codon-output').innerHTML='<div class="small">Enter at least one complete codon.</div>';return}const counts={},aaCounts={};for(let i=0;i<usable.length;i+=3){const c=usable.slice(i,i+3);counts[c]=(counts[c]||0)+1;const aa=geneticCode[c]||'X';aaCounts[aa]=(aaCounts[aa]||0)+1}const rows=Object.keys(geneticCode).filter(c=>counts[c]).sort((a,b)=>counts[b]-counts[a]),max=Math.max(...rows.map(c=>counts[c]));const rareCut=Math.max(1,Math.floor(max*.2));const rare=rows.filter(c=>counts[c]<=rareCut);$('#codon-summary').innerHTML=[[''+fmtInt(usable.length/3),'codons'],[Object.keys(counts).length,'unique'],[rare.length,'rare by local rule']].map(([a,b])=>`<div class="stat"><b>${a}</b><span>${b}</span></div>`).join('');$('#codon-output').innerHTML='<table class="table"><tr><th>Codon</th><th>AA</th><th>Count</th><th>Frequency</th><th>Relative bar</th></tr>'+rows.map(c=>{const f=counts[c]/(usable.length/3)*100,rr=counts[c]/max*100;return `<tr><td class="mono">${c}</td><td>${geneticCode[c]}</td><td>${counts[c]}</td><td>${f.toFixed(2)}%</td><td><div class="bar"><i style="width:${rr}%"></i></div>${rare.includes(c)?'<span class="danger">rare (local rule)</span>':''}</td></tr>`}).join('')+'</table>'}
-
-/* Mutation */
-function runMutation(){const a=cleanSeq($('#mut-ref').value),b=cleanSeq($('#mut-alt').value),n=Math.min(a.length,b.length);if(!a||!b){$('#mut-output').innerHTML='<div class="small">Both sequences are required.</div>';return}let diffs=[];for(let i=0;i<n;i++)if(a[i]!==b[i])diffs.push({pos:i+1,ref:a[i],alt:b[i],type:'substitution'});if(a.length!==b.length)diffs.push({pos:n+1,ref:a.length>b.length?a.slice(n):'-',alt:b.length>a.length?b.slice(n):'-',type:a.length>b.length?'deletion':'insertion'});const aa=translate(a),bb=translate(b);let aaDiff=[];for(let i=0;i<Math.min(aa.length,bb.length);i++)if(aa[i]!==bb[i])aaDiff.push({codon:i+1,ref:aa[i],alt:bb[i]});$('#mut-output').innerHTML=`<div class="small">Reference: ${fmtInt(a.length)} nt · Mutant: ${fmtInt(b.length)} nt · Nucleotide changes: ${fmtInt(diffs.length)}</div><table class="table"><tr><th>Position</th><th>Type</th><th>Ref</th><th>Alt</th></tr>${diffs.map(d=>`<tr><td>${fmtInt(d.pos)}</td><td>${d.type}</td><td>${esc(d.ref)}</td><td>${esc(d.alt)}</td></tr>`).join('')}</table><div class="small" style="margin-top:10px">Protein-level differences in frame +1: ${aaDiff.length}</div>${aaDiff.length?'<table class="table"><tr><th>Codon</th><th>AA ref</th><th>AA alt</th></tr>'+aaDiff.map(d=>`<tr><td>${d.codon}</td><td>${d.ref}</td><td>${d.alt}</td></tr>`).join('')+'</table>':'<div class="small">No amino-acid difference detected in the compared frame.</div>'}`}
-
-/* PDF text editor */
-if(window.pdfjsLib)pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-const pdfState={bytes:null,pdf:null,pages:[],edits:new Map(),ocrUsed:false,fileName:''};
-function bindPdfDrop(){const dz=$('#pdf-drop'),input=$('#pdf-input');['dragenter','dragover'].forEach(e=>dz.addEventListener(e,ev=>{ev.preventDefault();dz.classList.add('drag')}));['dragleave','drop'].forEach(e=>dz.addEventListener(e,ev=>{ev.preventDefault();dz.classList.remove('drag')}));dz.addEventListener('drop',ev=>{const f=ev.dataTransfer.files?.[0];if(f&&f.type==='application/pdf')handlePdfFile(f)});input.addEventListener('change',()=>{if(input.files?.[0])handlePdfFile(input.files[0])})}
-async function handlePdfFile(file){try{pdfState.fileName=file.name;pdfState.bytes=await file.arrayBuffer();pdfState.pdf=await pdfjsLib.getDocument({data:pdfState.bytes.slice(0)}).promise;pdfState.pages=[];pdfState.edits.clear();pdfState.ocrUsed=false;$('#pdf-save-btn').disabled=false;$('#pdf-ocr-btn').disabled=false;setStatus('#pdf-status',`Loaded ${esc(file.name)} · ${pdfState.pdf.numPages} page${pdfState.pdf.numPages===1?'':'s'}. Analyzing text layers…`);$('#pdf-pages').innerHTML='';for(let p=1;p<=pdfState.pdf.numPages;p++)await renderPdfPage(p);setStatus('#pdf-status','PDF ready. Click a detected text line to edit it. If text layers are absent, use OCR first.','success');renderPdfEditList()}catch(e){setStatus('#pdf-status',esc(e.message||'Could not open PDF.'),'error');$('#pdf-save-btn').disabled=true;$('#pdf-ocr-btn').disabled=true}}
-async function renderPdfPage(pageNo){const page=await pdfState.pdf.getPage(pageNo),scale=1.4,viewport=page.getViewport({scale});const card=document.createElement('div');card.className='pdf-page-card';const head=document.createElement('div');head.className='pdf-page-head';head.innerHTML=`<span class="codepill">PAGE ${pageNo}</span><span class="small" id="pdf-page-status-${pageNo}">rendering…</span>`;card.appendChild(head);const wrap=document.createElement('div');wrap.className='pdf-page-wrap';const canvas=document.createElement('canvas');canvas.className='pdf-canvas';canvas.width=Math.floor(viewport.width);canvas.height=Math.floor(viewport.height);const ctx=canvas.getContext('2d');wrap.appendChild(canvas);const layer=document.createElement('div');layer.className='text-hit-layer';wrap.appendChild(layer);card.appendChild(wrap);$('#pdf-pages').appendChild(card);await page.render({canvasContext:ctx,viewport}).promise;const tc=await page.getTextContent();const items=tc.items||[];if(items.length){const blocks=groupPdfLines(items,viewport);blocks.forEach((b,idx)=>createTextHit(layer,b,pageNo,idx,viewport));$(`#pdf-page-status-${pageNo}`).textContent=`${blocks.length} editable text line${blocks.length===1?'':'s'}`;pdfState.pages.push({pageNo,viewport,items,blocks,wrap,layer,canvas})}else{$(`#pdf-page-status-${pageNo}`).innerHTML='<span class="danger">no text layer</span>';pdfState.pages.push({pageNo,viewport,items:[],blocks:[],wrap,layer,canvas})}}
-function groupPdfLines(items,viewport){const scale=viewport.scale||1;const vals=items.filter(i=>i.str&&i.str.trim()).map((it,idx)=>{const tr=it.transform||[1,0,0,1,0,0],x=tr[4],y=tr[5],fs=Math.max(7,Math.hypot(tr[0],tr[1])),w=Math.max(1,it.width||fs*.6*it.str.length),h=Math.max(fs*1.15,Math.abs(tr[3]||fs));return {idx,str:it.str,x:x*scale,y:y*scale,w:w*scale,h:h*scale,fs:fs*scale}});const lines=[];vals.sort((a,b)=>a.y-b.y||a.x-b.x).forEach(v=>{let target=lines.find(l=>Math.abs(l.y-v.y)<v.fs*.7);if(!target){target={y:v.y,items:[]};lines.push(target)}target.items.push(v)});return lines.map(l=>{l.items.sort((a,b)=>a.x-b.x);const x=Math.min(...l.items.map(i=>i.x)),right=Math.max(...l.items.map(i=>i.x+i.w)),top=Math.min(...l.items.map(i=>i.y-i.h)),bottom=Math.max(...l.items.map(i=>i.y));return {text:l.items.map(i=>i.str).join(' '),items:l.items,x,y:top,w:right-x,h:bottom-top||16,fs:Math.max(...l.items.map(i=>i.fs))}})}
-function createTextHit(layer,block,pageNo,idx,viewport){const div=document.createElement('div');div.className='text-hit';const canvas=layer.parentElement.querySelector('canvas'),cw=(canvas&&canvas.width)||viewport.width,ch=(canvas&&canvas.height)||viewport.height,leftPx=block.x,topPx=(ch-block.y-block.h),wPx=Math.max(6,block.w),hPx=Math.max(10,block.h);div.style.left=(leftPx/cw*100)+'%';div.style.top=(topPx/ch*100)+'%';div.style.width=(wPx/cw*100)+'%';div.style.height=(hPx/ch*100)+'%';div.title='Click to edit: '+block.text;div.dataset.page=pageNo;div.dataset.block=idx;div.addEventListener('click',()=>beginPdfEdit(pageNo,idx,div));layer.appendChild(div)}
-function beginPdfEdit(pageNo,idx,hit){const p=pdfState.pages.find(x=>x.pageNo===pageNo);if(!p)return;const b=p.blocks[idx],existing=pdfState.edits.get(`${pageNo}:${idx}`)?.text??b.text;const editor=document.createElement('textarea');editor.className='text-editor';editor.value=existing;editor.style.left=hit.offsetLeft+'px';editor.style.top=hit.offsetTop+'px';editor.style.width=Math.max(80,hit.offsetWidth)+'px';editor.style.minHeight=Math.max(22,hit.offsetHeight)+'px';editor.style.height=Math.max(40,hit.offsetHeight+10)+'px';hit.parentElement.appendChild(editor);editor.focus();editor.select();const commit=()=>{pdfState.edits.set(`${pageNo}:${idx}`,{text:editor.value,block:b});editor.remove();hit.classList.toggle('edited',true);hit.title='Edited — click again to change';renderPdfEditList()};editor.addEventListener('blur',commit);editor.addEventListener('keydown',e=>{if(e.key==='Escape'){editor.remove()}if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();editor.blur()}})}
-function renderPdfEditList(){const el=$('#pdf-edit-list');if(!pdfState.edits.size){el.textContent='None.';return}el.innerHTML=[...pdfState.edits.entries()].map(([k,v])=>`<div><span class="codepill">${esc(k)}</span> ${esc(v.text)}</div>`).join('')}
-async function ocrPdf(){if(!pdfState.pdf)return;const btn=$('#pdf-ocr-btn');btn.disabled=true;try{const worker=await Tesseract.createWorker('eng',1,{logger:m=>{if(m.status) setStatus('#pdf-status',`OCR: ${esc(m.status)} ${m.progress!=null?Math.round(m.progress*100)+'%':''}`)}});for(const p of pdfState.pages){if(p.items.length)continue;const canvas=p.canvas;const res=await worker.recognize(canvas);const words=res.data.words||[];p.blocks=words.filter(w=>w.text&&w.text.trim()).map(w=>{const x=w.bbox.x0,y=w.bbox.y0,wid=w.bbox.x1-w.bbox.x0,h=w.bbox.y1-w.bbox.y0;return{text:w.text,x,y:canvas.height-y-h,w:wid,h,fs:h}});p.layer.innerHTML='';p.blocks.forEach((b,idx)=>createTextHit(p.layer,b,p.pageNo,idx,p.viewport));$(`#pdf-page-status-${p.pageNo}`).textContent=`${p.blocks.length} OCR words`};await worker.terminate();pdfState.ocrUsed=true;setStatus('#pdf-status','OCR text boxes added. Click a detected word to edit it.','success')}catch(e){setStatus('#pdf-status',esc(e.message||'OCR failed.'),'error')}finally{btn.disabled=false}}
-function wrapTextToWidth(text,maxChars){const words=text.split(/\s+/).filter(Boolean),lines=[];let cur='';words.forEach(w=>{const nxt=cur?cur+' '+w:w;if(nxt.length<=maxChars)cur=nxt;else{if(cur)lines.push(cur);cur=w}});if(cur)lines.push(cur);return lines.length?lines:[text]}
-async function saveEditedPdf(){
-  if(!pdfState.bytes||!window.PDFLib){setStatus('#pdf-status','PDF editor libraries are unavailable.','error');return}
-  if(!pdfState.edits.size){setStatus('#pdf-status','No edits have been committed yet.','error');return}
-  const {PDFDocument,rgb,StandardFonts}=PDFLib;
-  const doc=await PDFDocument.load(pdfState.bytes);
-  const font=await doc.embedFont(StandardFonts.Helvetica);
-  for(const [key,edit] of pdfState.edits){
-    const [pstr,idxstr]=key.split(':');
-    const pageIndex=+pstr-1, idx=+idxstr;
-    const page=doc.getPage(pageIndex);
-    const p=pdfState.pages.find(x=>x.pageNo===pageIndex+1);
-    const b=p&&p.blocks[idx];
-    if(!b)continue;
-    const scale=p.viewport?.scale||1;
-    // b.x / b.y / b.w / b.h / b.fs are pdf.js text-content transform values (tr[4], tr[5]) that
-    // have only been multiplied by the render "scale" — they are still in the PDF's native,
-    // bottom-left-origin, y-up coordinate space (the same space pdf-lib's drawText/drawRectangle
-    // use). There is NO top-left/canvas flip baked into them, so no "pageHeight - y" conversion
-    // is needed (that was Bug 2: it silently re-flipped already-correct coordinates).
-    // Per line grouping, the line's bottom (max item y) equals the original text's BASELINE.
-    const x=b.x/scale;
-    const boxW=Math.max(30,b.w/scale);
-    const baselineY=(b.y+b.h)/scale; // original Td/Tm baseline, in true PDF units
-    const fontSize=Math.max(6,Math.min(24,b.fs/scale));
-    // 1) Redact the original glyphs in place: paint an opaque rectangle, sampled from the page
-    //    background right next to the text, over the full ascender-to-descender span around the
-    //    real baseline (not the mislabeled/approximate box height) so nothing shows through.
-    const padBelow=fontSize*0.32, padAbove=fontSize*0.86;
-    const bg=pdfSampleBackground(p,b);
-    page.drawRectangle({
-      x:x-3,
-      y:baselineY-padBelow,
-      width:boxW+6,
-      height:padBelow+padAbove,
-      color:bg,
-      borderWidth:0
+/* ---------- Card mouse-follow glow + tilt ---------- */
+document.querySelectorAll('.glass-card, .proj-card-outer').forEach(card=>{
+  card.addEventListener('mousemove', e=>{
+    const rect = card.getBoundingClientRect();
+    const x = e.clientX-rect.left, y = e.clientY-rect.top;
+    const target = card.classList.contains('glass-card') ? card : card.querySelector('.proj-face');
+    if(target){ target.style.setProperty('--mx', x+'px'); target.style.setProperty('--my', y+'px'); }
+  });
+});
+if(!reduceMotion){
+  document.querySelectorAll('.proj-card-inner').forEach(inner=>{
+    const outer = inner.parentElement;
+    outer.addEventListener('mousemove', e=>{
+      if(outer.classList.contains('flipped')) return;
+      const rect = outer.getBoundingClientRect();
+      const px = (e.clientX-rect.left)/rect.width - 0.5;
+      const py = (e.clientY-rect.top)/rect.height - 0.5;
+      gsap.to(inner, {rotateY: px*10, rotateX: -py*10, duration:.4, ease:'power2.out'});
     });
-    // 2) Draw the replacement text on that exact same baseline (never a CSS "top"), so it sits
-    //    flush with the surrounding, untouched lines instead of overlapping them.
-    const rawLines=String(edit.text).split(/\r?\n/);
-    let drawSize=fontSize;
-    rawLines.forEach(line=>{
-      const w=font.widthOfTextAtSize(line||' ',drawSize);
-      // 3) If the replacement is wider than the original line, shrink the font just enough to
-      //    fit the original box width instead of letting it run into the next line's text.
-      if(w>boxW&&line.length)drawSize=Math.min(drawSize,Math.max(5,drawSize*(boxW/w)));
+    outer.addEventListener('mouseleave', ()=>{
+      if(outer.classList.contains('flipped')) return;
+      gsap.to(inner, {rotateY:0, rotateX:0, duration:.5, ease:'power2.out'});
     });
-    const lineGap=drawSize*1.18;
-    rawLines.forEach((line,i)=>{
-      page.drawText(line,{x:x,y:baselineY-lineGap*i,size:drawSize,font,color:rgb(0.06,0.08,0.12)});
+  });
+}
+
+/* ---------- Project card flip ---------- */
+document.querySelectorAll('.proj-card-outer').forEach(outer=>{
+  outer.addEventListener('click', ()=>{
+    outer.classList.toggle('flipped');
+    const inner = outer.querySelector('.proj-card-inner');
+    if(!outer.classList.contains('flipped')) gsap.set(inner, {rotateX:0});
+  });
+});
+
+/* ---------- Sidebar nav + tab switching ---------- */
+const navItems = document.querySelectorAll('.nav-item');
+const panels = document.querySelectorAll('.panel');
+const navGlow = document.getElementById('navGlow');
+const navList = document.getElementById('navList');
+const tabOrder = ['home','about','experience','projects','skills','contact'];
+
+function positionGlow(item){
+  if(!item) return;
+  const listRect = navList.getBoundingClientRect();
+  const rect = item.getBoundingClientRect();
+  gsap.to(navGlow, {top: rect.top-listRect.top, height: rect.height, duration:.45, ease:'power3.out'});
+}
+
+function activateTab(tab, pushHash=true){
+  const item = document.querySelector(`.nav-item[data-tab="${tab}"]`);
+  navItems.forEach(n=>n.removeAttribute('aria-current'));
+  if(item) item.setAttribute('aria-current','page');
+  positionGlow(item);
+
+  const current = document.querySelector('.panel.active');
+  const next = document.getElementById('panel-'+tab);
+  if(!next || next === current) return;
+
+  if(reduceMotion){
+    if(current) current.classList.remove('active');
+    next.classList.add('active');
+  } else {
+    const tl = gsap.timeline();
+    if(current){
+      tl.to(current, {opacity:0, y:-14, duration:.28, ease:'power2.in', onComplete:()=>{current.classList.remove('active'); current.style.cssText='';}});
+    }
+    tl.set(next, {opacity:0, y:14});
+    tl.add(()=>{ next.classList.add('active'); }, current ? '-=0.02' : 0);
+    tl.to(next, {opacity:1, y:0, duration:.4, ease:'power2.out'});
+  }
+
+  runPanelAnimations(tab);
+  if(pushHash) history.replaceState(null,'','#'+tab);
+  closeMobileSidebar();
+}
+
+navItems.forEach(item=>{
+  item.addEventListener('click', e=>{ e.preventDefault(); activateTab(item.dataset.tab); });
+});
+document.querySelectorAll('.js-tab-link').forEach(link=>{
+  link.addEventListener('click', e=>{ e.preventDefault(); activateTab(link.dataset.tab); });
+});
+
+navList.addEventListener('keydown', e=>{
+  const idx = tabOrder.indexOf(document.querySelector('.nav-item[aria-current="page"]').dataset.tab);
+  if(e.key==='ArrowDown'){ e.preventDefault(); activateTab(tabOrder[(idx+1)%tabOrder.length]); }
+  if(e.key==='ArrowUp'){ e.preventDefault(); activateTab(tabOrder[(idx-1+tabOrder.length)%tabOrder.length]); }
+});
+
+window.addEventListener('resize', ()=>{
+  positionGlow(document.querySelector('.nav-item[aria-current="page"]'));
+});
+
+/* Mobile sidebar */
+const sidebar = document.getElementById('sidebar');
+const sidebarToggle = document.getElementById('sidebarToggle');
+const sidebarOverlay = document.getElementById('sidebarOverlay');
+function openMobileSidebar(){ sidebar.classList.add('open'); sidebarOverlay.classList.add('show'); sidebarToggle.setAttribute('aria-expanded','true'); }
+function closeMobileSidebar(){ sidebar.classList.remove('open'); sidebarOverlay.classList.remove('show'); sidebarToggle.setAttribute('aria-expanded','false'); }
+sidebarToggle.addEventListener('click', ()=> sidebar.classList.contains('open') ? closeMobileSidebar() : openMobileSidebar());
+sidebarOverlay.addEventListener('click', closeMobileSidebar);
+
+/* Initial tab from hash */
+const initialTab = tabOrder.includes(location.hash.slice(1)) ? location.hash.slice(1) : 'home';
+if(initialTab !== 'home'){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('panel-'+initialTab).classList.add('active');
+  document.querySelector(`.nav-item[data-tab="${initialTab}"]`).setAttribute('aria-current','page');
+}
+window.addEventListener('load', ()=>{ positionGlow(document.querySelector('.nav-item[aria-current="page"]')); });
+
+/* ---------- Hero letter stagger + typed.js ---------- */
+function startHero(){
+  const nameEl = document.getElementById('heroName');
+  const text = nameEl.textContent;
+  nameEl.innerHTML = text.split('').map(ch=>`<span class="letter">${ch===' '?'&nbsp;':ch}</span>`).join('');
+  if(!reduceMotion){
+    gsap.from(nameEl.querySelectorAll('.letter'), {opacity:0, y:26, duration:.6, stagger:.028, ease:'power3.out'});
+  }
+  if(window.Typed){
+    new Typed('#typedRoles', {
+      strings:['Biotechnology Student','Bioinformatics Enthusiast','Computational Genomics Explorer','PCR &amp; Primer Design Specialist'],
+      typeSpeed:42, backSpeed:22, backDelay:1400, loop:true,
+      cursorChar:'|', autoInsertCss:true
     });
   }
-  const out=await doc.save();
-  const blob=new Blob([out],{type:'application/pdf'});
-  downloadBlob(blob,pdfState.fileName.replace(/\.pdf$/i,'')+'-edited.pdf');
-  setStatus('#pdf-status','Edited PDF saved locally. Original text was redacted at its source position on the page, and replacement text was drawn on the original baseline.','success');
+  runPanelAnimations('home');
 }
-function pdfSampleBackground(p,b){
-  // Sample an actual page-background pixel just left of the text block so the redaction
-  // rectangle matches non-white backgrounds too; fall back to white if sampling fails.
+
+/* ---------- Stat counters ---------- */
+let statsCounted = false;
+function countStats(){
+  if(statsCounted) return; statsCounted=true;
+  document.querySelectorAll('.stat-num').forEach(el=>{
+    const target = +el.dataset.count;
+    const obj = {v:0};
+    gsap.to(obj, {v:target, duration:1.4, ease:'power2.out', onUpdate:()=>{ el.textContent = Math.round(obj.v); }});
+  });
+}
+
+/* ---------- Scroll / entry reveals per panel ---------- */
+const animatedPanels = new Set();
+function runPanelAnimations(tab){
+  if(tab==='home') countStats();
+
+  const panel = document.getElementById('panel-'+tab);
+  if(!panel) return;
+  const cards = panel.querySelectorAll('.glass-card, .proj-card-outer, .tl-item, .exp-item');
+  if(!reduceMotion){
+    gsap.fromTo(cards, {opacity:0, y:22}, {opacity:1, y:0, duration:.55, stagger:.06, ease:'power2.out', overwrite:'auto'});
+  }
+
+  if(tab==='skills') animateSkillBars(panel);
+  if(tab==='skills' && !animatedPanels.has('radar')){ animatedPanels.add('radar'); initRadarChart(); }
+
+  scrambleHeadings(panel);
+}
+
+/* ---------- Skill bars ---------- */
+let skillsFilled = false;
+function animateSkillBars(panel){
+  if(skillsFilled) return; skillsFilled = true;
+  panel.querySelectorAll('.skill-row').forEach(row=>{
+    const fill = row.querySelector('.skill-fill');
+    const val = row.dataset.value;
+    if(reduceMotion){ fill.style.width = val+'%'; }
+    else gsap.to(fill, {width: val+'%', duration:1.1, ease:'elastic.out(1,0.75)', delay:.1});
+  });
+}
+
+/* ---------- Radar chart ---------- */
+function initRadarChart(){
+  const ctx = document.getElementById('radarChart');
+  if(!ctx || !window.Chart) return;
+  new Chart(ctx, {
+    type:'radar',
+    data:{
+      labels:['Lab Techniques','Bioinformatics','Programming','Analytical'],
+      datasets:[{
+        label:'Proficiency',
+        data:[85,75,66,68],
+        backgroundColor:'rgba(0,229,255,0.14)',
+        borderColor:'#00e5ff',
+        pointBackgroundColor:'#9d4edd',
+        borderWidth:2
+      }]
+    },
+    options:{
+      responsive:true,
+      scales:{
+        r:{
+          angleLines:{color:'rgba(255,255,255,.08)'},
+          grid:{color:'rgba(255,255,255,.08)'},
+          pointLabels:{color:'#93a1bd', font:{size:11}},
+          ticks:{display:false, backdropColor:'transparent'},
+          min:0, max:100
+        }
+      },
+      plugins:{legend:{display:false}}
+    }
+  });
+}
+
+/* ---------- Text scramble on headings ---------- */
+const scrambled = new WeakSet();
+function scrambleHeadings(panel){
+  const chars='ACGT0123456789';
+  panel.querySelectorAll('h2, .exp-org').forEach(h=>{
+    if(scrambled.has(h) || reduceMotion) return;
+    scrambled.add(h);
+    const original = h.textContent;
+    let frame = 0;
+    const totalFrames = 16;
+    const interval = setInterval(()=>{
+      frame++;
+      h.textContent = original.split('').map((c,i)=>{
+        if(c===' ') return ' ';
+        if(i < (frame/totalFrames)*original.length) return original[i];
+        return chars[Math.floor(Math.random()*chars.length)];
+      }).join('');
+      if(frame>=totalFrames){ clearInterval(interval); h.textContent = original; }
+    }, 28);
+  });
+}
+
+/* ---------- Project filter + search ---------- */
+const filterBtns = document.querySelectorAll('.filter-btn');
+const projSearch = document.getElementById('projSearch');
+const projCards = document.querySelectorAll('.proj-card-outer');
+let currentFilter = 'all';
+
+function applyProjectFilters(){
+  const q = projSearch.value.trim().toLowerCase();
+  let visibleCount = 0;
+  projCards.forEach(card=>{
+    const matchesCat = currentFilter==='all' || card.dataset.cat===currentFilter;
+    const matchesSearch = !q || card.dataset.title.includes(q);
+    const show = matchesCat && matchesSearch;
+    card.classList.toggle('hidden', !show);
+    if(show) visibleCount++;
+  });
+  let noRes = document.getElementById('noResultsMsg');
+  if(visibleCount===0){
+    if(!noRes){
+      noRes = document.createElement('div');
+      noRes.id='noResultsMsg'; noRes.className='no-results';
+      noRes.textContent='No projects match your search.';
+      document.getElementById('projGrid').appendChild(noRes);
+    }
+  } else if(noRes){ noRes.remove(); }
+}
+filterBtns.forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    filterBtns.forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    currentFilter = btn.dataset.filter;
+    applyProjectFilters();
+  });
+});
+projSearch.addEventListener('input', applyProjectFilters);
+
+/* ---------- Contact form validation + submit ---------- */
+const form = document.getElementById('contactForm');
+const statusEl = document.getElementById('formStatus');
+
+function setError(fieldId, msg){
+  const row = document.getElementById(fieldId).closest('.form-row');
+  const err = document.getElementById('err-'+fieldId.replace('cf-',''));
+  if(msg){ row.classList.add('error'); err.textContent = msg; }
+  else { row.classList.remove('error'); err.textContent = ''; }
+}
+
+function validateForm(){
+  let valid = true;
+  const name = document.getElementById('cf-name').value.trim();
+  const email = document.getElementById('cf-email').value.trim();
+  const subject = document.getElementById('cf-subject').value.trim();
+  const message = document.getElementById('cf-message').value.trim();
+
+  if(name.length < 2){ setError('cf-name','Please enter your name.'); valid=false; } else setError('cf-name','');
+  const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if(!emailRe.test(email)){ setError('cf-email','Please enter a valid email address.'); valid=false; } else setError('cf-email','');
+  if(subject.length < 2){ setError('cf-subject','Please add a subject.'); valid=false; } else setError('cf-subject','');
+  if(message.length < 10){ setError('cf-message','Message should be at least 10 characters.'); valid=false; } else setError('cf-message','');
+
+  return valid;
+}
+['cf-name','cf-email','cf-subject','cf-message'].forEach(id=>{
+  document.getElementById(id).addEventListener('blur', validateForm);
+});
+
+form.addEventListener('submit', async (e)=>{
+  e.preventDefault();
+  statusEl.className='form-status';
+  if(!validateForm()) return;
+
+  const btn = document.getElementById('cf-submit');
+  const originalHTML = btn.innerHTML;
+  btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Sending…';
+  btn.disabled = true;
+
   try{
-    const canvas=p&&p.canvas;
-    if(!canvas)return PDFLib.rgb(1,1,1);
-    const ctx=canvas.getContext('2d');
-    const sx=Math.max(0,Math.min(canvas.width-1,Math.round(b.x-6)));
-    const sy=Math.max(0,Math.min(canvas.height-1,Math.round(canvas.height-(b.y+b.h*0.5))));
-    const d=ctx.getImageData(sx,sy,1,1).data;
-    return PDFLib.rgb(d[0]/255,d[1]/255,d[2]/255);
-  }catch(e){
-    return PDFLib.rgb(1,1,1);
+    const res = await fetch(form.action, {
+      method:'POST',
+      headers:{'Accept':'application/json'},
+      body:new FormData(form)
+    });
+    if(res.ok){
+      statusEl.textContent = "Message sent — thanks for reaching out! I'll reply soon.";
+      statusEl.className='form-status success';
+      form.reset();
+      fireConfetti();
+    } else {
+      statusEl.textContent = 'Something went wrong sending your message. Please try emailing directly.';
+      statusEl.className='form-status failure';
+    }
+  } catch(err){
+    statusEl.textContent = 'Network error — please try emailing saifali15874@gmail.com directly.';
+    statusEl.className='form-status failure';
+  } finally {
+    btn.innerHTML = originalHTML;
+    btn.disabled = false;
   }
-}
+});
 
-/* Cross-device secure file share */
-const SHARE_API=location.protocol==='file:'?'http://localhost:8787':location.origin;
-let shareFile=null,shareRecord=null,shareLink='';
-function b64url(bytes){let bin='';for(const b of bytes)bin+=String.fromCharCode(b);return btoa(bin).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'')}
-function fromB64url(s){s=s.replace(/-/g,'+').replace(/_/g,'/');while(s.length%4)s+='=';const bin=atob(s);return Uint8Array.from(bin,c=>c.charCodeAt(0))}
-function randomId(){return crypto.randomUUID?crypto.randomUUID().replace(/-/g,''):b64url(crypto.getRandomValues(new Uint8Array(16)))}
-async function sha256(bytes){return new Uint8Array(await crypto.subtle.digest('SHA-256',bytes))}
-async function fileToBytes(file){
- if(!file||typeof file.arrayBuffer!=='function')throw new Error('Unable to read the selected file.');
- return new Uint8Array(await file.arrayBuffer());
-}
-async function createShareCode(){
- if(!shareFile){setStatus('#share-created','Choose a file first.','error');return}
- try{
-  setStatus('#share-created','Encrypting and uploading…','info');
-  const raw=await fileToBytes(shareFile);
-  const key=await crypto.subtle.generateKey({name:'AES-GCM',length:256},true,['encrypt','decrypt']);
-  const iv=crypto.getRandomValues(new Uint8Array(12));
-  const cipher=new Uint8Array(await crypto.subtle.encrypt({name:'AES-GCM',iv},key,raw));
-  const keyBytes=new Uint8Array(await crypto.subtle.exportKey('raw',key));
-  const id=randomId();
-  const meta={id,filename:shareFile.name,size:shareFile.size,mime:shareFile.type||'application/octet-stream',iv:b64url(iv),total:cipher.length};
-  const res=await fetch(SHARE_API+'/api/share',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(meta)});
-  if(!res.ok)throw new Error(await res.text()||'Relay server rejected the share.');
-  const chunkSize=256*1024;
-  for(let offset=0;offset<cipher.length;offset+=chunkSize){
-   const chunk=b64url(cipher.slice(offset,Math.min(offset+chunkSize,cipher.length)));
-   const r=await fetch(SHARE_API+'/api/share/'+encodeURIComponent(id)+'/chunk',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({offset,data:chunk})});
-   if(!r.ok)throw new Error('Upload failed while sending the encrypted file.');
-   setStatus('#share-created',`Encrypted ${fmtBytes(shareFile.size)} · uploading ${Math.min(100,Math.round((Math.min(offset+chunkSize,cipher.length)/cipher.length)*100))}%…`,'info');
+/* ---------- Confetti (only on successful submit) ---------- */
+function fireConfetti(){
+  if(reduceMotion) return;
+  const canvas = document.getElementById('confetti-canvas');
+  canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+  const ctx = canvas.getContext('2d');
+  const colors = ['#00e5ff','#9d4edd','#39ff14','#f0f4ff'];
+  const pieces = Array.from({length:120}, ()=>({
+    x: canvas.width/2, y: canvas.height/2,
+    vx:(Math.random()-0.5)*14, vy:(Math.random()-1.4)*14,
+    size: Math.random()*6+3, color: colors[Math.floor(Math.random()*colors.length)],
+    rot: Math.random()*360, vr:(Math.random()-0.5)*14, life:0
+  }));
+  let frame=0;
+  function tick(){
+    frame++;
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    pieces.forEach(p=>{
+      p.vy += 0.32; p.x += p.vx; p.y += p.vy; p.rot += p.vr; p.life++;
+      ctx.save();
+      ctx.translate(p.x,p.y); ctx.rotate(p.rot*Math.PI/180);
+      ctx.fillStyle = p.color; ctx.globalAlpha = Math.max(0, 1-p.life/90);
+      ctx.fillRect(-p.size/2,-p.size/2,p.size,p.size);
+      ctx.restore();
+    });
+    if(frame<90) requestAnimationFrame(tick);
+    else ctx.clearRect(0,0,canvas.width,canvas.height);
   }
-  const urlKey=b64url(keyBytes);
-  shareLink=SHARE_API+'/#share='+encodeURIComponent(id)+'&key='+encodeURIComponent(urlKey);
-  shareRecord={id,key:keyBytes,iv,meta};
-  $('#share-link-view').value=shareLink;$('#share-code-view').textContent=id.slice(0,12);
-  $('#share-created').textContent=`Encrypted ${fmtBytes(shareFile.size)} · ready for another device · expires in 60 minutes or after one successful download.`;
-  setStatus('#share-receive-status','Share ready. Send the link to the other device.','success');
- }catch(e){setStatus('#share-created',esc(e.message||'Unable to create encrypted share.'),'error')}
+  tick();
 }
-function parseShareInput(value){
- value=(value||'').trim();
- if(value.startsWith('http://')||value.startsWith('https://')){const u=new URL(value);const id=u.hash.match(/(?:^|[?#&])share=([^&]+)/)?.[1];const key=u.hash.match(/(?:^|[?#&])key=([^&]+)/)?.[1];if(id&&key)return{id:decodeURIComponent(id),key:fromB64url(decodeURIComponent(key))}}
- const m=value.match(/^([^\s.:]+)\.([A-Za-z0-9_-]+)$/);if(m)return{id:m[1],key:fromB64url(m[2])};
- return null;
-}
-async function receiveShareCode(){
- let parsed=parseShareInput($('#share-code-input').value);
- if(!parsed&&location.hash.includes('share=')){const u=new URL(location.href);parsed=parseShareInput(location.href)}
- if(!parsed){setStatus('#share-receive-status','Paste the secure share link from the sending device.','error');return}
- try{
-  setStatus('#share-receive-status','Fetching encrypted file…','info');
-  const r=await fetch(SHARE_API+'/api/share/'+encodeURIComponent(parsed.id));
-  if(!r.ok)throw new Error(r.status===404?'Share not found or already downloaded.':await r.text());
-  const rec=await r.json();
-  const chunks=[];
-  for(let offset=0;offset<rec.total;offset+=256*1024){const cr=await fetch(SHARE_API+'/api/share/'+encodeURIComponent(parsed.id)+'/chunk/'+offset);if(!cr.ok)throw new Error('Could not fetch an encrypted file chunk.');chunks.push(fromB64url(await cr.text()));setStatus('#share-receive-status',`Downloading encrypted data ${Math.min(100,Math.round(((offset+chunks.at(-1).length)/rec.total)*100))}%…`,'info')}
-  const cipher=new Uint8Array(chunks.reduce((n,c)=>n+c.length,0));let p=0;for(const c of chunks){cipher.set(c,p);p+=c.length}
-  const key=await crypto.subtle.importKey('raw',parsed.key,{name:'AES-GCM'},false,['decrypt']);
-  const plain=await crypto.subtle.decrypt({name:'AES-GCM',iv:fromB64url(rec.iv)},key,cipher);
-  downloadBlob(new Blob([plain],{type:rec.mime}),rec.filename);
-  await fetch(SHARE_API+'/api/share/'+encodeURIComponent(parsed.id),{method:'DELETE'}).catch(()=>{});
-  setStatus('#share-receive-status',`Decrypted and downloaded ${esc(rec.filename)}. The one-time share has now been deleted.`,'success');
- }catch(e){setStatus('#share-receive-status',esc(e.message||'Unable to decrypt this share.'),'error')}
-}
-async function copyShareLink(){if(!shareLink){setStatus('#share-created','Create a share first.','error');return}try{await navigator.clipboard.writeText(shareLink);setStatus('#share-created','Secure share link copied.','success')}catch(e){$('#share-link-view').select();document.execCommand('copy');setStatus('#share-created','Secure share link copied.','success')}}
-function openShareLink(){if(shareLink)window.open(shareLink,'_blank','noopener')}
-function clearShareState(){shareFile=null;shareRecord=null;shareLink='';$('#share-file-label').textContent='No file selected.';$('#share-link-view').value='';$('#share-code-view').textContent='—';$('#share-created').textContent='';$('#share-code-input').value='';setStatus('#share-receive-status','')}
-$('#share-file-input')?.addEventListener('change',()=>{shareFile=$('#share-file-input').files?.[0]||null;$('#share-file-label').textContent=shareFile?`${shareFile.name} · ${fmtBytes(shareFile.size)}`:'No file selected.'});
-(function consumeShareHash(){if(location.hash.includes('share=')){const input=$('#share-code-input');if(input)input.value=location.href;setTimeout(receiveShareCode,350)}})();
-
-/* Signature assistant */
-const sigState={image:null,doc:null,kind:null,placements:[],signedBytes:null,fileName:''};
-$('#sig-image-input')?.addEventListener('change',()=>{sigState.image=$('#sig-image-input').files?.[0]||null});
-$('#sig-doc-input')?.addEventListener('change',()=>{sigState.doc=$('#sig-doc-input').files?.[0]||null});
-async function scanForSignatures(){if(!sigState.image||!sigState.doc){setStatus('#sig-status','Choose both a signature image and a PDF/DOCX document.','error');return}sigState.placements=[];sigState.signedBytes=null;sigState.fileName=sigState.doc.name;try{if(/\.pdf$/i.test(sigState.doc.name)){sigState.kind='pdf';await scanPdfSignatureFields()}else if(/\.docx$/i.test(sigState.doc.name)){sigState.kind='docx';await scanDocxSignatureFields()}else throw new Error('Only PDF and DOCX are supported.');$('#sig-download-btn').disabled=false}catch(e){setStatus('#sig-status',esc(e.message||'Signature scan failed.'),'error')}}
-function signatureMatch(text){return /\b(signature|signed|authorized by|authorised by|approved by|sign here)\b/i.test(text)||/_{4,}|\.{5,}|-{5,}/.test(text)}
-async function scanPdfSignatureFields(){const bytes=await sigState.doc.arrayBuffer(),doc=await pdfjsLib.getDocument({data:bytes.slice(0)}).promise;const page=await doc.getPage(1),scale=1.5,viewport=page.getViewport({scale});const canvas=document.createElement('canvas');canvas.width=Math.floor(viewport.width);canvas.height=Math.floor(viewport.height);await page.render({canvasContext:canvas.getContext('2d'),viewport}).promise;$('#sig-preview-wrap').innerHTML='';$('#sig-preview-wrap').appendChild(canvas);const tc=await page.getTextContent();let hits=[];for(let p=1;p<=doc.numPages;p++){const pg=await doc.getPage(p),vp=pg.getViewport({scale:1});const t=await pg.getTextContent();t.items.filter(x=>x.str&&signatureMatch(x.str)).slice(0,8).forEach(x=>{const tr=x.transform||[1,0,0,1,0,0],h=Math.abs(tr[3]||12),w=Math.max(x.width||80,80);hits.push({page:p,x:tr[4],y:tr[5]-h,w:Math.min(w*1.3,240),h:Math.max(h*1.6,32),scale,viewport:vp,text:x.str})})}if(!hits.length){const worker=await Tesseract.createWorker('eng',1);const pg=await doc.getPage(1);const vp=pg.getViewport({scale});const can=document.createElement('canvas');can.width=Math.floor(vp.width);can.height=Math.floor(vp.height);await pg.render({canvasContext:can.getContext('2d'),viewport:vp}).promise;const res=await worker.recognize(can);await worker.terminate();(res.data.words||[]).filter(w=>signatureMatch(w.text)).slice(0,6).forEach(w=>hits.push({page:1,x:w.bbox.x0/scale,y:(can.height-w.bbox.y1)/scale,w:140,h:42,scale:1.0,viewport:pg.getViewport({scale:1}),text:w.text}))}sigState.placements=hits.slice(0,12);if(!sigState.placements.length){setStatus('#sig-status','No signature-like text or lines were detected. Nothing was altered.','error');return}const first=sigState.placements[0];if(first.page===1){renderSignaturePreview(canvas,first)}setStatus('#sig-status',`Detected ${sigState.placements.length} possible signature location${sigState.placements.length===1?'':'s'}. Preview shows the first candidate; placement uses the detected page coordinates.`,'success')}
-function renderSignaturePreview(canvas,placement){const wrap=$('#sig-preview-wrap');wrap.innerHTML='';wrap.appendChild(canvas);const ov=document.createElement('div');ov.className='signature-overlay';ov.style.left=(placement.x*placement.scale)+'px';ov.style.top=((placement.viewport.height-placement.y-placement.h)*placement.scale)+'px';ov.style.width=Math.max(80,placement.w*placement.scale)+'px';ov.style.height=Math.max(36,placement.h*placement.scale)+'px';const img=document.createElement('img');img.src=URL.createObjectURL(sigState.image);ov.appendChild(img);wrap.appendChild(ov);const badge=document.createElement('div');badge.className='preview-badge';badge.textContent='drag to adjust';wrap.appendChild(badge);enableDrag(ov,placement,canvas)}
-function enableDrag(el,placement,canvas){let sx=0,sy=0,ox=0,oy=0;el.addEventListener('pointerdown',e=>{el.setPointerCapture(e.pointerId);sx=e.clientX;sy=e.clientY;ox=parseFloat(el.style.left)||0;oy=parseFloat(el.style.top)||0});el.addEventListener('pointermove',e=>{if(!el.hasPointerCapture(e.pointerId))return;const dx=e.clientX-sx,dy=e.clientY-sy;el.style.left=Math.max(0,ox+dx)+'px';el.style.top=Math.max(0,oy+dy)+'px'});el.addEventListener('pointerup',()=>{placement.previewLeft=parseFloat(el.style.left);placement.previewTop=parseFloat(el.style.top)})}
-async function scanDocxSignatureFields(){const zip=await JSZip.loadAsync(await sigState.doc.arrayBuffer());const xml=await zip.file('word/document.xml').async('string');const pats=[];const textMatches=[...xml.matchAll(/<w:t[^>]*>([^<]*(?:Signature|Signed|Authorized by|Authorised by|Approved by|Sign here)[^<]*)<\/w:t>/gi)];textMatches.forEach(m=>pats.push(m[1]));const placeholders=[...xml.matchAll(/<w:t[^>]*>([^<]*_{4,}[^<]*)<\/w:t>/g)];placeholders.forEach(m=>pats.push(m[1]));$('#sig-preview-wrap').innerHTML='<div class="small" style="padding:18px">DOCX scan found '+pats.length+' signature-like location'+(pats.length===1?'':'s')+'. The image will be inserted inline next to the matched paragraph without rebuilding the rest of the package.</div>';sigState.placements=pats.slice(0,12).map((text,i)=>({paragraphText:text,index:i}));setStatus('#sig-status',pats.length?`Detected ${pats.length} DOCX signature placeholder${pats.length===1?'':'s'}.`:'No common DOCX signature placeholder was found.','success')}
-async function downloadSignedDocument(){if(!sigState.doc||!sigState.image||!sigState.kind)return;try{if(sigState.kind==='pdf')await buildSignedPdf();else await buildSignedDocx()}catch(e){setStatus('#sig-status',esc(e.message||'Could not build signed document.'),'error')}}
-async function buildSignedPdf(){const bytes=await sigState.doc.arrayBuffer(),doc=await PDFLib.PDFDocument.load(bytes),imgBytes=await sigState.image.arrayBuffer(),img=/\.png$/i.test(sigState.image.name)?await doc.embedPng(imgBytes):await doc.embedJpg(imgBytes);for(const p of sigState.placements.slice(0,12)){const page=doc.getPage((p.page||1)-1),w=Math.min(180,p.w||140),h=w*(img.height/img.width);page.drawImage(img,{x:p.x||60,y:p.y||60,width:w,height:h})}const out=await doc.save();downloadBlob(new Blob([out],{type:'application/pdf'}),sigState.doc.name.replace(/\.pdf$/i,'')+'-signed.pdf');setStatus('#sig-status','Signed PDF created. Only signature images were added.','success')}
-async function buildSignedDocx(){const zip=await JSZip.loadAsync(await sigState.doc.arrayBuffer()),docFile=zip.file('word/document.xml');const relsFile=zip.file('word/_rels/document.xml.rels');if(!docFile||!relsFile)throw new Error('DOCX package is missing the standard document XML parts.');let xml=await docFile.async('string'),rels=await relsFile.async('string');const imgPath='word/media/signature.png';zip.file(imgPath,await sigState.image.arrayBuffer());const rids=[...rels.matchAll(/Id="(rId\d+)"/g)].map(m=>+m[1].slice(3));const rid='rId'+((Math.max(0,...rids))+1);rels=rels.replace('</Relationships>',`<Relationship Id="${rid}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="media/signature.png"/></Relationships>`);const drawing=`<w:r><w:drawing><wp:inline xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing" xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" xmlns:pic="http://schemas.openxmlformats.org/drawingml/2006/picture"><wp:extent cx="1371600" cy="685800"/><wp:docPr id="99" name="Signature"/><a:graphic><a:graphicData uri="http://schemas.openxmlformats.org/drawingml/2006/picture"><pic:pic><pic:nvPicPr><pic:cNvPr id="0" name="signature.png"/><pic:cNvPicPr/></pic:nvPicPr><pic:blipFill><a:blip r:embed="${rid}"/><a:stretch><a:fillRect/></a:stretch></pic:blipFill><pic:spPr><a:xfrm><a:off x="0" y="0"/><a:ext cx="1371600" cy="685800"/></a:xfrm><a:prstGeom prst="rect"><a:avLst/></a:prstGeom></pic:spPr></pic:pic></a:graphicData></a:graphic></wp:inline></w:drawing></w:r>`;let inserted=0;for(const p of sigState.placements.slice(0,12)){const rx=new RegExp(`(<w:p[\\s\\S]*?<w:t[^>]*>${escapeRegExp(p.paragraphText||'')}[\\s\\S]*?</w:p>)`,'i');if(rx.test(xml)){xml=xml.replace(rx,m=>m.replace('</w:p>',drawing+'</w:p>'));inserted++}else{const generic=/<w:p[\s\S]*?<\/w:p>/gi;let count=0;xml=xml.replace(generic,m=>{if(count===p.index&&!m.includes('<w:drawing>')){count++;return m.replace('</w:p>',drawing+'</w:p>')}count++;return m})}}if(!inserted&&sigState.placements.length)throw new Error('DOCX signature field text could not be matched safely.');zip.file('word/document.xml',xml);zip.file('word/_rels/document.xml.rels',rels);const out=await zip.generateAsync({type:'blob'});downloadBlob(out,sigState.doc.name.replace(/\.docx$/i,'')+'-signed.docx');setStatus('#sig-status','Signed DOCX created. Existing document XML was retained and the signature image was inserted inline.','success')}
-function escapeRegExp(s){return String(s).replace(/[.*+?^${}()|[\]\\]/g,'\\$&')}
-
-/* Helpers */
-function downloadBlob(blob,name){const a=document.createElement('a');const url=URL.createObjectURL(blob);a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),2000)}
-
-/* Init */
-bindPdfDrop();
-analyzeSequence();
-loadRestrictionExample();
-analyzeCodons();
-runMutation();
-runORF();
-initProtein();
+window.addEventListener('resize', ()=>{
+  const canvas = document.getElementById('confetti-canvas');
+  canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+});
 </script>
 </body>
 </html>
