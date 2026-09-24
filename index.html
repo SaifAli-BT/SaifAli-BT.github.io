@@ -3,11 +3,23 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#0a0a0a">
 <title>Saif Ali — Biotechnology &amp; Bioinformatics Portfolio</title>
 <meta name="description" content="Saif Ali — BS Biotechnology student at IIUI, Pakistan. Bioinformatics enthusiast with hands-on experience in genomics, PCR, primer design and computational biology.">
+<link rel="canonical" href="https://saif-ali.me/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Saif Ali — Biotechnology &amp; Bioinformatics Portfolio">
+<meta property="og:description" content="BS Biotechnology student at IIUI, Pakistan. Genomics, PCR, primer design and computational biology.">
+<meta property="og:image" content="https://saif-ali.me/saif-ali.jpg">
+<meta property="og:url" content="https://saif-ali.me/">
+<!-- Favicon: three gel bands on a black lane, ~430 bytes. -->
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230a0a0a'/%3E%3Crect x='6' y='8' width='20' height='3' fill='%2313e0d8'/%3E%3Crect x='6' y='15' width='14' height='3' fill='%23fc66b6'/%3E%3Crect x='6' y='22' width='17' height='3' fill='%2313e0d8'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter+Tight:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<!-- Without JS the intro overlay would cover the page forever. Note: experience, projects and skills are rendered by JS, so they are empty without it. -->
+<noscript><style>#pre{display:none}</style></noscript>
 <!--
  DESIGN MANIFESTO — "The Portfolio as a Sequencing Run"
  The site is one agarose gel run. Content lives in lanes, skills are glowing bands, and every
@@ -17,7 +29,8 @@
  Motif (the only one): gel bands — horizontal glowing bars. Type HELIX for DNA rain; toggle sequence mode for terminal skin.
 -->
 <style>
-:root{--ink:oklch(.15 .01 200);--gel:oklch(.2 .015 200);--bone:oklch(.93 .015 95);--dim:color-mix(in oklch,var(--bone) 55%,transparent);
+/* --dim was 55%: ~4.4:1 on --ink, just under AA. 62% gives ~5.7:1. */
+:root{color-scheme:dark;--ink:oklch(.15 .01 200);--gel:oklch(.2 .015 200);--bone:oklch(.93 .015 95);--dim:color-mix(in oklch,var(--bone) 62%,transparent);
 --teal:oklch(.82 .14 190);--pink:oklch(.72 .2 350);--line:color-mix(in oklch,var(--bone) 14%,transparent);
 --serif:'Instrument Serif',Georgia,serif;--sans:'Inter Tight',system-ui,sans-serif;--mono:'JetBrains Mono',ui-monospace,monospace}
 body.seq{--ink:#020a04;--gel:#03130a;--bone:#7dffa0;--teal:#7dffa0;--pink:#c6ff7d;--serif:var(--mono);--sans:var(--mono)}
@@ -26,20 +39,25 @@ html,body{height:100%}
 body{background:var(--ink);color:var(--bone);font:400 16px/1.6 var(--sans);overflow:hidden}
 ::selection{background:var(--pink);color:var(--ink);text-shadow:0 0 8px var(--pink)}
 a{color:inherit}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
 :focus-visible{outline:2px solid var(--teal);outline-offset:3px;animation:ring 1.2s ease-out infinite}
 @keyframes ring{0%{outline-offset:2px}100%{outline-offset:9px;outline-color:transparent}}
 #ambient{position:fixed;inset:0;z-index:0;pointer-events:none}
 /* ═══ SECTION: OPENING SEQUENCE ═══ */
-#pre{position:fixed;inset:0;z-index:100;background:#000;display:grid;place-items:center;overflow:hidden;clip-path:circle(150% at 50% 50%)}
-#reads{position:absolute;inset:0;font:500 15px/1.5 var(--mono);color:var(--teal);opacity:.35;white-space:pre;overflow:hidden;letter-spacing:.3em}
+/* was: #pre had a clip-path plus a JS-injected veil that did the real iris; the veil is now plain markup and #pre never clips */
+#pre{position:fixed;inset:0;z-index:100;background:transparent;display:grid;place-items:center;overflow:hidden}
+#veil{position:absolute;inset:0;background:#000}
+#reads{position:absolute;inset:0;z-index:1;font:500 15px/1.5 var(--mono);color:var(--teal);opacity:.35;white-space:pre;overflow:hidden;letter-spacing:.3em}
 #reads span{display:block}
-#log{position:absolute;left:20px;bottom:20px;font:12px/1.7 var(--mono);color:var(--pink)}
+#log{position:absolute;left:20px;bottom:20px;font:12px/1.7 var(--mono);color:var(--pink);white-space:pre}
 #cell{width:min(46vmin,340px);aspect-ratio:1;border-radius:50%;border:2px solid var(--pink);box-shadow:0 0 60px color-mix(in oklch,var(--pink) 40%,transparent),inset 0 0 50px color-mix(in oklch,var(--teal) 30%,transparent);display:grid;place-items:center;position:relative}
 #helix{position:relative;width:60%;height:70%;perspective:500px}
-#pulse{position:absolute;width:20px;height:20px;border:2px solid var(--teal);border-radius:50%;opacity:0}
+/* was: pinned to #pre's top-left. `translate` is a separate property, so GSAP's scale doesn't fight it. */
+#pulse{position:absolute;left:50%;top:50%;translate:-50% -50%;width:20px;height:20px;border:2px solid var(--teal);border-radius:50%;opacity:0}
 /* ═══ SECTION: GENOME NAV ═══ */
 header{position:fixed;top:0;left:0;right:0;z-index:20;display:flex;align-items:center;gap:20px;padding:14px 22px}
 #plasmid{width:84px;height:84px;flex:none;cursor:pointer;animation:breathe 4s ease-in-out infinite}
+#plasmid-home{cursor:pointer}
 @keyframes breathe{50%{transform:scale(1.05)}}
 #ring{transform-origin:50% 50%;transition:transform 1s cubic-bezier(.7,0,.2,1)}
 .seg{fill:none;stroke:var(--line);stroke-width:7;cursor:pointer;transition:stroke .4s,stroke-width .4s}
@@ -67,39 +85,50 @@ h3{font:400 28px var(--serif)}
 /* home */
 .dash{display:grid;grid-template-columns:1.5fr 1fr;gap:40px;align-items:center}
 #mol{height:340px;position:relative;perspective:700px}
+.spin{position:absolute;inset:0;transform-style:preserve-3d;animation:spin 14s linear infinite}
+@keyframes spin{to{transform:rotateY(360deg)}}
 .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:0;border-top:1px solid var(--line);margin-top:40px}
 .stat{padding:16px 0;border-right:1px solid var(--line);padding-left:14px}.stat:last-child{border:0}
 .flip{display:inline-flex;height:1em;overflow:hidden;font:400 56px/1 var(--serif)}
-.flip i{display:block;font-style:normal;transition:transform 1.4s cubic-bezier(.2,.8,.2,1)}
-.btn{display:inline-block;border:1px solid var(--teal);color:var(--teal);background:none;padding:10px 20px;border-radius:99px;font:500 14px var(--sans);cursor:pointer;text-decoration:none;margin-right:10px;transition:background .3s,color .3s}
+.flip i{display:block;font-style:normal}  /* driven by GSAP now so it replays on every Home visit */
+.btn{display:inline-block;border:1px solid var(--teal);color:var(--teal);background:none;padding:10px 20px;border-radius:99px;font:500 14px var(--sans);cursor:pointer;text-decoration:none;margin:0 10px 8px 0;transition:background .3s,color .3s}
 .btn:hover{background:var(--teal);color:var(--ink)}
 /* about */
-.note{background:var(--bone);color:var(--ink);padding:28px 30px;transform:rotate(-1deg);max-width:640px;position:relative;font-family:var(--serif);font-size:21px;line-height:1.45;box-shadow:0 20px 50px #0008}
+/* was: font-family:var(--serif), which is monospace in body.seq and killed the specimen-note look */
+.note{background:var(--bone);color:var(--ink);padding:28px 30px;transform:rotate(-1deg);max-width:640px;position:relative;font-family:'Instrument Serif',Georgia,serif;font-size:21px;line-height:1.45;box-shadow:0 20px 50px #0008}
 .note .mono{color:oklch(.4 .02 200)}
 .note em{color:oklch(.5 .2 350);font-style:italic}
 .tags{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
 .tags span{border:1px solid var(--line);padding:3px 12px;border-radius:99px;font-size:13px}
 .cols{display:grid;grid-template-columns:1fr 1fr;gap:40px;margin-top:36px}
-/* tree */
+/* tree: two strands (teal + pink), paths generated in JS */
 .tree{position:relative;padding-left:56px;margin-top:20px}
 .tree svg{position:absolute;left:0;top:0;width:40px;height:100%}
 .tree path{fill:none;stroke:var(--teal);stroke-width:2;filter:drop-shadow(0 0 4px var(--teal))}
+.tree #branch2{stroke:var(--pink);opacity:.5;filter:none}
 .job{padding:0 0 46px;position:relative}
-.job::before{content:"";position:absolute;left:-42px;top:12px;width:14px;height:14px;border-radius:50%;background:var(--ink);border:2px solid var(--pink);box-shadow:0 0 10px var(--pink)}
+/* was: .job carried .scan (overflow:hidden), which clipped this dot at left:-42px so it never showed. .scan now lives on an inner wrapper. --dx slides the dot onto the wave. */
+.job::before{content:"";position:absolute;left:calc(-42px + var(--dx,0px));top:12px;width:14px;height:14px;border-radius:50%;background:var(--ink);border:2px solid var(--pink);box-shadow:0 0 10px var(--pink)}
 .job ul{padding-left:18px;color:var(--dim);margin:10px 0;max-width:70ch}
 /* slides */
 .tray{display:flex;gap:18px;overflow-x:auto;padding:16px 4px 26px;scroll-snap-type:x mandatory;max-width:none!important;margin:0!important}
 .slide{flex:none;width:min(300px,78vw);height:400px;scroll-snap-align:start;background:linear-gradient(160deg,var(--gel),var(--ink));border:1px solid var(--line);border-radius:6px;padding:18px;cursor:pointer;text-align:left;color:inherit;font:inherit;position:relative;overflow:hidden;transition:transform .4s,border-color .4s}
 .slide:hover{transform:translateY(-6px);border-color:var(--teal)}
 .slide .lens{width:100%;height:110px;border-radius:50%/50%;margin-bottom:16px;background:radial-gradient(circle at 40% 45%,color-mix(in oklch,var(--pink) 60%,transparent),transparent 45%),radial-gradient(circle at 65% 60%,color-mix(in oklch,var(--teal) 50%,transparent),transparent 50%);border:1px solid var(--line)}
-.slide .more{position:absolute;inset:0;background:var(--bone);color:var(--ink);padding:18px;clip-path:circle(0 at 50% 100%);transition:clip-path .7s cubic-bezier(.7,0,.2,1);font-size:15px}
-.slide[aria-expanded=true] .more{clip-path:circle(150% at 50% 100%)}
+/* visibility keeps the collapsed detail out of the a11y tree and tab order; it flips after the clip finishes closing */
+.slide .more{position:absolute;inset:0;background:var(--bone);color:var(--ink);padding:18px;clip-path:circle(0 at 50% 100%);visibility:hidden;transition:clip-path .7s cubic-bezier(.7,0,.2,1),visibility 0s .7s;font-size:15px}
+.slide[aria-expanded=true] .more{clip-path:circle(150% at 50% 100%);visibility:visible;transition:clip-path .7s cubic-bezier(.7,0,.2,1),visibility 0s}
 .slide p{color:var(--dim);font-size:14px;margin-top:8px}
-/* skills heatmap */
+/* skills heatmap: three tiers */
 .grp{margin:26px 0}
 .heat{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:4px;margin-top:8px}
-.cell{padding:14px 10px;font-size:13px;border-radius:3px;position:relative;background:color-mix(in oklch,var(--teal) calc(var(--v)*1%),var(--gel));color:oklch(calc(1 - var(--v)/140) 0 0);opacity:0;transform:scaleY(.2);transform-origin:bottom}
-.cell b{display:block;font:500 11px var(--mono);opacity:.75}
+/* was: text lightness = 1 - v/140. That crosses the background lightness around v=60-75 (~1.5:1), so mid-strength cells were unreadable. Tiers now pick bone or ink text explicitly; all three clear 4.5:1 in both skins (estimated from oklch lightness). */
+.cell{padding:14px 10px;font-size:13px;border-radius:3px;position:relative;background:color-mix(in oklch,var(--teal) calc(var(--v)*1%),var(--gel));color:var(--bone);opacity:0;transform:scaleY(.2);transform-origin:bottom}
+.t0{--v:22}.t1{--v:40}.t2{--v:88;color:var(--ink)}
+.cell b{display:block;font:500 11px var(--mono)}  /* was opacity:.75, which pulled 11px text below AA */
+.legend{margin:-10px 0 4px}
+.lg{display:inline-block;width:28px;height:6px;border-radius:1px;vertical-align:middle;margin:0 6px 0 16px;background:color-mix(in oklch,var(--teal) calc(var(--v)*1%),var(--gel))}
+.lg:first-child{margin-left:0}
 /* contact */
 .term{background:#000;border:1px solid var(--line);border-radius:8px;padding:22px;font:14px/1.7 var(--mono);max-width:680px}
 .term label{color:var(--teal);display:block;margin-top:10px}
@@ -107,16 +136,18 @@ h3{font:400 28px var(--serif)}
 #st{color:var(--pink);margin-top:10px;min-height:1.6em}
 #rain{position:fixed;inset:0;z-index:50;pointer-events:none}
 @media(max-width:760px){.dash,.cols{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,1fr)}#mol{height:220px}header{gap:12px;padding:10px 14px}#plasmid{width:64px;height:64px}nav button{font-size:13px}.panel{padding-top:110px}}
-@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}
+/* animations are off globally, but the 44 blurred helix nodes would still render for nothing */
+#mol{display:none}.dash{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
 <canvas id="ambient" aria-hidden="true"></canvas>
 
-<div id="pre" aria-hidden="true"><div id="reads"></div><div id="cell"><div id="helix"></div></div><div id="pulse"></div><div id="log"></div></div>
+<div id="pre" aria-hidden="true"><div id="veil"></div><div id="reads"></div><div id="cell"><div id="helix"></div></div><div id="pulse"></div><div id="log"></div></div>
 
 <header>
-  <svg id="plasmid" viewBox="0 0 100 100" role="img" aria-label="Plasmid navigation ring"><g id="ring"></g><circle cx="50" cy="50" r="6" fill="var(--pink)"/></svg>
+  <svg id="plasmid" viewBox="0 0 100 100" role="img" aria-label="Plasmid navigation ring"><g id="ring"></g><circle id="plasmid-home" cx="50" cy="50" r="6" fill="var(--pink)"/></svg>
   <nav id="nav" aria-label="Sections"></nav>
 </header>
 <button id="mode" aria-pressed="false">sequence mode</button>
@@ -128,7 +159,7 @@ h3{font:400 28px var(--serif)}
       <p class="mono" id="readout">read 001 · aligned · Q40</p>
       <h1 id="name" aria-label="Saif Ali">Saif Ali</h1>
       <p class="lede">BS Biotechnology student at IIUI, building a bridge between wet-lab genomics and computational biology — from primer design to Python-driven analysis.</p>
-      <button class="btn" data-go="projects">View projects</button><button class="btn" data-go="contact">Contact me</button>
+      <button class="btn" data-go="projects">View projects</button><button class="btn" data-go="contact">Contact me</button><a class="btn" href="./saif-ali-cv.pdf" download>Download CV →</a>
     </div>
     <div id="mol" aria-hidden="true"></div>
   </div>
@@ -158,7 +189,9 @@ h3{font:400 28px var(--serif)}
 
 <section class="panel" id="skills" aria-label="Skills">
   <h2>Lab, computational &amp; analytical toolkit</h2>
-  <p class="lede">Each cell is a skill; brighter teal means stronger.</p>
+  <!-- was: "brighter teal means stronger", which implied a precision the old percentages never had -->
+  <p class="lede">Each cell is a skill, banded into three tiers. Brighter teal means a higher tier.</p>
+  <p class="legend mono"><span class="lg t0"></span>Familiar<span class="lg t1"></span>Proficient<span class="lg t2"></span>Advanced</p>
   <div id="skillgrid"></div>
 </section>
 
@@ -172,7 +205,7 @@ h3{font:400 28px var(--serif)}
     <label for="m">message</label><textarea id="m" name="message" rows="4" required></textarea>
     <p style="margin-top:14px"><button class="btn" type="submit">Send message</button></p><div id="st" role="status"></div>
   </form>
-  <p style="margin-top:26px" class="mono">saifali15874@gmail.com · Jhelum, Punjab, Pakistan<br><a href="https://linkedin.com/in/saif-ali-421b20369" target="_blank" rel="noopener">LinkedIn</a> · <a href="mailto:saifali15874@gmail.com">Email</a> · © 2026 Saif Ali</p>
+  <p style="margin-top:26px" class="mono">saifali15874@gmail.com · Jhelum, Punjab, Pakistan<br><a href="https://linkedin.com/in/saif-ali-421b20369" target="_blank" rel="noopener">LinkedIn</a> · <a href="mailto:saifali15874@gmail.com">Email</a> · <a href="./saif-ali-cv.pdf" download>Download CV →</a> · © 2026 Saif Ali</p>
 </section>
 </main>
 <canvas id="rain" aria-hidden="true"></canvas>
@@ -181,11 +214,27 @@ h3{font:400 28px var(--serif)}
 const RM=matchMedia('(prefers-reduced-motion:reduce)').matches;
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const B='ATGC';
+const secs=[['home','Home'],['about','About'],['experience','Experience'],['projects','Projects'],['skills','Skills'],['contact','Contact']];
+let cur='home',busy=false,queued=null;
+
+/* ═══ CANVAS COLOURS ═══ */
+/* was: ctx.fillStyle = getPropertyValue('--teal'), an oklch() string that Safari <15.4 and old Firefox silently ignore, leaving the fill black.
+   Assigning through a scratch context with a sentinel detects that, then falls back to sRGB equivalents (oklch converted by hand). */
+const PAL={teal:'#13e0d8',pink:'#fc66b6'},FB={n:{teal:'#13e0d8',pink:'#fc66b6'},s:{teal:'#7dffa0',pink:'#c6ff7d'}};
+const scratch=document.createElement('canvas').getContext('2d');
+function palette(){const cs=getComputedStyle(document.body),seq=document.body.classList.contains('seq');
+  ['teal','pink'].forEach(k=>{scratch.fillStyle='#010203';scratch.fillStyle=cs.getPropertyValue('--'+k).trim();
+    PAL[k]=scratch.fillStyle==='#010203'?FB[seq?'s':'n'][k]:scratch.fillStyle})}
+palette();
+
 /* ═══ SECTION: OPENING SEQUENCE ═══ */
-(function(){
+/* was: an IIFE at the top of the script. Under reduced motion it called intro() synchronously, before `secs`/`cur` (const/let, declared below) existed, so it threw a TDZ ReferenceError and killed the whole script. Now a function called from boot. */
+function opening(){
   const pre=$('#pre'),reads=$('#reads'),log=$('#log'),hx=$('#helix');
   const rnd=n=>Array.from({length:n},()=>B[Math.random()*4|0]).join('');
-  for(let i=0;i<40;i++){const s=document.createElement('span');s.textContent=rnd(90);reads.appendChild(s)}
+  /* was: 40 rows x 90 chars, ~1200px wide, most of it off-screen. Sized to the viewport plus the 400px drift. */
+  const rows=Math.min(24,Math.ceil(innerHeight/23)),chars=Math.min(90,Math.ceil((innerWidth+400)/13.5));
+  for(let i=0;i<rows;i++){const s=document.createElement('span');s.textContent=rnd(chars);reads.appendChild(s)}
   for(let i=0;i<14;i++){const d=document.createElement('div');const c=i%2?'var(--teal)':'var(--pink)';
     d.style.cssText=`position:absolute;left:50%;top:${i*7}%;width:100%;height:2px;margin-left:-50%;background:linear-gradient(90deg,${c} 0 8%,transparent 8% 92%,${c} 92%);transform:rotateY(${i*28}deg)`;hx.appendChild(d)}
   const done=()=>{pre.remove();intro()};
@@ -197,78 +246,107 @@ const B='ATGC';
     .to(reads,{opacity:0,duration:.6},2.2)
     .fromTo('#cell',{scale:.2,opacity:0},{scale:1,opacity:1,duration:.9,ease:'back.out(1.6)'},.3)
     .to(hx.children,{rotateY:'+=360',duration:2.4,ease:'none'},.3)
-    .to(hx.children,{scaleX:i=>1.8,duration:.6,stagger:.02},2.6)   /* unzip */
+    .to(hx.children,{scaleX:1.8,duration:.6,stagger:.02},2.6)   /* unzip */
     .fromTo('#pulse',{scale:1,opacity:.9},{scale:70,opacity:0,duration:1.2,ease:'power2.out'},3)
     .to('#cell',{scale:1.5,duration:.4,ease:'power2.in'},3)
-    .to(pre,{clipPath:'circle(0% at 50% 50%)',duration:1,ease:'power3.in'},3.2);  /* lysis: iris closes on the membrane, revealing page */
-  pre.style.background='transparent';pre.style.clipPath='none';
-  pre.insertAdjacentHTML('afterbegin','<div style="position:absolute;inset:0;background:#000" id="veil"></div>');
-  tl.to('#veil',{clipPath:'circle(0% at 50% 50%)',duration:1.1,ease:'power3.in'},3.1).set('#veil',{display:'none'});
-  $('#reads').style.zIndex=1;
-})();
+    .to(['#cell','#log'],{opacity:0,duration:.4},3.4)   /* was: the membrane sat there until #pre was removed, then popped out */
+    .to('#veil',{clipPath:'circle(0% at 50% 50%)',duration:1.1,ease:'power3.in'},3.1)  /* lysis: iris closes on the membrane, revealing the page */
+    .set('#veil',{display:'none'});
+}
+
 /* ═══ SECTION: GENOME NAV ═══ */
-const secs=[['home','Home'],['about','About'],['experience','Experience'],['projects','Projects'],['skills','Skills'],['contact','Contact']];
-let cur='home',busy=false;
 (function(){
   const g=$('#ring'),n=$('#nav'),N=secs.length,C=2*Math.PI*36,gap=5;
   secs.forEach(([id,l],i)=>{
     const len=C/N-gap,p=document.createElementNS('http://www.w3.org/2000/svg','circle');
     p.setAttribute('cx',50);p.setAttribute('cy',50);p.setAttribute('r',36);p.setAttribute('class','seg');p.dataset.id=id;
+    p.setAttribute('role','link');   /* pointer shortcut only; keyboard users get the nav buttons, so no extra tab stops */
     p.setAttribute('stroke-dasharray',`${len} ${C-len}`);p.setAttribute('transform',`rotate(${i*360/N-90} 50 50)`);
     p.innerHTML=`<title>${l}</title>`;p.onclick=()=>go(id);g.appendChild(p);
     const b=document.createElement('button');b.textContent=l;b.dataset.id=id;b.onclick=()=>go(id);n.appendChild(b);
   });
-  $('#plasmid').onclick=e=>{if(e.target.id==='plasmid')go('home')};
+  /* was: only the svg root counted, so clicking the pink centre dot did nothing */
+  $('#plasmid').onclick=e=>{if(e.target.id==='plasmid'||e.target.id==='plasmid-home')go('home')};
 })();
-function mark(){$$('.seg,nav button').forEach(e=>e.classList.toggle('on',e.dataset.id===cur));
-  const i=secs.findIndex(s=>s[0]===cur);$('#ring').style.transform=`rotate(${-i*360/secs.length}deg)`;
-  $$('.seg').forEach((s,k)=>s.setAttribute('transform',`rotate(${k*360/secs.length-90} 50 50)`))}
+function mark(){
+  $$('.seg,nav button').forEach(e=>{const on=e.dataset.id===cur;e.classList.toggle('on',on);
+    if(on)e.setAttribute('aria-current','page');else e.removeAttribute('aria-current')});
+  /* was: also re-rotated every .seg here. They are rotated once at creation and ride inside the rotating #ring. */
+  $('#ring').style.transform=`rotate(${-secs.findIndex(s=>s[0]===cur)*360/secs.length}deg)`;
+}
 /* ═══ SECTION: CELL-DIVISION PANEL TRANSITIONS ═══ */
-function go(id){
-  if(id===cur||busy)return;const from=$('#'+cur),to=$('#'+id);cur=id;mark();history.replaceState(null,'','#'+id);
-  if(RM){from.classList.remove('on');to.classList.add('on');enter(id);return}
+/* History: pushState per navigation + popstate. was: replaceState, so Back left the site. Chosen over dropping hashes because deep links (#projects) are worth keeping. */
+function go(id,push=true){
+  if(!secs.some(s=>s[0]===id))return;
+  if(busy){if(!push)queued=id;return}   /* a Back press mid-animation must not be dropped: the URL has already changed */
+  if(id===cur)return;
+  const from=$('#'+cur),to=$('#'+id);cur=id;mark();
+  if(push)history.pushState({id},'','#'+id);
+  if(RM){from.classList.remove('on');to.classList.add('on');to.scrollTop=0;enter(id);return}
   busy=true;
   gsap.to(from,{clipPath:'inset(0 50% 0 50%)',duration:.5,ease:'power3.in',onComplete(){   /* cell divides: panel pinches to its midline */
     from.classList.remove('on');gsap.set(from,{clipPath:'inset(0)'});to.classList.add('on');
-    gsap.fromTo(to,{clipPath:'inset(0 50% 0 50%)'},{clipPath:'inset(0 0% 0 0%)',duration:.7,ease:'power3.out',onComplete(){busy=false}});
+    gsap.fromTo(to,{clipPath:'inset(0 50% 0 50%)'},{clipPath:'inset(0 0% 0 0%)',duration:.7,ease:'power3.out',onComplete(){
+      busy=false;if(queued){const q=queued;queued=null;go(q,false)}}});
     to.scrollTop=0;enter(id)}});
 }
+addEventListener('popstate',()=>go(location.hash.slice(1)||'home',false));
 document.addEventListener('click',e=>{const t=e.target.closest('[data-go]');if(t)go(t.dataset.go)});
+
 /* ---------- content ---------- */
+/* bullets capped at ~14 words */
 const jobs=[
-['NIGAB — National Institute for Genomics & Advanced Biotechnology, NARC','Genomics Research Intern','Jul – Sep 2026 · Supervisor: Dr. Zaheer Abbas',['Designed and validated PCR primers for the OsARF11 gene using Primer-BLAST and NCBI databases.','Ran gel electrophoresis to confirm amplification products and assess primer specificity.','Performed DNA extraction and PCR optimization across multiple rice genotype samples.','Documented protocols and results for genomics workflows under supervisor review.']],
-['National Institutes of Health (NIH), Pakistan','Health Sciences Intern','Jul – Aug 2026',['Rotated through health sciences laboratories, observing diagnostic and research workflows.','Assisted with sample handling and basic lab documentation practices.','Gained exposure to public-health-oriented lab operations and quality standards.']],
-['PCSIR — Pakistan Council of Scientific & Industrial Research','Multi-Lab Rotation Intern','Mar 2026 · 8 weeks · Supervisors: Mrs. Razia Kalsoom, Dr. Fouzia Noureen, Miss Fouzia Hussain, Dr. Uzma Rashid',['Rotated across multiple analytical and microbiology labs over an 8-week placement.','Practiced titration, NanoDrop quantification, and general instrumental analysis techniques.','Learned media preparation and core microbiology handling protocols.','Compiled a multi-lab techniques report summarizing methods and findings.']]];
-$('#tree').innerHTML='<svg aria-hidden="true"><path id="branch" d="M10 0 V1000"/></svg>'+jobs.map(j=>`<article class="job scan"><h3>${j[0]}</h3><div>${j[1]}</div><div class="mono">${j[2]}</div><ul>${j[3].map(x=>`<li>${x}</li>`).join('')}</ul></article>`).join('');
+['NIGAB — National Institute for Genomics & Advanced Biotechnology, NARC','Genomics Research Intern','Jul – Sep 2026 · Supervisor: Dr. Zaheer Abbas',['Designed and validated PCR primers for OsARF11 with Primer-BLAST and NCBI databases.','Ran gel electrophoresis to confirm amplification and primer specificity.','Extracted DNA and optimized PCR across multiple rice genotypes.','Documented protocols and results for supervisor review.']],
+['National Institutes of Health (NIH), Pakistan','Health Sciences Intern','Jul – Aug 2026',['Rotated through health sciences labs, observing diagnostic and research workflows.','Assisted with sample handling and lab documentation.','Gained exposure to public-health lab operations and quality standards.']],
+['PCSIR — Pakistan Council of Scientific & Industrial Research','Multi-Lab Rotation Intern','Mar 2026 · 8 weeks · Supervisors: Mrs. Razia Kalsoom, Dr. Fouzia Noureen, Miss Fouzia Hussain, Dr. Uzma Rashid',['Rotated across analytical and microbiology labs over eight weeks.','Practiced titration, NanoDrop quantification and general instrumental analysis.','Learned media preparation and core microbiology handling protocols.','Compiled a multi-lab techniques report of methods and findings.']]];
+$('#tree').innerHTML='<svg aria-hidden="true"><path id="branch"/><path id="branch2"/></svg>'+jobs.map(j=>`<article class="job"><div class="scan"><h3>${j[0]}</h3><div>${j[1]}</div><div class="mono">${j[2]}</div><ul>${j[3].map(x=>`<li>${x}</li>`).join('')}</ul></div></article>`).join('');
 $('#tags').innerHTML=['Bioinformatics & Computational Genomics','Machine Learning in Biology','Computational Drug Discovery','CRISPR & Genome Editing','NGS Data Analysis','R Programming for Omics'].map(t=>`<span>${t}</span>`).join('');
-const projs=[['Research','Dengue Fever Awareness Survey','Community-level survey assessing public knowledge and prevention practices around dengue fever.','Designed and distributed a structured questionnaire to evaluate awareness of dengue transmission, symptoms and prevention within the local community, then analyzed responses to identify knowledge gaps.'],
-['Molecular','Cas12a (Cpf1) Nuclease Study','Literature-based study on the structure, mechanism and applications of the Cas12a nuclease in genome editing.',"Reviewed how Cas12a's single RNA-guided nuclease mechanism differs from Cas9, its staggered-cut DNA repair implications, and its growing role in diagnostics and genome engineering."],
-['Internship','PCSIR Lab Techniques Report','Consolidated report covering the analytical and microbiology techniques practiced during the PCSIR rotation.','Documented titration procedures, NanoDrop quantification, media preparation and instrumentation basics across the 8-week, multi-lab PCSIR rotation.'],
-['Internship','NIGAB Genomics Report','Summary report of primer design and PCR-based genomics work carried out at NIGAB-NARC.','Detailed the primer design workflow for OsARF11 using Primer-BLAST, the PCR optimization steps taken, and gel electrophoresis results confirming amplification.'],
-['ML · In progress','ML in Bioinformatics','Exploring machine learning approaches applied to biological and genomic datasets.','Currently studying how classification and clustering methods can be applied to genomic and expression data as a foundation for future computational biology work.'],
-['ML · In progress','R Programming for Biological Data','Building fluency in R for statistical analysis and visualization of biological datasets.','Working through R fundamentals — data wrangling, statistical tests and plotting — with a focus on applying them to omics-style datasets.']];
-$('#tray').innerHTML=projs.map(p=>`<button class="slide" aria-expanded="false"><div class="lens"></div><span class="mono">${p[0]}</span><h3>${p[1]}</h3><p>${p[2]}</p><div class="more"><span class="mono" style="color:#444">${p[0]}</span><h3>${p[1]}</h3><p style="color:#222;margin-top:10px">${p[3]}</p></div></button>`).join('');
+/* 5th field = date. Only the two 2026 internship reports are known from the source file; the rest render undated until filled in, rather than invented. */
+const projs=[['Research','Dengue Fever Awareness Survey','Community-level survey assessing public knowledge and prevention practices around dengue fever.','Designed and distributed a structured questionnaire to evaluate awareness of dengue transmission, symptoms and prevention within the local community, then analyzed responses to identify knowledge gaps.',''],
+['Molecular','Cas12a (Cpf1) Nuclease Study','Literature-based study on the structure, mechanism and applications of the Cas12a nuclease in genome editing.',"Reviewed how Cas12a's single RNA-guided nuclease mechanism differs from Cas9, its staggered-cut DNA repair implications, and its growing role in diagnostics and genome engineering.",''],
+['Internship','PCSIR Lab Techniques Report','Consolidated report covering the analytical and microbiology techniques practiced during the PCSIR rotation.','Documented titration procedures, NanoDrop quantification, media preparation and instrumentation basics across the 8-week, multi-lab PCSIR rotation.','2026'],
+['Internship','NIGAB Genomics Report','Summary report of primer design and PCR-based genomics work carried out at NIGAB-NARC.','Detailed the primer design workflow for OsARF11 using Primer-BLAST, the PCR optimization steps taken, and gel electrophoresis results confirming amplification.','2026'],
+['ML · In progress','ML in Bioinformatics','Exploring machine learning approaches applied to biological and genomic datasets.','Currently studying how classification and clustering methods can be applied to genomic and expression data as a foundation for future computational biology work.',''],
+['ML · In progress','R Programming for Biological Data','Building fluency in R for statistical analysis and visualization of biological datasets.','Working through R fundamentals — data wrangling, statistical tests and plotting — with a focus on applying them to omics-style datasets.','']];
+$('#tray').innerHTML=projs.map((p,i)=>{const k=p[4]?`${p[0]} · ${p[4]}`:p[0];
+  return `<button class="slide" aria-expanded="false" aria-controls="more${i}"><div class="lens"></div><span class="mono">${k}</span><h3>${p[1]}</h3><p>${p[2]}</p><div class="more" id="more${i}"><span class="mono" style="color:#444">${k}</span><h3>${p[1]}</h3><p style="color:#222;margin-top:10px">${p[3]}</p></div></button>`}).join('');
 $$('.slide').forEach(s=>s.onclick=()=>s.setAttribute('aria-expanded',s.getAttribute('aria-expanded')!=='true'));
-const sk={'Lab techniques':[['DNA Extraction (CTAB)',95],['Agarose Gel Prep',95],['Gel Electrophoresis',90],['PCR',85],['Primer Designing',85],['Media Preparation',80],['qPCR',70],['Tissue Culture',65]],
-'Bioinformatics':[['Primer-BLAST / NCBI',85],['SnapGene',80],['Computational Genomics',80],['Bioinformatics Tools',70],['Data Analysis',70],['R Basics',65]],
-'Programming':[['Python',75],['MS Excel',80],['AutoDock',65],['Machine Learning',50],['CAD',60]],
-'Analytical':[['NanoDrop',80],['Titration',80],['HPLC',65],['ICP-OES / ICP-MS',65],['NGS Analysis',50]]};
-$('#skillgrid').innerHTML=Object.entries(sk).map(([g,a])=>`<div class="grp"><h3>${g}</h3><div class="heat">${a.map(s=>`<div class="cell scan" style="--v:${s[1]}">${s[0]}<b>${s[1]}%</b></div>`).join('')}</div></div>`).join('');
-/* stats: split-flap digits */
-$('#stats').innerHTML=[[3,'Internships completed'],[6,'Projects & reports'],[3,'Labs trained in'],[4,'Years of BS Biotechnology']].map(s=>`<div class="stat"><span class="flip" data-n="${s[0]}"><i>${[...Array(10).keys()].join('<br>')}</i></span><div class="mono">${s[1]}</div></div>`).join('');
-/* molecule */
-(function(){const m=$('#mol');const w=document.createElement('div');w.style.cssText='position:absolute;inset:0;transform-style:preserve-3d;animation:spin 14s linear infinite';
-  for(let i=0;i<22;i++){const a=i*30,y=i*15+6;for(const s of[0,180]){const d=document.createElement('i');d.style.cssText=`position:absolute;left:50%;top:${y}px;width:12px;height:12px;border-radius:50%;background:${s?'var(--pink)':'var(--teal)'};box-shadow:0 0 10px currentColor;color:${s?'var(--pink)':'var(--teal)'};transform:rotateY(${a+s}deg) translateZ(70px)`;w.appendChild(d)}}
-  m.appendChild(w);const st=document.createElement('style');st.textContent='@keyframes spin{to{transform:rotateY(360deg)}}';document.head.appendChild(st)})();
+/* Tiers replace the old percentages ("qPCR 70%" was a self-rating with false precision).
+   Mechanical mapping: >=85 Advanced, 65-84 Proficient, <65 Familiar. Re-rate these yourself. */
+const TIER=['Familiar','Proficient','Advanced'];
+const sk={'Lab techniques':[['DNA Extraction (CTAB)',2],['Agarose Gel Prep',2],['Gel Electrophoresis',2],['PCR',2],['Primer Designing',2],['Media Preparation',1],['qPCR',1],['Tissue Culture',1]],
+'Bioinformatics':[['Primer-BLAST / NCBI',2],['SnapGene',1],['Computational Genomics',1],['Bioinformatics Tools',1],['Data Analysis',1],['R Basics',1]],
+'Programming':[['Python',1],['MS Excel',1],['AutoDock',1],['Machine Learning',0],['CAD',0]],
+'Analytical':[['NanoDrop',1],['Titration',1],['HPLC',1],['ICP-OES / ICP-MS',1],['NGS Analysis',0]]};
+$('#skillgrid').innerHTML=Object.entries(sk).map(([g,a])=>`<div class="grp"><h3>${g}</h3><div class="heat">${a.map(s=>`<div class="cell scan t${s[1]}">${s[0]}<b>${TIER[s[1]]}</b></div>`).join('')}</div></div>`).join('');
+/* stats: split-flap digits. was "4 Years of BS Biotechnology": Sept 2023 to Sept 2026 is three completed years. */
+$('#stats').innerHTML=[[3,'Internships completed'],[6,'Projects & reports'],[3,'Labs trained in'],[3,'BS years completed · Class of 2027']].map(s=>`<div class="stat"><span class="flip" data-n="${s[0]}" aria-hidden="true"><i>${[...Array(10).keys()].join('<br>')}</i></span><span class="sr">${s[0]}</span><div class="mono">${s[1]}</div></div>`).join('');
+/* molecule: none under reduced motion (CSS hides the box), half the rungs on small screens */
+(function(){if(RM)return;const m=$('#mol'),n=matchMedia('(max-width:760px)').matches?11:22,step=(m.offsetHeight-24)/n;
+  const w=document.createElement('div');w.className='spin';
+  for(let i=0;i<n;i++){const a=i*660/n,y=i*step+6;for(const s of[0,180]){const d=document.createElement('i');d.style.cssText=`position:absolute;left:50%;top:${y}px;width:12px;height:12px;border-radius:50%;background:${s?'var(--pink)':'var(--teal)'};box-shadow:0 0 10px currentColor;color:${s?'var(--pink)':'var(--teal)'};transform:rotateY(${a+s}deg) translateZ(70px)`;w.appendChild(d)}}
+  m.appendChild(w)})();
 /* name readout: bases resolve into letters */
-function typeName(){const el=$('#name'),t='Saif Ali';if(RM){el.textContent=t;return}let f=0;const iv=setInterval(()=>{f++;el.textContent=[...t].map((c,i)=>c===' '?' ':(f>i*3+6?c:B[Math.random()*4|0])).join('');if(f>t.length*3+8){clearInterval(iv);el.textContent=t}},50)}
-function flips(){$$('.flip').forEach(f=>{const i=f.firstElementChild,n=+f.dataset.n;i.style.transform=`translateY(-${n}em)`;if(RM)i.style.transition='none'})}
+let nameIv;   /* was: overlapping intervals if Home was re-entered mid-animation */
+function typeName(){const el=$('#name'),t='Saif Ali';clearInterval(nameIv);if(RM){el.textContent=t;return}let f=0;nameIv=setInterval(()=>{f++;el.textContent=[...t].map((c,i)=>c===' '?' ':(f>i*3+6?c:B[Math.random()*4|0])).join('');if(f>t.length*3+8){clearInterval(nameIv);el.textContent=t}},50)}
+/* was: a CSS transition to the final digit, which never re-ran once resolved. fromTo replays from 0 on every visit. */
+function flips(){$$('.flip').forEach((f,k)=>{const i=f.firstElementChild,y=-(+f.dataset.n)*f.offsetHeight;gsap.killTweensOf(i);
+  if(RM){gsap.set(i,{y});return}
+  gsap.fromTo(i,{y:0},{y,duration:1.4,ease:'expo.out',delay:.15+k*.08})})}
+let visits=0;
+function readout(){visits++;$('#readout').textContent=`read ${String(visits).padStart(3,'0')} · aligned · Q${37+(Math.random()*5|0)}`}
 function enter(id){
-  if(id==='home'){typeName();setTimeout(flips,150)}
-  if(id==='experience'){const p=$('#branch');const h=$('#tree').offsetHeight;p.setAttribute('d',`M10 0 V${h}`);const L=h;p.style.strokeDasharray=L;p.style.strokeDashoffset=RM?0:L;if(!RM)gsap.to(p,{strokeDashoffset:0,duration:1.6,ease:'power2.inOut'});
-    if(!RM)gsap.from('.job',{clipPath:'polygon(0 0,0 0,0 100%,0 100%)',duration:.9,stagger:.25,delay:.3,ease:'power3.out'})}
+  if(id==='home'){readout();typeName();flips()}
+  if(id==='experience'){
+    /* was: a straight vertical line. Two phase-opposed strands (teal + pink); each dot is nudged onto the teal strand. */
+    const h=$('#tree').offsetHeight,cx=20,A=8,per=170,X=(y,s)=>cx+s*A*Math.sin(y/per*Math.PI*2),P=[$('#branch'),$('#branch2')];
+    P.forEach((p,k)=>{let d='';for(let y=0;y<=h;y+=6)d+=(y?'L':'M')+X(y,k?-1:1).toFixed(1)+' '+y;p.setAttribute('d',d)});
+    $$('.job').forEach(j=>j.style.setProperty('--dx',(X(j.offsetTop+19,1)-21).toFixed(1)+'px'));
+    if(!RM){P.forEach(p=>{const L=p.getTotalLength();p.style.strokeDasharray=L;p.style.strokeDashoffset=L;gsap.to(p,{strokeDashoffset:0,duration:1.6,ease:'power2.inOut'})});
+      /* was: polygon() -> none, which can snap. Same-function inset() interpolates; negative left inset keeps the dot visible; cleared after so nothing clips later. */
+      gsap.fromTo('.job',{clipPath:'inset(0 100% 0 -70px)'},{clipPath:'inset(0 -10px 0 -70px)',duration:.9,stagger:.25,delay:.3,ease:'power3.out',clearProps:'clipPath'})}}
   if(id==='skills'){const c=$$('.cell');if(RM)gsap.set(c,{opacity:1,scaleY:1});else gsap.to(c,{opacity:1,scaleY:1,duration:.7,ease:'back.out(2)',stagger:{amount:1,from:'start'}})}
-  if(id==='projects'&&!RM)gsap.from('.slide',{clipPath:'polygon(0 0,100% 0,100% 0,0 0)',duration:.8,stagger:.1,ease:'power3.out'});
+  if(id==='projects'&&!RM)gsap.fromTo('.slide',{clipPath:'inset(0 0 100% 0)'},{clipPath:'inset(0 0 0% 0)',duration:.8,stagger:.1,ease:'power3.out',clearProps:'clipPath'});
 }
 /* ---------- contact ---------- */
 $('#form').onsubmit=async e=>{e.preventDefault();const f=e.target,st=$('#st');st.textContent='> transmitting …';
@@ -276,22 +354,37 @@ $('#form').onsubmit=async e=>{e.preventDefault();const f=e.target,st=$('#st');st
     if(!r.ok)throw 0;st.textContent='> message sent. I will reply soon.';f.reset()}
   catch{st.textContent='> send failed. Email saifali15874@gmail.com directly.'}};
 /* ---------- sequence mode + ambient + HELIX rain ---------- */
-$('#mode').onclick=e=>{const on=document.body.classList.toggle('seq');e.target.setAttribute('aria-pressed',on);e.target.textContent=on?'normal mode':'sequence mode'};
+$('#mode').onclick=e=>{const on=document.body.classList.toggle('seq');e.target.setAttribute('aria-pressed',on);e.target.textContent=on?'normal mode':'sequence mode';palette()};
 (function(){const c=$('#ambient'),x=c.getContext('2d');let W,H,P=[],mx=0,my=0;
   const rs=()=>{W=c.width=innerWidth;H=c.height=innerHeight};rs();addEventListener('resize',rs);
   for(let i=0;i<40;i++)P.push({x:Math.random(),y:Math.random(),s:.2+Math.random()*.8,b:B[i%4],v:.0002+Math.random()*.0004});
   addEventListener('mousemove',e=>{mx=e.clientX/W-.5;my=e.clientY/H-.5});
-  if(RM)return;(function f(){x.clearRect(0,0,W,H);x.font='14px JetBrains Mono, monospace';
-    const col=getComputedStyle(document.body).getPropertyValue('--teal');x.fillStyle=col;
+  if(RM)return;(function f(){x.clearRect(0,0,W,H);x.font='14px JetBrains Mono, monospace';x.fillStyle=PAL.teal;
     P.forEach(p=>{p.y-=p.v;if(p.y<-.05)p.y=1.05;x.globalAlpha=.12+p.s*.15;x.fillText(p.b,p.x*W-mx*40*p.s,p.y*H-my*40*p.s)});requestAnimationFrame(f)})()})();
-let typed='';addEventListener('keydown',e=>{if(e.key.length!==1)return;typed=(typed+e.key.toUpperCase()).slice(-5);if(typed==='HELIX')rain()});
-function rain(){const c=$('#rain'),x=c.getContext('2d');c.width=innerWidth;c.height=innerHeight;const cols=Math.ceil(c.width/16),y=Array(cols).fill(0).map(()=>-Math.random()*40);let n=0;
-  (function f(){x.fillStyle='rgba(0,0,0,.12)';x.fillRect(0,0,c.width,c.height);x.font='16px monospace';
-    y.forEach((v,i)=>{x.fillStyle=i%2?'#5ff':'#f6c';x.fillText(B[Math.random()*4|0],i*16,v*16);y[i]=v*16>c.height&&Math.random()>.96?0:v+1});
-    if(++n<260)requestAnimationFrame(f);else x.clearRect(0,0,c.width,c.height)})()}
+let typed='';
+addEventListener('keydown',e=>{
+  if(e.key.length!==1||e.ctrlKey||e.metaKey||e.altKey)return;
+  const a=document.activeElement;   /* was: typing "helix" in the contact form fired the rain */
+  if(a&&(a.isContentEditable||/^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName))){typed='';return}
+  typed=(typed+e.key.toUpperCase()).slice(-5);if(typed==='HELIX')rain()});
+let RY=null,raining=false;   /* column heads persist across runs; was: new Array(cols) per call */
+function rain(){
+  if(RM||raining)return;raining=true;
+  const c=$('#rain'),x=c.getContext('2d'),W=c.width=innerWidth,H=c.height=innerHeight,cols=Math.ceil(W/16),max=W<760?120:260;  /* was: 260 frames everywhere */
+  if(!RY||RY.length!==cols)RY=new Float32Array(cols);
+  for(let i=0;i<cols;i++)RY[i]=-Math.random()*40;
+  x.font='16px monospace';let n=0;
+  (function f(){
+    /* was: fillRect rgba(0,0,0,.12) painted black over the whole fixed page. destination-out fades the trail toward transparent instead. */
+    x.globalCompositeOperation='destination-out';x.fillStyle='rgba(0,0,0,.12)';x.fillRect(0,0,W,H);
+    x.globalCompositeOperation='source-over';
+    for(let i=0;i<cols;i++){const v=RY[i];x.fillStyle=i%2?PAL.teal:PAL.pink;x.fillText(B[Math.random()*4|0],i*16,v*16);RY[i]=v*16>H&&Math.random()>.96?0:v+1}
+    if(++n<max)requestAnimationFrame(f);else{x.clearRect(0,0,W,H);raining=false}})()}
 /* ---------- boot ---------- */
-function intro(){mark();const h=location.hash.slice(1);if(h&&h!=='home'&&secs.some(s=>s[0]===h)){$('#home').classList.remove('on');cur=h;$('#'+h).classList.add('on');mark();enter(h)}else enter('home')}
-mark();
+function intro(){const h=location.hash.slice(1);
+  if(h&&h!=='home'&&secs.some(s=>s[0]===h)){$('#home').classList.remove('on');cur=h;$('#'+h).classList.add('on')}
+  mark();enter(cur)}
+mark();opening();   /* last on purpose: everything intro() touches must exist first */
 </script>
 </body>
 </html>
